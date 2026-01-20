@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../components/Navbar.jsx";
-import "./Landing.css";
+
 
 export default function Login() {
 

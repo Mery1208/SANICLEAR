@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar.jsx";
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Activity, Users } from 'lucide-react';
-import "./Landing.css";
+
 
 const Landing = () => {
     return (
@@ -38,3 +38,4 @@ const Landing = () => {
         </div>
     )
 }
+    export default Landing
