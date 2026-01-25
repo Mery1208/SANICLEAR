@@ -1,19 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "../css/Navbar.css";
-// import logo from "../assets/logo.png"; // Logo no disponible, comentado
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Button from './Button'; 
+import '../css/Navbar.css';
+import logoImg from '../img/logo.png';
 
 const Navbar = () => {
-    return (
-        <nav className="navbar">
-            <div className="navbar-logo">
-                {/* <img src={logo} alt="Logo" className="logo-image" /> */}
-                <span className="logo-text">Limpieza Hospitalaria</span>
-            </div>
-            <div className="navbar-links">
-                <Link to="/login" className="btn-login">Acceso Personal</Link>
-            </div>
-        </nav>
-    );
+  return (
+    <nav className="navbar">
+      <div className="logo">
+        <Link to="/">
+          <img src={logoImg} alt="Saniclear Logo" className="logo-img" style={{ height: '40px' }} />
+        </Link>
+      </div>
+      
+      <div className="nav-links">
+        <Link to="/" style={{ marginRight: '15px' }}>Inicio</Link>
+        
+        
+        <Link to="/login">
+          <Button text="Acceso Personal" variant="secondary" />
+        </Link>
+      </div>
+    </nav>
+  );
 };
+
 export default Navbar;
