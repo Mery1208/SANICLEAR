@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
 import Button from './Button'; 
 import '../css/Dashboard.css';
-import { supabase } from '../supabase/client'; // Importamos el cliente
+import { supabase } from '../supabase/client'; 
 
 export default function Formulario({ onClose }) {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    rol: 'operario', // Valor por defecto del select
+    rol: 'operario',
     password: ''
   });
   const [loading, setLoading] = useState(false);
@@ -19,14 +19,13 @@ export default function Formulario({ onClose }) {
 
     try {
       // 1. CREAR USUARIO EN AUTH
-      // Enviamos el 'nombre' en los metadatos para que el Trigger SQL lo capture
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
           data: {
             nombre: formData.nombre
-            // No enviamos el rol aquí porque el trigger SQL lo fuerza a 'operario' por seguridad inicial
+
           }
         }
       });
@@ -38,7 +37,7 @@ export default function Formulario({ onClose }) {
       // si elegimos 'admin', tenemos que actualizarlo manualmente ahora.
       if (formData.rol === 'admin' && authData.user) {
         
-        // A) Buscamos cuál es el ID del rol 'admin'
+        // Buscamos cuál es el ID del rol 'admin'
         const { data: roleData, error: roleError } = await supabase
           .from('roles')
           .select('id_rol')
@@ -46,7 +45,7 @@ export default function Formulario({ onClose }) {
           .single();
 
         if (!roleError && roleData) {
-          // B) Actualizamos al usuario recién creado
+          // Actualizamos al usuario recién creado
           await supabase
             .from('usuarios')
             .update({ id_rol: roleData.id_rol })
@@ -55,7 +54,7 @@ export default function Formulario({ onClose }) {
       }
 
       alert("¡Trabajador registrado correctamente en el sistema!");
-      onClose(); // Cerramos el modal
+      onClose();
 
     } catch (error) {
       console.error("Error registrando:", error.message);
