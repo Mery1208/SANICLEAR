@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Button from './Button'; 
+import Button from './Button';
 import '../css/Navbar.css';
-import logoImg from '../img/logo.png';
+import logoImg from '../assets/img/logo.png';
 
 const Navbar = () => {
   return (
@@ -12,11 +12,11 @@ const Navbar = () => {
           <img src={logoImg} alt="Saniclear Logo" className="logo-img" style={{ height: '40px' }} />
         </Link>
       </div>
-      
+
       <div className="nav-links">
         <Link to="/" style={{ marginRight: '15px' }}>Inicio</Link>
-        
-        
+
+
         <Link to="/login">
           <Button text="Acceso Personal" variant="secondary" />
         </Link>

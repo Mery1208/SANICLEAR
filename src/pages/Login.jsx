@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importamos para poder redirigir
+import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import Button from '../components/Button'; 
+import Button from '../components/Button';
 import '../css/Login.css';
 import { supabase } from '../supabase/client';
+import logoImg from '../assets/img/logo.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Para evitar doble clic mientras carga
-  const navigate = useNavigate(); // Hook para navegar entre páginas
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Activamos estado de carga
+    setLoading(true);
 
     try {
-      // 1. AUTENTICACIÓN: Comprobamos email y contraseña en Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
@@ -24,8 +24,6 @@ export default function Login() {
 
       if (authError) throw authError;
 
-      // 2. CONSULTA DE DATOS: Buscamos al usuario y pedimos el NOMBRE del rol
-      // Fíjate en la sintaxis: `roles ( nombre )` hace la unión con la otra tabla
       const { data: userData, error: userError } = await supabase
         .from('usuarios')
         .select(`
@@ -39,13 +37,11 @@ export default function Login() {
 
       if (userError) throw userError;
 
-      // 3. VERIFICACIÓN DE ROL
-      // Ahora el rol no es un texto directo, viene dentro del objeto 'roles'
       const nombreRol = userData.roles?.nombre;
 
       if (nombreRol === 'admin') {
         console.log('Login exitoso: Redirigiendo a Dashboard');
-        navigate('/dashboard'); // <-- Te lleva al panel de admin
+        navigate('/dashboard');
       } else {
         alert(`Bienvenido, ${userData.nombre}. El panel de Operario está en construcción.`);
       }
@@ -54,50 +50,66 @@ export default function Login() {
       console.error('Error de login:', error.message);
       alert('Error al acceder: Comprueba tu email y contraseña.');
     } finally {
-      setLoading(false); // Desactivamos carga pase lo que pase
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      
-      <div style={{position:'absolute', top:0, width:'100%'}}>
-        <Navbar/>
-      </div>
-
-      <div className="login-card">
-        <h2 className="login-title">Acceso al Portal</h2>
-        
-        <form onSubmit={handleLogin}>
-          <div className="input-group">
-            <label>Email</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="usuario@hospital.com"
-              disabled={loading} // Bloqueamos si está cargando
-            />
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-card">
+          <div className="login-logo">
+            <img src={logoImg} alt="Saniclear" />
+            <span>Saniclear</span>
           </div>
 
-          <div className="input-group">
-            <label>Contraseña</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              disabled={loading}
-            />
-          </div>
+          <h2 className="login-title">Acceso al Portal</h2>
+          <p className="login-subtitle">Bienvenido a SANICLEAR</p>
 
-          <Button 
-            text={loading ? "Verificando..." : "Iniciar Sesión"} 
-            type="submit" 
-            variant="primary" 
-            style={{ width: '100%', opacity: loading ? 0.7 : 1 }} 
-          />
-        </form>
+          <form onSubmit={handleLogin}>
+            <div className="input-group">
+              <label>Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="usuario@hospital.com"
+                disabled={loading}
+              />
+            </div>
+
+            <div className="input-group">
+              <label>Contraseña</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={loading}
+              />
+            </div>
+
+            <div className="forgot-password">
+              <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <Button
+              text={loading ? "Verificando..." : "Iniciar Sesión"}
+              type="submit"
+              variant="primary"
+              style={{ width: '100%', marginTop: '0.5rem' }}
+            />
+          </form>
+
+          <div className="demo-access">
+            <p className="demo-title">Demo de acceso:</p>
+            <div className="demo-credentials">
+              <p><span className="demo-icon admin">◆</span> <strong>Admin:</strong> admin@hospital.com</p>
+              <p><span className="demo-icon operario">◆</span> <strong>Operario:</strong> operario@hospital.com</p>
+            </div>
+            <p className="demo-note">El registro de usuarios lo realiza el administrador</p>
+          </div>
+        </div>
       </div>
     </div>
   );
