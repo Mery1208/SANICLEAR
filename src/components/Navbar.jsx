@@ -9,7 +9,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="logo">
         <Link to="/">
-          <img src={logoImg} alt="Saniclear Logo" className="logo-img" style={{ height: '40px' }} />
+          <img src={logoImg} alt="Saniclear Logo" className="logo-img" style={{ height: '90px' }} />
         </Link>
       </div>
 

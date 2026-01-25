@@ -1,0 +1,43 @@
+:root {
+  /* Colores primarios */
+  --color-primary: #2563EB;
+  --color-primary-hover: #1E40AF;
+  --color-primary-light: #DBEAFE;
+  
+  /* Colores de títulos y texto */
+  --color-title: #1E3A8A;
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #6B7280;
+  --color-text-disabled: #9CA3AF;
+  
+  /* Colores de fondo */
+  --color-background-page: #F3F4F6;
+  --color-background-white: #FFFFFF;
+  --color-background-light: #F9FAFB;
+  
+  /* Colores de acento */
+  --color-accent: #D97706;
+  --color-accent-light: #FEF3C7;
+  
+  /* Colores de estados */
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #3B82F6;
+  --color-info-light: #DBEAFE;
+  
+  /* Colores de bordes */
+  --color-border-light: #F3F4F6;
+  --color-border-medium: #D1D5DB;
+  --color-border-dark: #9CA3AF;
+  
+  /* Colores de sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,89 @@
+/* Contenedores principales */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+}
+
+.container-fluid {
+  width: 100%;
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+}
+
+/* Grid system */
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Flex utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+/* Secciones */
+.section {
+  padding-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-2xl);
+}
+
+.section-title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-title);
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-subtitle {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-xl);
+}

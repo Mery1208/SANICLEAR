@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Save, Edit2, Camera, User } from 'lucide-react';
-import Button from './Button'; // <-- Usamos tu botón reutilizable
+import Button from './Button'; 
 import '../css/Dashboard.css';
 
 export default function ProfileModal({ onClose, userRole = "Admin" }) {

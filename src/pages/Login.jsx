@@ -60,7 +60,6 @@ export default function Login() {
         <div className="login-card">
           <div className="login-logo">
             <img src={logoImg} alt="Saniclear" />
-            <span>Saniclear</span>
           </div>
 
           <h2 className="login-title">Acceso al Portal</h2>
@@ -100,15 +99,6 @@ export default function Login() {
               style={{ width: '100%', marginTop: '0.5rem' }}
             />
           </form>
-
-          <div className="demo-access">
-            <p className="demo-title">Demo de acceso:</p>
-            <div className="demo-credentials">
-              <p><span className="demo-icon admin">◆</span> <strong>Admin:</strong> admin@hospital.com</p>
-              <p><span className="demo-icon operario">◆</span> <strong>Operario:</strong> operario@hospital.com</p>
-            </div>
-            <p className="demo-note">El registro de usuarios lo realiza el administrador</p>
-          </div>
         </div>
       </div>
     </div>

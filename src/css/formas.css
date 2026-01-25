@@ -1,0 +1,104 @@
+/* Labels */
+.form-label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-title);
+  margin-bottom: 0.5rem;
+}
+
+/* Inputs de texto */
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-background-white);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.form-input::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Input con error */
+.form-input.error {
+  border-color: var(--color-error);
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Select */
+.form-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-background-white);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Textarea */
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-background-white);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.2s ease;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Checkbox y Radio */
+.form-checkbox,
+.form-radio {
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+/* Mensaje de error */
+.form-error-message {
+  color: var(--color-error);
+  font-size: var(--text-xs);
+  margin-top: 0.25rem;
+}
+
+/* Mensaje de ayuda */
+.form-help-text {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  margin-top: 0.25rem;
+}

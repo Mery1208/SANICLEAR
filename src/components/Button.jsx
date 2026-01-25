@@ -1,11 +1,11 @@
 import React from 'react';
-import '../css/Button.css'; 
+import '../css/Button.css';
 
 const Button = ({ text, onClick, type = "button", variant = "primary", icon: Icon, style }) => {
   return (
-    <button 
-      type={type} 
-      className={`btn btn-${variant}`} 
+    <button
+      type={type}
+      className={`btn btn-${variant}`}
       onClick={onClick}
       style={style}
     >
