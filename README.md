@@ -40,67 +40,98 @@ Proyecto Final de Curso - Aplicación web para la gestión de limpieza hospitala
 
 ---
 
-## 🚀 PROGRESO SEMANAL
+🚀 PROGRESO SEMANAL - SANICLEAR (Curso 2025/2026)
+🗓️ ENERO 2026: Ejecución Visual y Frontend
+Objetivo del mes: Construcción de la interfaz gráfica y conexión inicial.
 
-### 🗓️ ENERO 2025: Ejecución y Frontend
+📍 Semana 15 | Desarrollo del MVP Visual
+Fecha Tutoría: Martes 27/01/2026
 
-#### 📍 Semana 15 | Inicio del Desarrollo Visual
-**Fecha Tutoría:** Martes 21/01/2025 - 16:55
-> **Hito:** Construcción del MVP (Producto Mínimo Viable) visual.
+Incidencia: No hubo avance presencial por falta de asistencia.
 
-* **✅ Landing Page:**
-    * Diseño e implementación de la portada pública.
-    * Secciones: Hero, Features y Footer.
-* **✅ Sistema de Autenticación (Frontend):**
-    * Creación de `Login.jsx` con detección visual de roles.
-    * Formulario de acceso responsive.
-* **✅ Arquitectura del Proyecto:**
-    * Estructuración de carpetas: `/components`, `/pages`, `/css`.
-    * Corrección de rutas de importación y configuración de `vite.config.js`.
-* **🛠️ En progreso:** Conexión del formulario con Supabase Auth.
+Trabajo autónomo (en casa): Se continuó con la lógica del formulario de registro y la validación de campos en React.
 
----
+📍 Semana 14 | Landing Page y Login
+Fecha Tutoría: Martes 20/01/2026 - 16:55
 
-### 🗓️ NOVIEMBRE - DICIEMBRE 2024: Análisis y Documentación
+✅ Landing Page: Diseño definitivo de la portada con secciones Hero (imagen hospitalaria), Features (características) y Footer.
 
-#### 📍 Semana 12 | Cierre de Análisis (Navidad)
-**Fecha Tutoría:** Martes 10/12/2024 - 16:55
-* **Actividad:** Revisión final de la documentación técnica generada hasta la fecha.
-* **Recursos:** Investigación de herramientas de IA para optimizar la redacción de documentos técnicos.
-* **Feedback Tutor:** Aprobación para comenzar la fase de código tras el parón navideño.
+✅ Sistema de Auth Visual: Maquetación del Login.jsx (inputs estilizados con Tailwind, botón de "Entrar" y selector visual de roles).
 
-#### 📍 Semana 8 | Definición del Stack
-**Fecha Tutoría:** Martes 12/11/2024 - 16:55
-* **Decisión Técnica:** Pivotamos de TypeScript a **JavaScript (JSX)** para agilizar el desarrollo del MVP visual, manteniendo la robustez con Supabase.
-* **Investigación:** Búsqueda de referencias visuales (UI) de aplicaciones médicas para la inspiración del diseño.
+✅ Estructura: Organización final de carpetas (/src/pages, /src/components, /src/supabase).
 
----
+📍 Semana 13 | Vuelta de Vacaciones
+Fecha Tutoría: Martes 13/01/2026 - 16:55
 
-### 🗓️ OCTUBRE 2024: Inicio y Fundamentos
+(El martes 06/01 fue festivo - Reyes).
 
-#### 📍 Semana 4 | Inicio Tecnológico
-**Fecha Tutoría:** Martes 29/10/2024 - 16:55
-* **Backend:** Inicialización del proyecto en **Supabase**.
-* **Frontend:** Creación del proyecto base con **Vite + React**.
-* **Objetivo:** Tener el entorno listo para empezar a programar.
+Actividad: Reactivación del entorno de desarrollo tras la Navidad.
 
-#### 📍 Semana 3 | Diseño de Datos
-**Fecha Tutoría:** Martes 22/10/2024 - 16:55
-* **Entregable:** Diagrama MER (Modelo Entidad-Relación).
-* **Estructura:** Definición de tablas clave:
-    * `Usuarios` (Admin/Operario).
-    * `Zonas` (Quirófanos, Habitaciones).
-    * `Historial` (Registro de limpiezas).
+Configuración: Actualización de librerías (npm update) y revisión del código pendiente de diciembre.
 
-#### 📍 Semana 2 | Control de Versiones
-**Fecha Tutoría:** Martes 15/10/2024 - 16:55
-* **Infraestructura:** Creación del repositorio en **GitHub**.
-* **Configuración:** Establecimiento de ramas (`main` / `dev`) y archivo `.gitignore` para Node.js.
+Planificación: Definición del sprint de Enero: "Prioridad absoluta al Frontend".
 
-#### 📍 Semana 1 | Aprobación del Proyecto
-**Fecha Tutoría:** Martes 08/10/2024 - 16:55
-* **Hito:** Firma del **Acta de Propuesta**.
-* **Definición:** "Saniclear" nace como solución para digitalizar partes de limpieza, garantizando trazabilidad y eliminando el papel en hospitales.
+🗓️ DICIEMBRE 2025: Documentación y Análisis
+Objetivo del mes: Cerrar los requisitos antes del parón navideño.
+
+📍 Semana 11 | Cierre de Análisis
+Fecha Tutoría: Martes 16/12/2025 - 16:55
+
+Hito: Entrega del análisis funcional y requisitos actualizados.
+
+Feedback: El tutor aprueba el paso a la fase de codificación intensiva para la vuelta de enero.
+
+Investigación: Estudio sobre cómo funcionan las Políticas de Seguridad (RLS) en Supabase.
+
+📍 Semana 10 | Dudas Teóricas
+Fecha Tutoría: Martes 09/12/2025 - 16:55
+
+(Día lectivo tras el puente de la Inmaculada).
+
+Actividad: Resolución de dudas sobre el modelo de datos y cómo relacionar la tabla auth.users de Supabase con nuestra tabla public.usuarios.
+
+🗓️ NOVIEMBRE 2025: Definición Tecnológica
+Objetivo del mes: Elegir las herramientas definitivas.
+
+📍 Semana 7 | Pivote a JavaScript
+Fecha Tutoría: Martes 11/11/2025 - 16:55
+
+Decisión Clave: Se abandona TypeScript a favor de JavaScript (JSX) para agilizar el desarrollo, dado que el tiempo apremia.
+
+Backend: Confirmación definitiva de Supabase como la mejor opción Serverless.
+
+Diseño: Elección de la librería de iconos Lucide React y la paleta de colores corporativa (Verde Esmeralda/Azul Clínico).
+
+🗓️ OCTUBRE 2025: Inicio del Proyecto
+Objetivo del mes: Configuración del entorno y aprobación de la idea.
+
+📍 Semana 4 | "Hola Mundo"
+Fecha Tutoría: Martes 28/10/2025 - 16:55
+
+Frontend: Inicialización del proyecto con npm create vite@latest saniclear.
+
+Backend: Creación de la organización y proyecto en el Dashboard de Supabase.
+
+📍 Semana 3 | Modelo de Datos (MER)
+Fecha Tutoría: Martes 21/10/2025 - 16:55
+
+Entregable: Diagrama Entidad-Relación.
+
+Definición: Diseño de las tablas principales (usuarios, zonas, tareas) y sus claves foráneas.
+
+📍 Semana 2 | Git y Repositorio
+Fecha Tutoría: Martes 14/10/2025 - 16:55
+
+Infraestructura: Creación del repositorio en GitHub.
+
+Configuración: Creación de ramas main y dev, y configuración del .gitignore.
+
+📍 Semana 1 | Aprobación de la Propuesta
+Fecha Tutoría: Martes 07/10/2025 - 16:55
+
+Hito: Firma del Acta de Propuesta.
+
+Concepto: Nace "Saniclear" como solución para digitalizar la limpieza hospitalaria con roles de Supervisor y Operario.
 
 ---
 > *Documento vivo. Última actualización: 21/01/2025*
