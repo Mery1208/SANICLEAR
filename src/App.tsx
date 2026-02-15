@@ -5,18 +5,18 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Landing from './pages/Landing'
 
-function App() {
+function App(): React.JSX.Element {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Rutas Admin (Apunta a Dashboard existente) */}
+        {/* admin */}
         <Route path="/admin" element={<Dashboard />} />
-        {/* { aqui ira las rutas de los archivos futuros de gestión usuario} */}
+        {/* TODO: rutas de gestion de usuarios */}
 
-        {/* Rutas Operario */}
+        {/* operario */}
         <Route path="/operario" element={<div style={{ padding: 20 }}>Panel Operario en construcción</div>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />

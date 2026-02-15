@@ -1,23 +1,33 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Button from '../components/Button';
 import '../css/Login.css';
 import { supabase } from '../supabase/client';
 import logoImg from '../assets/img/logo.png';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+interface UserRoles {
+  nombre: string;
+}
+
+interface UserRow {
+  nombre: string;
+  roles?: UserRoles;
+  [key: string]: unknown;
+}
+
+export default function Login(): React.JSX.Element {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
@@ -37,17 +47,19 @@ export default function Login() {
 
       if (userError) throw userError;
 
-      const nombreRol = userData.roles?.nombre;
+      const typedUser = userData as UserRow;
+      const nombreRol = typedUser.roles?.nombre;
 
       if (nombreRol === 'admin') {
         console.log('Login exitoso: Redirigiendo a Dashboard');
         navigate('/dashboard');
       } else {
-        alert(`Bienvenido, ${userData.nombre}. El panel de Operario está en construcción.`);
+        alert(`Bienvenido, ${typedUser.nombre}. El panel de Operario está en construcción.`);
       }
 
-    } catch (error) {
-      console.error('Error de login:', error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error desconocido';
+      console.error('Error de login:', message);
       alert('Error al acceder: Comprueba tu email y contraseña.');
     } finally {
       setLoading(false);
@@ -71,7 +83,7 @@ export default function Login() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 placeholder="usuario@hospital.com"
                 disabled={loading}
               />
@@ -82,7 +94,7 @@ export default function Login() {
               <input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={loading}
               />

@@ -4,7 +4,7 @@ import Button from './Button';
 import '../css/Navbar.css';
 import logoImg from '../assets/img/logo.png';
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   return (
     <nav className="navbar">
       <div className="logo">
@@ -15,7 +15,6 @@ const Navbar = () => {
 
       <div className="nav-links">
         <Link to="/" style={{ marginRight: '15px' }}>Inicio</Link>
-
 
         <Link to="/login">
           <Button text="Acceso Personal" variant="secondary" />
