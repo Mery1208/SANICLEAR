@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Activity, ShieldCheck, Users, BarChart3, Smartphone, Globe, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
@@ -11,174 +10,41 @@ import hospitalImg from '../assets/img/hospital.avif';
 import medicoImg from '../assets/img/medico.avif';
 import pasilloImg from '../assets/img/pasillo.avif';
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Landing(): React.JSX.Element {
-  const heroRef = useRef<HTMLElement>(null);
-  const aboutRef = useRef<HTMLElement>(null);
-  const featuresRef = useRef<HTMLElement>(null);
-  const stepsRef = useRef<HTMLElement>(null);
-  const testimonialRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // animacion de entrada del hero con gsap
     const ctx = gsap.context(() => {
-
-      // animaciones del hero
       const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
       heroTl
         .from('.hero-badge', { opacity: 0, y: 20, duration: 0.6 })
         .from('.hero-text h1', { opacity: 0, y: 40, duration: 0.8 }, '-=0.3')
         .from('.hero-text p', { opacity: 0, y: 30, duration: 0.6 }, '-=0.4')
         .from('.hero-buttons', { opacity: 0, y: 20, duration: 0.5 }, '-=0.3')
-        .from('.hero-image', { opacity: 0, x: 60, scale: 0.95, duration: 1 }, '-=0.6')
-        .from('.hero-glow', { opacity: 0, scale: 0.5, duration: 1.2 }, '-=0.8');
+        .from('.hero-image', { opacity: 0, x: 60, scale: 0.95, duration: 1 }, '-=0.6');
 
-      // efecto flotante de la imagen
       gsap.to('.hero-image', {
-        y: -15,
-        duration: 3,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
+        y: -15, duration: 3, ease: 'sine.inOut', yoyo: true, repeat: -1,
       });
-
-      // sobre nosotros
-      gsap.from('.about-image', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        x: -80,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-      });
-
-      gsap.from('.about-text', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-        x: 80,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        delay: 0.2,
-      });
-
-      // animacion de los numeros
-      const statNumbers = document.querySelectorAll('.stat-number');
-      statNumbers.forEach((stat) => {
-        const el = stat as HTMLElement;
-        const target = el.getAttribute('data-value');
-        const suffix = el.getAttribute('data-suffix') || '';
-        if (!target) return;
-
-        ScrollTrigger.create({
-          trigger: el,
-          start: 'top 85%',
-          onEnter: () => {
-            gsap.fromTo(el, { textContent: '0' }, {
-              textContent: target,
-              duration: 2,
-              ease: 'power2.out',
-              snap: { textContent: 1 },
-              onUpdate: function () {
-                el.textContent = Math.ceil(parseFloat(el.textContent || '0')) + suffix;
-              },
-            });
-          },
-          once: true,
-        });
-      });
-
-      // seccion de funcionalidades
-      gsap.from('.features-header', {
-        scrollTrigger: {
-          trigger: featuresRef.current,
-          start: 'top 80%',
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-      });
-
-      gsap.from('.feature-card', {
-        scrollTrigger: {
-          trigger: '.features-grid',
-          start: 'top 85%',
-        },
-        y: 60,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.12,
-        ease: 'power3.out',
-      });
-
-      // pasos
-      gsap.from('.steps-header', {
-        scrollTrigger: {
-          trigger: stepsRef.current,
-          start: 'top 80%',
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-      });
-
-      gsap.from('.step-card', {
-        scrollTrigger: {
-          trigger: '.steps-grid',
-          start: 'top 85%',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.2,
-        ease: 'back.out(1.5)',
-      });
-
-      gsap.from('.steps-line', {
-        scrollTrigger: {
-          trigger: '.steps-grid',
-          start: 'top 85%',
-        },
-        scaleX: 0,
-        duration: 1.2,
-        delay: 0.4,
-        ease: 'power3.inOut',
-      });
-
-      // testimonios
-      gsap.from('.testimonial-image', {
-        scrollTrigger: {
-          trigger: testimonialRef.current,
-          start: 'top 80%',
-        },
-        x: -60,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-      });
-
-      gsap.from('.testimonial-text', {
-        scrollTrigger: {
-          trigger: testimonialRef.current,
-          start: 'top 80%',
-        },
-        x: 60,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        delay: 0.2,
-      });
-
     });
 
-    return () => ctx.revert();
+    // animaciones de scroll con intersection observer
+    const animated = document.querySelectorAll('.anim');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    animated.forEach((el) => observer.observe(el));
+
+    return () => {
+      ctx.revert();
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -186,7 +52,7 @@ export default function Landing(): React.JSX.Element {
       <Navbar />
 
       {/* Hero */}
-      <header className="hero" ref={heroRef}>
+      <header className="hero">
         <div className="hero-glow"></div>
         <div className="hero-content">
           <div className="hero-text">
@@ -218,12 +84,12 @@ export default function Landing(): React.JSX.Element {
       </header>
 
       {/* Sobre nosotros */}
-      <section id="sobre-nosotros" className="about-section" ref={aboutRef}>
+      <section id="sobre-nosotros" className="about-section">
         <div className="about-content">
-          <div className="about-image">
+          <div className="about-image anim slide-left">
             <img src={medicoImg} alt="Equipo médico" />
           </div>
-          <div className="about-text">
+          <div className="about-text anim slide-right">
             <h2>Una Solución Nacida de la Necesidad</h2>
             <p>
               SANICLEAR nació en 2024 cuando un grupo de profesionales sanitarios
@@ -242,16 +108,16 @@ export default function Landing(): React.JSX.Element {
               comunicación fluida entre todo el personal.
             </p>
             <div className="about-stats">
-              <div className="stat">
-                <span className="stat-number" data-value="50" data-suffix="+">0</span>
+              <div className="stat anim fade-up delay-1">
+                <span className="stat-number">50+</span>
                 <span className="stat-label">Hospitales</span>
               </div>
-              <div className="stat">
-                <span className="stat-number" data-value="10000" data-suffix="+">0</span>
+              <div className="stat anim fade-up delay-2">
+                <span className="stat-number">10.000+</span>
                 <span className="stat-label">Tareas Diarias</span>
               </div>
-              <div className="stat">
-                <span className="stat-number" data-value="99" data-suffix="%">0</span>
+              <div className="stat anim fade-up delay-3">
+                <span className="stat-number">99%</span>
                 <span className="stat-label">Satisfacción</span>
               </div>
             </div>
@@ -260,48 +126,48 @@ export default function Landing(): React.JSX.Element {
       </section>
 
       {/* Funcionalidades */}
-      <section className="features-section" ref={featuresRef}>
-        <div className="features-header">
+      <section className="features-section">
+        <div className="features-header anim fade-up">
           <h2>Todo lo que Necesitas en una Plataforma</h2>
           <p>Herramientas profesionales diseñadas para maximizar la eficiencia y seguridad</p>
         </div>
         <div className="features-grid">
-          <div className="feature-card">
+          <div className="feature-card anim fade-up delay-1">
             <div className="feature-icon">
               <Activity size={28} />
             </div>
             <h3>Control en Tiempo Real</h3>
             <p>Monitoriza en tiempo real el estado de todas las tareas de limpieza en tu institución desde un único panel de control.</p>
           </div>
-          <div className="feature-card">
+          <div className="feature-card anim fade-up delay-2">
             <div className="feature-icon">
               <ShieldCheck size={28} />
             </div>
             <h3>Trazabilidad Completa</h3>
             <p>Registra y audita cada acción realizada con un historial completo, verificable y conforme a normativas sanitarias.</p>
           </div>
-          <div className="feature-card">
+          <div className="feature-card anim fade-up delay-3">
             <div className="feature-icon">
               <Users size={28} />
             </div>
             <h3>Gestión de Equipos</h3>
             <p>Administra equipos con diferentes niveles de acceso: administradores, supervisores y personal operativo.</p>
           </div>
-          <div className="feature-card">
+          <div className="feature-card anim fade-up delay-4">
             <div className="feature-icon">
               <BarChart3 size={28} />
             </div>
             <h3>Análisis y Reportes</h3>
             <p>Genera informes detallados sobre productividad, cumplimiento y áreas de mejora para tomar decisiones basadas en datos.</p>
           </div>
-          <div className="feature-card">
+          <div className="feature-card anim fade-up delay-5">
             <div className="feature-icon">
               <Smartphone size={28} />
             </div>
             <h3>App Móvil Operarios</h3>
             <p>Aplicación móvil intuitiva para que el personal de limpieza registre tareas completadas con un simple toque.</p>
           </div>
-          <div className="feature-card">
+          <div className="feature-card anim fade-up delay-6">
             <div className="feature-icon">
               <Globe size={28} />
             </div>
@@ -312,25 +178,25 @@ export default function Landing(): React.JSX.Element {
       </section>
 
       {/* Pasos */}
-      <section className="steps-section" ref={stepsRef}>
-        <div className="steps-header">
+      <section className="steps-section">
+        <div className="steps-header anim fade-up">
           <h2>Cómo Funciona SANICLEAR</h2>
           <p>Implementación simple en 3 pasos</p>
         </div>
         <div className="steps-wrapper">
-          <div className="steps-line"></div>
+          <div className="steps-line anim scale-x"></div>
           <div className="steps-grid">
-            <div className="step-card">
+            <div className="step-card anim fade-up delay-1">
               <div className="step-number">1</div>
               <h3>Configura tus Zonas</h3>
               <p>Define las áreas del hospital, asigna responsables y establece los protocolos de limpieza para cada zona.</p>
             </div>
-            <div className="step-card">
+            <div className="step-card anim fade-up delay-2">
               <div className="step-number">2</div>
               <h3>Asigna Tareas</h3>
               <p>Programa y distribuye las tareas de limpieza al personal operativo desde el panel de administración.</p>
             </div>
-            <div className="step-card">
+            <div className="step-card anim fade-up delay-3">
               <div className="step-number">3</div>
               <h3>Supervisa y Optimiza</h3>
               <p>Monitoriza el progreso en tiempo real y genera reportes para mejorar continuamente la eficiencia operativa.</p>
@@ -340,34 +206,48 @@ export default function Landing(): React.JSX.Element {
       </section>
 
       {/* Testimonios */}
-      <section className="testimonial-section" ref={testimonialRef}>
+      <section className="testimonial-section">
         <div className="testimonial-content">
-          <div className="testimonial-image">
+          <div className="testimonial-image anim slide-left">
             <img src={pasilloImg} alt="Pasillo de hospital" />
           </div>
-          <div className="testimonial-text">
+          <div className="testimonial-text anim slide-right">
             <h2>Resultados Reales, Impacto Medible</h2>
             <blockquote>
               "Desde que implementamos SANICLEAR, hemos reducido el tiempo de gestión administrativa en un 60% y mejorado significativamente la trazabilidad de nuestros procesos de limpieza."
             </blockquote>
             <div className="testimonial-author">
-              <CheckCircle size={20} color="#60a5fa" />
+              <CheckCircle size={20} color="#2563EB" />
               <div>
                 <strong>Dr. María González</strong>
                 <span>Directora de Calidad, Hospital Central</span>
               </div>
             </div>
             <div className="testimonial-stats">
-              <div className="t-stat">
+              <div className="t-stat anim fade-up delay-1">
                 <span className="t-stat-number">60%</span>
                 <span className="t-stat-label">Reducción en tiempo administrativo</span>
               </div>
-              <div className="t-stat">
+              <div className="t-stat anim fade-up delay-2">
                 <span className="t-stat-number">100%</span>
                 <span className="t-stat-label">Trazabilidad de tareas</span>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="cta-section">
+        <div className="cta-content anim fade-up">
+          <h2>¿Listo para Transformar la Gestión de tu Hospital?</h2>
+          <p>
+            Únete a los hospitales que ya confían en SANICLEAR para optimizar sus procesos
+            de higiene y garantizar la máxima seguridad.
+          </p>
+          <Link to="/login">
+            <Button text="Comenzar Ahora" variant="primary" icon={ArrowRight} />
+          </Link>
         </div>
       </section>
 
