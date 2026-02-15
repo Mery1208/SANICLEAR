@@ -56,10 +56,6 @@ export default function Landing(): React.JSX.Element {
         <div className="hero-glow"></div>
         <div className="hero-content">
           <div className="hero-text">
-            <div className="hero-badge">
-              <Sparkles size={16} />
-              <span>Plataforma Líder en Gestión Sanitaria</span>
-            </div>
             <h1>
               Gestión <span className="text-gradient">Inteligente</span> de
               Higiene Hospitalaria

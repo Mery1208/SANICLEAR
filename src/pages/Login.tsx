@@ -51,10 +51,9 @@ export default function Login(): React.JSX.Element {
       const nombreRol = typedUser.roles?.nombre;
 
       if (nombreRol === 'admin') {
-        console.log('Login exitoso: Redirigiendo a Dashboard');
-        navigate('/dashboard');
+        navigate('/admin');
       } else {
-        alert(`Bienvenido, ${typedUser.nombre}. El panel de Operario está en construcción.`);
+        navigate('/operario');
       }
 
     } catch (error: unknown) {

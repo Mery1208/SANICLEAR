@@ -1,0 +1,210 @@
+/* layout operario */
+.op-layout {
+    min-height: 100vh;
+    background: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+}
+
+/* navbar */
+.op-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-dark-bg-alt);
+    border-bottom: 1px solid var(--color-dark-border);
+}
+
+.op-navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.op-navbar-brand img {
+    height: 32px;
+}
+
+.op-navbar-brand span {
+    font-weight: var(--font-bold);
+    font-size: var(--text-lg);
+    color: var(--color-primary);
+}
+
+.op-navbar-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--color-dark-text-muted);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s, color 0.2s;
+}
+
+.op-navbar-logout:hover {
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--color-error);
+}
+
+/* contenido principal */
+.op-main {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.op-greeting h1 {
+    font-size: 1.5rem;
+    font-weight: var(--font-bold);
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.op-greeting p {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.op-greeting strong {
+    color: var(--color-primary);
+    font-weight: var(--font-bold);
+}
+
+/* contador de progreso */
+.op-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-primary);
+    font-weight: var(--font-semibold);
+    font-size: var(--text-sm);
+}
+
+.op-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.op-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* lista de tareas */
+.op-tasks {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.op-task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.op-task-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+.op-task-card.completed {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    opacity: 0.8;
+}
+
+.op-task-info h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.op-task-info p {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    margin-bottom: 0.5rem;
+}
+
+.task-done {
+    text-decoration: line-through !important;
+    color: var(--color-success) !important;
+}
+
+/* prioridad */
+.op-priority {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+}
+
+.priority-alta {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.priority-media {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.priority-baja {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* check */
+.op-check {
+    width: 36px;
+    height: 36px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.op-check.checked {
+    border-color: var(--color-success);
+    background: #dcfce7;
+    color: var(--color-success);
+}
+
+/* responsive */
+@media (max-width: 600px) {
+    .op-main {
+        padding: 1.25rem 1rem;
+    }
+
+    .op-task-card {
+        padding: 1rem;
+    }
+}
