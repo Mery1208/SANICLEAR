@@ -16,122 +16,23 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 =======
-# SANICLEAR
-Proyecto Final de Curso - Aplicación web para la gestión de limpieza hospitalaria. Proyecto Final del ciclo  2 DAW.
->>>>>>> f1d51bc663e40cdd42a90bf7ab929c9e711cd09c
-
-# 🏥 SANICLEAR
-## 📘 Diario de Desarrollo del TFG
-
-![Estado](https://img.shields.io/badge/Estado-En_Desarrollo-blue?style=for-the-badge&logo=react)
-![Ciclo](https://img.shields.io/badge/Ciclo-2%C2%BA_DAW-green?style=for-the-badge)
-![Tutorías](https://img.shields.io/badge/Tutor%C3%ADas-Martes_16:55-orange?style=for-the-badge)
-
----
-
-### 📋 Ficha del Proyecto
-
-| **Rol** | **Detalle** |
-| :--- | :--- |
-| **👩‍💻 Alumna** | **María Ceballos** |
-| **👨‍🏫 Tutor** | **Paco Mera** |
-| **📅 Horario Seguimiento** | **Martes, 16:55** |
-| **🏥 Proyecto** | Gestión Inteligente de Higiene Hospitalaria |
-
----
-
-🚀 PROGRESO SEMANAL - SANICLEAR (Curso 2025/2026)
-🗓️ ENERO 2026: Ejecución Visual y Frontend
-Objetivo del mes: Construcción de la interfaz gráfica y conexión inicial.
-
-📍 Semana 15 | Desarrollo del MVP Visual
-Fecha Tutoría: Martes 27/01/2026
-
-Incidencia: No hubo avance presencial por falta de asistencia.
-
-Trabajo autónomo (en casa): Se continuó con la lógica del formulario de registro y la validación de campos en React.
-
-📍 Semana 14 | Landing Page y Login
-Fecha Tutoría: Martes 20/01/2026 - 16:55
-
-✅ Landing Page: Diseño definitivo de la portada con secciones Hero (imagen hospitalaria), Features (características) y Footer.
-
-✅ Sistema de Auth Visual: Maquetación del Login.jsx (inputs estilizados con Tailwind, botón de "Entrar" y selector visual de roles).
-
-✅ Estructura: Organización final de carpetas (/src/pages, /src/components, /src/supabase).
-
-📍 Semana 13 | Vuelta de Vacaciones
-Fecha Tutoría: Martes 13/01/2026 - 16:55
-
-(El martes 06/01 fue festivo - Reyes).
-
-Actividad: Reactivación del entorno de desarrollo tras la Navidad.
-
-Configuración: Actualización de librerías (npm update) y revisión del código pendiente de diciembre.
-
-Planificación: Definición del sprint de Enero: "Prioridad absoluta al Frontend".
-
-🗓️ DICIEMBRE 2025: Documentación y Análisis
-Objetivo del mes: Cerrar los requisitos antes del parón navideño.
-
-📍 Semana 11 | Cierre de Análisis
-Fecha Tutoría: Martes 16/12/2025 - 16:55
-
-Hito: Entrega del análisis funcional y requisitos actualizados.
-
-Feedback: El tutor aprueba el paso a la fase de codificación intensiva para la vuelta de enero.
-
-Investigación: Estudio sobre cómo funcionan las Políticas de Seguridad (RLS) en Supabase.
-
-📍 Semana 10 | Dudas Teóricas
-Fecha Tutoría: Martes 09/12/2025 - 16:55
-
-(Día lectivo tras el puente de la Inmaculada).
-
-Actividad: Resolución de dudas sobre el modelo de datos y cómo relacionar la tabla auth.users de Supabase con nuestra tabla public.usuarios.
-
-🗓️ NOVIEMBRE 2025: Definición Tecnológica
-Objetivo del mes: Elegir las herramientas definitivas.
-
-📍 Semana 7 | Pivote a JavaScript
-Fecha Tutoría: Martes 11/11/2025 - 16:55
-
-Decisión Clave: Se abandona TypeScript a favor de JavaScript (JSX) para agilizar el desarrollo, dado que el tiempo apremia.
-
-Backend: Confirmación definitiva de Supabase como la mejor opción Serverless.
-
-Diseño: Elección de la librería de iconos Lucide React y la paleta de colores corporativa (Verde Esmeralda/Azul Clínico).
-
-🗓️ OCTUBRE 2025: Inicio del Proyecto
-Objetivo del mes: Configuración del entorno y aprobación de la idea.
-
-📍 Semana 4 | "Hola Mundo"
-Fecha Tutoría: Martes 28/10/2025 - 16:55
-
-Frontend: Inicialización del proyecto con npm create vite@latest saniclear.
-
-Backend: Creación de la organización y proyecto en el Dashboard de Supabase.
-
-📍 Semana 3 | Modelo de Datos (MER)
-Fecha Tutoría: Martes 21/10/2025 - 16:55
-
-Entregable: Diagrama Entidad-Relación.
-
-Definición: Diseño de las tablas principales (usuarios, zonas, tareas) y sus claves foráneas.
-
-📍 Semana 2 | Git y Repositorio
-Fecha Tutoría: Martes 14/10/2025 - 16:55
-
-Infraestructura: Creación del repositorio en GitHub.
-
-Configuración: Creación de ramas main y dev, y configuración del .gitignore.
-
-📍 Semana 1 | Aprobación de la Propuesta
-Fecha Tutoría: Martes 07/10/2025 - 16:55
-
-Hito: Firma del Acta de Propuesta.
-
-Concepto: Nace "Saniclear" como solución para digitalizar la limpieza hospitalaria con roles de Supervisor y Operario.
-
----
-> *Documento vivo. Última actualización: 21/01/2025*
+ <div align="center"><img src="https://www.google.com/search?q=https://via.placeholder.com/1000x300/0ea5e9/ffffff%3Ftext%3DSANICLEAR%2BHospital%2BHygiene%2BManagement" alt="Saniclear Banner" width="100%"><h1 align="center">🏥 SANICLEAR</h1><p align="center"><strong>Gestión Inteligente de Higiene Hospitalaria</strong>Proyecto Final de Ciclo (TFG) - Desarrollo de Aplicaciones Web (DAW)</p><p align="center"><img src="https://www.google.com/search?q=https://img.shields.io/badge/REACT-v18-61DAFB%3Fstyle%3Dfor-the-badge%26logo%3Dreact%26logoColor%3Dblack" alt="React"><img src="https://www.google.com/search?q=https://img.shields.io/badge/VITE-Lighting_Fast-646CFF%3Fstyle%3Dfor-the-badge%26logo%3Dvite%26logoColor%3Dwhite" alt="Vite"><img src="https://www.google.com/search?q=https://img.shields.io/badge/TAILWIND-CSS-38B2AC%3Fstyle%3Dfor-the-badge%26logo%3Dtailwind-css%26logoColor%3Dwhite" alt="Tailwind"><img src="https://www.google.com/search?q=https://img.shields.io/badge/SUPABASE-PostgreSQL-3ECF8E%3Fstyle%3Dfor-the-badge%26logo%3Dsupabase%26logoColor%3Dwhite" alt="Supabase"></p><p align="center"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Estado-En_Desarrollo-orange%3Fstyle%3Dflat-square" alt="Estado"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Versi%C3%B3n-1.0.0-blue%3Fstyle%3Dflat-square" alt="Versión"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Licencia-MIT-green%3Fstyle%3Dflat-square" alt="Licencia"></p></div>📖 Descripción del ProyectoSaniclear es una aplicación web tipo SPA (Single Page Application) diseñada para digitalizar y optimizar los procesos de limpieza en entornos hospitalarios.El sistema sustituye los partes de trabajo en papel por una gestión en tiempo real, permitiendo trazar quién limpió qué zona y cuándo. Diferencia claramente entre Supervisores (gestión y control) y Operarios (validación de tareas en movilidad).✨ Características Clave🔐 Control de Acceso (RBAC): Sistema de autenticación seguro con roles diferenciados para Administradores y Operarios.🏥 Gestión de Zonas y Tareas: Asignación dinámica de limpiezas a quirófanos, habitaciones y pasillos.📱 Diseño Mobile-First: Interfaz optimizada para que los operarios la usen cómodamente desde tablets o móviles.⚡ Tiempo Real: Actualización instantánea de estados gracias a la tecnología de Supabase.🛡️ Seguridad Avanzada: Implementación de Row Level Security (RLS) para proteger los datos sensibles.📊 Dashboard Analítico: Panel visual para el control de incidencias y métricas de limpieza.📂 Estructura del ProyectoBashsaniclear/
+├── 📂 public/              # Assets estáticos (imágenes, favicon)
+├── 📂 src/
+│   ├── 📂 components/      # Componentes reutilizables (Botones, Modales, Navbar)
+│   ├── 📂 pages/           # Vistas principales (Login, Dashboard, Tareas)
+│   ├── 📂 supabase/        # Configuración del cliente y conexión DB
+│   ├── 📂 assets/          # Estilos globales e imágenes importadas
+│   ├── 📜 App.jsx          # Enrutador principal
+│   └── 📜 main.jsx         # Punto de entrada de React
+├── 📜 .env                 # Variables de entorno (NO SUBIR A GITHUB)
+├── 📜 index.html           # HTML base
+├── 📜 tailwind.config.js   # Configuración de estilos
+└── 📜 vite.config.js       # Configuración del empaquetador
+🚀 Instalación y DespliegueSigue estos pasos para ejecutar el proyecto en tu entorno local:Clonar el repositorio:Bashgit clone [https://github.com/TU_USUARIO/saniclear.git](https://github.com/TU_USUARIO/saniclear.git)
+cd saniclear
+Instalar dependencias:Bashnpm install
+Configurar variables de entorno:Crea un archivo .env en la raíz del proyecto con tus credenciales de Supabase:Fragmento de códigoVITE_SUPABASE_URL=tu_url_de_supabase
+VITE_SUPABASE_ANON_KEY=tu_clave_anonima
+Ejecutar servidor de desarrollo:Bashnpm run dev
+La aplicación estará disponible en http://localhost:5173.📘 Diario de Desarrollo del TFG📋 Ficha del ProyectoRolDetalle👩‍💻 AlumnaMaría Ceballos👨‍🏫 TutorPaco Mera📅 Horario SeguimientoMartes, 16:55🏥 ProyectoGestión Inteligente de Higiene Hospitalaria🚀 PROGRESO SEMANAL🗓️ FEBRERO - MARZO 2026: Prototipado Final, Lógica y DocumentaciónObjetivo del bimestre: Cerrar la 2ª Evaluación con la documentación lista y las vistas principales funcionales.📍 Semana 20 | Entrega de Documentación (Previsión)Fecha Tutoría: Martes 03/03/2026🎯 Hito: Finalización y entrega de la "Biblia" del proyecto.📂 Documentos a entregar:Manual Técnico: Arquitectura y Código.Manual de Usuario: Guía para Supervisor/Operario.Manual de Despliegue: Guía de instalación.Manual de Evaluación: Autoevaluación del progreso.Estado: 📅 Planificado para cierre de evaluación.📍 Semana 19 | Lógica de Negocio y PanelesFecha Tutoría: Martes 24/02/2026🛠️ En desarrollo (Frontend):Panel de Control (Admin): Refactorización del Dashboard conectando datos reales de Supabase.Vista Operario ("Mis Tareas"): Maquetación de tarjetas y lógica de "marcar completada".📍 Semana 18 | Maratón de DocumentaciónFecha Tutoría: Martes 17/02/2026📚 Documentación: Inicio de redacción de entregables obligatorios (Técnico, Usuario, Despliegue).📄 Evaluación: Creación del "Manual de Evaluación" para el tutor.📍 Semana 17 | UX/UI y "Efecto WOW"Fecha Tutoría: Martes 10/02/2026✨ Frontend: Implementación de animaciones en la Landing Page.🎨 Diseño: Creación de Prototipos Definitivos en Excalidraw.📍 Semana 16 | Innovación: Asistente IAFecha Tutoría: Martes 03/02/2026💡 Mejora del Alcance: Integración conceptual de un Asistente IA para predecir zonas de riesgo.🗓️ ENERO 2026: Ejecución Visual y Frontend📍 Semana 15 | Desarrollo del MVP VisualFecha Tutoría: Martes 27/01/2026Trabajo autónomo: Lógica del formulario de registro y validación en React.📍 Semana 14 | Landing Page y LoginFecha Tutoría: Martes 20/01/2026✅ Landing Page: Diseño definitivo (Hero, Features, Footer).✅ Auth: Maquetación del Login y selectores de rol.📍 Semana 13 | Vuelta de VacacionesFecha Tutoría: Martes 13/01/2026Actividad: Reactivación del entorno y actualización de librerías.🗓️ DICIEMBRE 2025: Documentación y Análisis📍 Semana 11 | Cierre de AnálisisFecha Tutoría: Martes 16/12/2025Hito: Entrega del análisis funcional y requisitos. Aprobación para codificar.📍 Semana 10 | Dudas TeóricasFecha Tutoría: Martes 09/12/2025Actividad: Resolución de dudas sobre relación auth.users vs public.usuarios.🗓️ NOVIEMBRE 2025: Definición Tecnológica📍 Semana 7 | Pivote a JavaScriptFecha Tutoría: Martes 11/11/2025Decisión Clave: Cambio de TypeScript a JavaScript (JSX) y confirmación de Supabase.🗓️ OCTUBRE 2025: Inicio del Proyecto📍 Semana 4 | "Hola Mundo"Fecha Tutoría: Martes 28/10/2025Hito: Inicialización del proyecto Vite + Supabase.📍 Semana 3 | Modelo de Datos (MER)Fecha Tutoría: Martes 21/10/2025Hito: Diseño de tablas principales.📍 Semana 2 | Git y RepositorioFecha Tutoría: Martes 14/10/2025Hito: Configuración de GitHub y ramas.📍 Semana 1 | Aprobación de la PropuestaFecha Tutoría: Martes 07/10/2025Hito: Firma del Acta de Propuesta. Nace "Saniclear".Documento vivo. Última actualización: 17/02/2026
