@@ -110,6 +110,7 @@ saniclear/
 
 La documentación detallada para la instalación local y el despliegue en producción (Vercel) se está finalizando. Las instrucciones completas estarán disponibles en la próxima actualización de la documentación.
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 📘 Diario de Desarrollo del TFG
 📋 Ficha del Proyecto
 Rol,Detalle
@@ -117,110 +118,174 @@ Rol,Detalle
 👨‍🏫 Tutor,Paco Mera
 📅 Horario Seguimiento,"Martes, 16:55"
 🏥 Proyecto,Gestión Inteligente de Higiene Hospitalaria
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-🚀 PROGRESO SEMANAL
-🗓️ FEBRERO - MARZO 2026: Prototipado Final, Lógica y Documentación
-Objetivo del bimestre: Cerrar la 2ª Evaluación con la documentación lista y las vistas principales funcionales.
+### 🗓️ MARZO 2026 — Cierre de Manuales y Segunda Evaluación
 
-📍 Semana 20 | Entrega de Documentación (Previsión)
-Fecha Tutoría: Martes 03/03/2026
+#### 📍 Semana 20 | Entrega de Documentación · Martes 03/03/2026
 
-🎯 Hito: Finalización y entrega de la "Biblia" del proyecto.
+🎯 **Hito:** Finalización y entrega de todos los manuales del proyecto.
 
-📂 Documentos a entregar:
+📂 Documentos entregados:
+- ✅ **Manual Técnico:** Arquitectura, base de datos, Triggers y RLS.
+- ✅ **Manual de Usuario:** Guía paso a paso para Supervisor y Operario con capturas de pantalla.
+- ✅ **Manual de Despliegue:** Guía de instalación local y despliegue en Vercel.
+- ✅ **Manual de Evaluación:** Autoevaluación del progreso del proyecto.
+- ✅ **Manual de Seguimiento:** Trazabilidad del desarrollo semanal entregado al tutor.
 
-Manual Técnico: Arquitectura y Código.
+🗒️ Estado general al cierre de la 2ª evaluación: vistas principales operativas y conectadas a Supabase. Pendiente para las próximas semanas: módulo de incidencias, notificaciones y refinamiento mobile.
 
-Manual de Usuario: Guía para Supervisor/Operario.
+---
 
-Manual de Despliegue: Guía de instalación.
+#### 📍 Semana 19 | Lógica de Negocio y Paneles · Martes 24/02/2026
 
-Manual de Evaluación: Autoevaluación del progreso.
+🛠️ **En desarrollo (Frontend):**
+- **Panel de Control (Admin):** Refactorización del Dashboard conectando datos reales de Supabase. Estadísticas en tiempo real: tareas pendientes, en curso y completadas; incidencias abiertas.
+- **Vista Operario ("Mis Tareas"):** Maquetación de tarjetas de tarea con zona, descripción, prioridad y estado. Lógica de "marcar como completada" actualizando el estado en Supabase.
+- Revisión con el tutor del avance general y feedback sobre las vistas desarrolladas.
 
-Estado: 📅 Planificado para cierre de evaluación.
+---
 
-📍 Semana 19 | Lógica de Negocio y Paneles
-Fecha Tutoría: Martes 24/02/2026
+### 🗓️ FEBRERO 2026 — Lógica de Negocio y Documentación
 
-🛠️ En desarrollo (Frontend):
+#### 📍 Semana 18 | Maratón de Documentación · Martes 17/02/2026
 
-Panel de Control (Admin): Refactorización del Dashboard conectando datos reales de Supabase.
+📚 **Hito:** Inicio formal de la redacción de los entregables obligatorios.
+- Inicio del **Manual Técnico:** arquitectura del sistema, descripción de la BD y código principal.
+- Inicio del **Manual de Usuario:** guía para Supervisor y Operario.
+- Inicio del **Manual de Despliegue:** instalación local y despliegue con Vercel.
+- Creación del **Manual de Evaluación** para el tutor.
 
-Vista Operario ("Mis Tareas"): Maquetación de tarjetas y lógica de "marcar completada".
+---
 
-📍 Semana 18 | Maratón de Documentación
-Fecha Tutoría: Martes 17/02/2026
+#### 📍 Semana 17 | UX/UI y "Efecto WOW" · Martes 10/02/2026
 
-📚 Documentación: Inicio de redacción de entregables obligatorios (Técnico, Usuario, Despliegue).
+✨ **Frontend:**
+- Implementación de animaciones de entrada en la Landing Page (fade-in, slide-up).
+- Creación de los **Prototipos Definitivos** en Excalidraw: Dashboard Admin, Vista Operario, Gestión de Zonas, Gestión de Tareas, Incidencias.
+- Revisión de paleta de colores y tipografía para mayor coherencia con la imagen corporativa.
 
-📄 Evaluación: Creación del "Manual de Evaluación" para el tutor.
+---
 
-📍 Semana 17 | UX/UI y "Efecto WOW"
-Fecha Tutoría: Martes 10/02/2026
+#### 📍 Semana 16 | Innovación: Asistente IA · Martes 03/02/2026
 
-✨ Frontend: Implementación de animaciones en la Landing Page.
+💡 **Mejora del Alcance:**
+- Investigación de viabilidad de un módulo de IA para predecir zonas de riesgo de infección.
+- Documentado como funcionalidad futura en el Acta de Propuesta.
+- La arquitectura del proyecto se ha diseñado para permitir esta integración en el futuro.
 
-🎨 Diseño: Creación de Prototipos Definitivos en Excalidraw.
+---
 
-📍 Semana 16 | Innovación: Asistente IA
-Fecha Tutoría: Martes 03/02/2026
+### 🗓️ ENERO 2026 — Ejecución Visual y Frontend
 
-💡 Mejora del Alcance: Integración conceptual de un Asistente IA para predecir zonas de riesgo.
+#### 📍 Semana 15 | Desarrollo del MVP Visual · Martes 27/01/2026
 
-🗓️ ENERO 2026: Ejecución Visual y Frontend
-📍 Semana 15 | Desarrollo del MVP Visual
-Fecha Tutoría: Martes 27/01/2026
+- Trabajo autónomo: lógica del formulario de registro y validaciones en React (campos obligatorios, formato email, longitud mínima de contraseña).
+- Implementación de la redirección según rol del usuario tras autenticación.
 
-Trabajo autónomo: Lógica del formulario de registro y validación en React.
+---
 
-📍 Semana 14 | Landing Page y Login
-Fecha Tutoría: Martes 20/01/2026
+#### 📍 Semana 14 | Landing Page y Login · Martes 20/01/2026
 
-✅ Landing Page: Diseño definitivo (Hero, Features, Footer).
+✅ **Landing Page:** Diseño definitivo (Hero, Features, Footer) implementado en React + Tailwind.  
+✅ **Auth:** Maquetación del Login, selectores de rol e integración con Supabase Auth.
 
-✅ Auth: Maquetación del Login y selectores de rol.
+---
 
-📍 Semana 13 | Vuelta de Vacaciones
-Fecha Tutoría: Martes 13/01/2026
+#### 📍 Semana 13 | Vuelta de Vacaciones · Martes 13/01/2026
 
-Actividad: Reactivación del entorno y actualización de librerías.
+- Reactivación del entorno de desarrollo.
+- Actualización de todas las dependencias del proyecto a sus últimas versiones estables.
+- Resolución de conflictos de versiones.
 
-🗓️ DICIEMBRE 2025: Documentación y Análisis
-📍 Semana 11 | Cierre de Análisis
-Fecha Tutoría: Martes 16/12/2025
+---
 
-Hito: Entrega del análisis funcional y requisitos. Aprobación para codificar.
+### 🗓️ DICIEMBRE 2025 — Documentación y Análisis
 
-📍 Semana 10 | Dudas Teóricas
-Fecha Tutoría: Martes 09/12/2025
+#### 📍 Semana 11 | Cierre de Análisis · Martes 16/12/2025
 
-Actividad: Resolución de dudas sobre relación auth.users vs public.usuarios.
+🎯 **Hito:** Entrega del análisis funcional completo y requisitos del sistema. **Aprobación del tutor para comenzar a codificar.**
 
-🗓️ NOVIEMBRE 2025: Definición Tecnológica
-📍 Semana 7 | Pivote a JavaScript
-Fecha Tutoría: Martes 11/11/2025
+---
 
-Decisión Clave: Cambio de TypeScript a JavaScript (JSX) y confirmación de Supabase.
+#### 📍 Semana 10 | Dudas Teóricas · Martes 09/12/2025
 
-🗓️ OCTUBRE 2025: Inicio del Proyecto
-📍 Semana 4 | "Hola Mundo"
-Fecha Tutoría: Martes 28/10/2025
+- Resolución de dudas sobre la relación `auth.users` (Supabase) vs `public.usuarios` (tabla propia).
+- Explicación del flujo de Triggers para sincronizar ambas tablas.
+- Revisión del flujo de registro de operarios por parte del Administrador.
 
-Hito: Inicialización del proyecto Vite + Supabase.
+---
 
-📍 Semana 3 | Modelo de Datos (MER)
-Fecha Tutoría: Martes 21/10/2025
+#### 📍 Semana 9 | Refinamiento de Base de Datos · Martes 02/12/2025
 
-Hito: Diseño de tablas principales.
+- Revisión y ajuste de todas las tablas del modelo.
+- Creación de índices y relaciones en Supabase Dashboard.
+- Pruebas de integridad referencial.
 
-📍 Semana 2 | Git y Repositorio
-Fecha Tutoría: Martes 14/10/2025
+---
 
-Hito: Configuración de GitHub y ramas.
+### 🗓️ NOVIEMBRE 2025 — Definición Tecnológica
 
-📍 Semana 1 | Aprobación de la Propuesta
-Fecha Tutoría: Martes 07/10/2025
+#### 📍 Semana 8 | Primeras Políticas RLS · Martes 25/11/2025
 
-Hito: Firma del Acta de Propuesta. Nace "Saniclear".
+- Configuración de las primeras políticas de Row Level Security (RLS) en Supabase.
+- Pruebas con distintas configuraciones y documentación de problemas encontrados.
 
-Documento vivo. Última actualización: 17/02/2026
+---
+
+#### 📍 Semana 7 | Pivote a JavaScript · Martes 11/11/2025
+
+🔑 **Decisión Clave:** Cambio de TypeScript a JavaScript (JSX) para reducir la curva de aprendizaje y ajustarse al plazo del proyecto.
+- Confirmación definitiva del stack: React + Vite + Tailwind + Supabase (JS).
+- Revisión de la estructura de carpetas del proyecto.
+
+---
+
+#### 📍 Semana 6 | Autenticación y Roles · Martes 04/11/2025 (aprox.)
+
+- Implementación del flujo de login con Supabase Auth.
+- Diseño del Trigger PostgreSQL para asignación automática de roles al registrarse.
+- Primeras pruebas de la tabla `usuarios` y su relación con `auth.users`.
+
+---
+
+### 🗓️ OCTUBRE 2025 — Inicio del Proyecto
+
+#### 📍 Semana 4 | "Hola Mundo" · Martes 28/10/2025
+
+🎯 **Hito:** Inicialización del proyecto Vite + Supabase. Primer commit funcional.
+- `npm create vite@latest saniclear` — proyecto arrancado.
+- Instalación y configuración de Tailwind CSS.
+- Configuración del cliente Supabase y primeras pruebas de conexión.
+- Creación de las primeras tablas en Supabase Dashboard.
+
+---
+
+#### 📍 Semana 3 | Modelo de Datos (MER) · Martes 21/10/2025
+
+🎯 **Hito:** Diseño y validación del Modelo Entidad-Relación con el tutor.
+- Diseño de tablas principales: `usuarios`, `zonas`, `tareas`, `incidencias`, `materiales`.
+- Definición de relaciones, claves primarias y foráneas.
+- Ajustes en la tabla `tareas` para incluir historial de estados.
+
+---
+
+#### 📍 Semana 2 | Git y Repositorio · Martes 14/10/2025
+
+🎯 **Hito:** Configuración de GitHub y estructura de ramas.
+- Creación del repositorio `saniclear` en GitHub.
+- Configuración de ramas: `main` (producción) y `develop` (desarrollo activo).
+- Definición de convención de commits.
+- Primera entrada del README.
+
+---
+
+#### 📍 Semana 1 | Aprobación de la Propuesta · Martes 07/10/2025
+
+🎯 **Hito:** Firma del Acta de Propuesta. Nace **Saniclear**.
+- Primera reunión con el tutor Paco Mera.
+- Validación de la idea y aprobación para comenzar el análisis funcional.
+
+---
+
+*Documento vivo. Última actualización: 03/03/2026*
