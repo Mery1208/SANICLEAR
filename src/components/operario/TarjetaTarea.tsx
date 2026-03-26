@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface TarjetaTareaProps {
     zona: string;
@@ -11,55 +11,45 @@ interface TarjetaTareaProps {
 
 const TarjetaTarea: React.FC<TarjetaTareaProps> = ({ zona, descripcion, prioridad, completada, onCompletar }) => {
     const prioridadStyles = {
-        Alta: 'bg-red-100 text-red-700 border-red-200',
-        Media: 'bg-orange-100 text-orange-700 border-orange-200',
-        Baja: 'bg-blue-100 text-blue-700 border-blue-200'
+        Alta: 'bg-red-100 text-red-500 border-red-200',
+        Media: 'bg-orange-100 text-orange-500 border-orange-200',
+        Baja: 'bg-blue-100 text-blue-500 border-blue-200'
     };
 
     return (
         <div 
-            className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 shadow-sm
+            className={`flex items-center justify-between p-5 rounded-3xl border transition-all duration-300
                 ${completada 
-                    ? 'bg-green-50/50 border-green-400 opacity-80' 
-                    : 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-md'
+                    ? 'bg-transparent border-green-400' 
+                    : 'bg-white border-slate-300 hover:border-slate-400'
                 }`}
         >
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                    <h3 className={`text-lg font-bold m-0 transition-colors ${completada ? 'line-through text-green-600' : 'text-[#1e3a5f]'}`}>
-                        {zona}
-                    </h3>
-                    {!completada && (
-                        <span className={`text-xs font-bold py-1 px-2.5 rounded-full border ${prioridadStyles[prioridad]}`}>
-                            {prioridad}
-                        </span>
-                    )}
-                </div>
+            <div className="flex flex-col items-start gap-1.5">
+                <h3 className={`text-[17px] font-medium m-0 transition-colors ${completada ? 'line-through text-green-500' : 'text-slate-700'}`}>
+                    {zona}
+                </h3>
                 
-                <p className={`text-sm m-0 transition-colors ${completada ? 'line-through text-green-500' : 'text-slate-500 font-medium'}`}>
+                <p className={`text-[13px] m-0 transition-colors ${completada ? 'line-through text-green-400' : 'text-slate-500'}`}>
                     {descripcion}
                 </p>
+
+                {!completada && (
+                    <span className={`mt-1 text-[13px] font-medium py-1 px-3.5 rounded-full border ${prioridadStyles[prioridad]}`}>
+                        Prioridad {prioridad}
+                    </span>
+                )}
             </div>
             
             <button
-                className={`flex items-center justify-center gap-2 h-10 px-4 rounded-lg font-bold text-sm transition-all duration-200 cursor-pointer border
+                className={`flex items-center justify-center gap-1.5 py-2.5 px-5 rounded-3xl font-medium text-[14px] transition-all duration-200 cursor-pointer
                     ${completada 
-                        ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200' 
-                        : 'bg-white text-slate-600 border-slate-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300'
+                        ? 'bg-green-100/50 text-green-500 border border-green-200' 
+                        : 'bg-[#22c55e] text-white border-transparent hover:bg-green-600 shadow-sm'
                     }`}
                 onClick={onCompletar}
             >
-                {completada ? (
-                    <>
-                        <CheckCircle2 size={18} className="text-green-600" />
-                        <span className="hidden sm:inline">Completada</span>
-                    </>
-                ) : (
-                    <>
-                        <Circle size={18} />
-                        <span className="hidden sm:inline">Marcar Válida</span>
-                    </>
-                )}
+                <Check size={18} />
+                <span>{completada ? 'Completada' : 'Completar'}</span>
             </button>
         </div>
     );
