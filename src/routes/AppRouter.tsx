@@ -35,7 +35,7 @@ const AppRouter: React.FC = () => {
                 {/* Rutas operario (protegidas) */}
                 <Route element={<RutaProtegida rolPermitido="operario" />}>
                     <Route element={<OperarioLayout />}>
-                        <Route path="/operario/tareas" element={<Tareas />} />
+                        <Route path="/operario" element={<Tareas />} />
                         <Route path="/operario/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>
@@ -43,7 +43,7 @@ const AppRouter: React.FC = () => {
                 {/* Rutas admin (protegidas) */}
                 <Route element={<RutaProtegida rolPermitido="admin" />}>
                     <Route element={<AdminLayout />}>
-                        <Route path="/admin/panel" element={<Panel />} />
+                        <Route path="/admin" element={<Panel />} />
                         <Route path="/admin/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>

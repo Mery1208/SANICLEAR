@@ -23,20 +23,20 @@ const AdminLayout: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#f3f4f6] font-inherit text-slate-800">
-            <BarraSuperior />
-            
-            <MenuLateral
-                items={menuAdmin}
-                rutaActiva={rutaActiva}
-                onItemClick={handleMenuClick}
-            />
-            
-            <main className="pt-[70px] md:pl-[250px] min-h-screen transition-all duration-300">
-                <div className="p-6 md:p-8 max-w-[1200px] mx-auto w-full">
-                    <Outlet />
+        <div className="flex items-center justify-center min-h-screen bg-slate-200 p-4 font-inherit">
+            <div className="w-[98vw] max-w-[1400px] h-[95vh] bg-[#f4f6f9] border border-slate-300 rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+                <BarraSuperior />
+                <div className="flex flex-1 overflow-hidden">
+                    <MenuLateral
+                        items={menuAdmin}
+                        rutaActiva={rutaActiva}
+                        onItemClick={handleMenuClick}
+                    />
+                    <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+                        <Outlet />
+                    </main>
                 </div>
-            </main>
+            </div>
         </div>
     );
 };
