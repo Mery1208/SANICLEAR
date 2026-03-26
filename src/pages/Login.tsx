@@ -1,68 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import Button from '../components/Button';
-import '../css/Login.css';
-import { supabase } from '../supabase/client';
+import { useAuth } from '../context/AuthContext';
 import logoImg from '../assets/img/logo.png';
-
-interface UserRoles {
-  nombre: string;
-}
-
-interface UserRow {
-  nombre: string;
-  roles?: UserRoles;
-  [key: string]: unknown;
-}
 
 export default function Login(): React.JSX.Element {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { login, usuario } = useAuth();
+
+  // Redirigir si el usuario ya está logueado
+  useEffect(() => {
+    if (usuario) {
+      if (usuario.rol === 'admin') navigate('/admin');
+      else navigate('/operario');
+    }
+  }, [usuario, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-
-      if (authError) throw authError;
-
-      const { data: userData, error: userError } = await supabase
-        .from('usuarios')
-        .select(`
-          *,
-          roles (
-            nombre
-          )
-        `)
-        .eq('email', email)
-        .single();
-
-      if (userError) throw userError;
-
-      const typedUser = userData as UserRow;
-      const nombreRol = typedUser.roles?.nombre;
-
-      if (nombreRol === 'admin') {
-        console.log('Login exitoso: Redirigiendo a Dashboard');
-        navigate('/dashboard');
+      const user = await login(email, password);
+      
+      if (user) {
+        if (user.rol === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/operario');
+        }
       } else {
-        alert(`Bienvenido, ${typedUser.nombre}. El panel de Operario está en construcción.`);
+        throw new Error("No se ha podido recuperar la información del rol del usuario.");
       }
-
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Error desconocido';
       console.error('Error de login:', message);
-      alert('Error al acceder: Comprueba tu email y contraseña.');
-    } finally {
-      setLoading(false);
+      alert('Error al acceder: Comprueba tu email y contraseña. \nDetalle: ' + message);
+      setLoading(false); // Solo restauramos el botón si hubo error
     }
   };
 

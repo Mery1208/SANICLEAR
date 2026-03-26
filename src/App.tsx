@@ -1,28 +1,13 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-
-import './App.css'
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
-import Landing from './pages/Landing'
+import React from 'react';
+import { AuthProvider } from './context/AuthContext';
+import AppRouter from './routes/AppRouter';
 
 function App(): React.JSX.Element {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-
-        {/* admin */}
-        <Route path="/admin" element={<Dashboard />} />
-        {/* TODO: rutas de gestion de usuarios */}
-
-        {/* operario */}
-        <Route path="/operario" element={<div style={{ padding: 20 }}>Panel Operario en construcción</div>} />
-
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;

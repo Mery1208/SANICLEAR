@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, Save } from 'lucide-react';
 import Button from './Button';
-import '../css/Dashboard.css';
 import { supabase } from '../supabase/client';
 
 interface FormData {

@@ -5,7 +5,6 @@ import { gsap } from 'gsap';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
-import '../css/Landing.css';
 import hospitalImg from '../assets/img/hospital.avif';
 import medicoImg from '../assets/img/medico.avif';
 import pasilloImg from '../assets/img/pasillo.avif';
@@ -17,8 +16,7 @@ export default function Landing(): React.JSX.Element {
     const ctx = gsap.context(() => {
       const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       heroTl
-        .from('.hero-badge', { opacity: 0, y: 20, duration: 0.6 })
-        .from('.hero-text h1', { opacity: 0, y: 40, duration: 0.8 }, '-=0.3')
+        .from('.hero-text h1', { opacity: 0, y: 40, duration: 0.8 })
         .from('.hero-text p', { opacity: 0, y: 30, duration: 0.6 }, '-=0.4')
         .from('.hero-buttons', { opacity: 0, y: 20, duration: 0.5 }, '-=0.3')
         .from('.hero-image', { opacity: 0, x: 60, scale: 0.95, duration: 1 }, '-=0.6');
@@ -56,10 +54,6 @@ export default function Landing(): React.JSX.Element {
         <div className="hero-glow"></div>
         <div className="hero-content">
           <div className="hero-text">
-            <div className="hero-badge">
-              <Sparkles size={16} />
-              <span>Plataforma Líder en Gestión Sanitaria</span>
-            </div>
             <h1>
               Gestión <span className="text-gradient">Inteligente</span> de
               Higiene Hospitalaria
