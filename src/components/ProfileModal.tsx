@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Edit2, Camera, User } from 'lucide-react';
 import Button from './Button';
-import '../css/Dashboard.css';
+
 
 interface UserData {
   nombre: string;

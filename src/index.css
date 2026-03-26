@@ -1,18 +1,34 @@
+/* Tailwind CSS v4 */
 @import './css/tailwind.css';
 
-/* sistema de diseño */
+/* Variables y tokens de diseño */
 @import './css/colores.css';
 @import './css/espacios.css';
+@import './css/theme.css';
+
+/* Utilidades y layout */
+@import './css/layout.css';
+@import './css/utilities.css';
+
+/* Componentes base */
+@import './css/Button.css';
 @import './css/formas.css';
 @import './css/cards.css';
 @import './css/badgets.css';
-@import './css/layout.css';
-@import './css/utilities.css';
-@import './css/theme.css';
+
+/* Componentes de la app */
+@import './css/Navbar.css';
+@import './css/Dashboard.css';
+@import './css/DashboardAdmin.css';
+@import './css/DashboardOperario.css';
+
+/* Páginas */
+@import './css/Landing.css';
+@import './css/Login.css';
 
 /* estilos base */
 body {
-  font-family: var(--font-family);
+  font-family: 'Kalam', cursive;
   background-color: var(--color-background-page);
   color: var(--color-title);
   margin: 0;

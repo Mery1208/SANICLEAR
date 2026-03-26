@@ -1,6 +1,6 @@
 import React from 'react';
 import { LayoutDashboard, Users, ClipboardList, LogOut, UserCircle } from 'lucide-react';
-import '../css/Dashboard.css';
+
 
 interface SidebarProps {
   onOpenProfile: () => void;
