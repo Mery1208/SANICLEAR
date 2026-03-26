@@ -41,36 +41,33 @@ const Tareas: React.FC = () => {
     };
 
     return (
-        <div className="max-w-[1000px] mx-auto w-full flex flex-col gap-6">
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <h1 className="text-2xl font-bold text-[#1e3a5f] mb-2">Mis Tareas Asignadas</h1>
-                <p className="text-slate-500 font-medium">
-                    Aquí encontrarás las tareas de tu turno ordenadas por prioridad. Al completar una tarea se marcará en verde y bajará al final de la lista.
+        <div className="max-w-[1000px] mx-auto w-full flex flex-col gap-5 pb-6">
+            <div className="px-2 pt-2">
+                <h1 className="text-[26px] font-normal text-[#1e3a5f] mb-2" style={{ fontFamily: 'Kalam, cursive' }}>Mis Tareas</h1>
+                <p className="text-[14px] text-slate-600 font-medium">
+                    Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas
                 </p>
             </div>
 
             {/* Tarjetas métricas */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-2">
                 <TarjetaMetrica label="Alta Prioridad" valor={altaPrioridad} color="rojo" />
-                <TarjetaMetrica label="Pendientes" valor={pendientes} color="azul" />
                 <TarjetaMetrica label="Completadas" valor={completadas} color="verde" />
+                <TarjetaMetrica label="Pendientes" valor={pendientes} color="azul" />
             </div>
 
             {/* Lista de tareas */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-4">
-                <h2 className="text-lg font-bold text-[#1e3a5f] mb-2 border-b border-slate-100 pb-3">Listado de Tareas</h2>
-                <div className="flex flex-col gap-3">
-                    {tareasOrdenadas.map(tarea => (
-                        <TarjetaTarea
-                            key={tarea.id}
-                            zona={tarea.zona}
-                            descripcion={tarea.descripcion}
-                            prioridad={tarea.prioridad}
-                            completada={tarea.completada}
-                            onCompletar={() => toggleTarea(tarea.id)}
-                        />
-                    ))}
-                </div>
+            <div className="flex flex-col gap-4">
+                {tareasOrdenadas.map(tarea => (
+                    <TarjetaTarea
+                        key={tarea.id}
+                        zona={tarea.zona}
+                        descripcion={tarea.descripcion}
+                        prioridad={tarea.prioridad}
+                        completada={tarea.completada}
+                        onCompletar={() => toggleTarea(tarea.id)}
+                    />
+                ))}
             </div>
 
             {/* Contador Inferior */}
