@@ -4,6 +4,7 @@ import { supabase } from '../supabase/client';
 interface Usuario {
   id: string;
   nombre: string;
+  apellidos?: string;
   email: string;
   rol: 'admin' | 'operario';
 }
@@ -58,6 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newUser: Usuario = {
         id: data.id,
         nombre: data.nombre,
+        apellidos: data.apellidos,
         email: data.email,
         rol: (data.roles?.nombre as 'admin' | 'operario') || 'operario',
       };

@@ -5,10 +5,9 @@ import MenuLateral from '../components/common/MenuLateral';
 
 const menuAdmin = [
     { id: 'panel', label: 'Panel Principal', ruta: '/admin' },
-    { id: 'zonas', label: 'Gestión de Zonas', ruta: '/admin/zonas' },
-    { id: 'usuarios', label: 'Usuarios y Roles', ruta: '/admin/usuarios' },
-    { id: 'incidencias', label: 'Incidencias', ruta: '/admin/incidencias', badge: 2 },
-    { id: 'notificaciones', label: 'Notificaciones', ruta: '/admin/notificaciones' },
+    { id: 'zonas_usuarios', label: 'Zonas y Usuarios', ruta: '/admin/zonas' },
+    { id: 'incidencias', label: 'Incidencias', ruta: '/admin/incidencias', badge: 3 },
+    { id: 'notificaciones', label: 'Notificaciones', ruta: '/admin/notificaciones', badge: 3 },
     { id: 'perfil', label: 'Mi Perfil', ruta: '/admin/perfil' },
 ];
 
@@ -23,19 +22,17 @@ const AdminLayout: React.FC = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-slate-200 p-4 font-inherit">
-            <div className="w-[98vw] max-w-[1400px] h-[95vh] bg-[#f4f6f9] border border-slate-300 rounded-3xl flex flex-col overflow-hidden shadow-2xl">
-                <BarraSuperior />
-                <div className="flex flex-1 overflow-hidden">
-                    <MenuLateral
-                        items={menuAdmin}
-                        rutaActiva={rutaActiva}
-                        onItemClick={handleMenuClick}
-                    />
-                    <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-                        <Outlet />
-                    </main>
-                </div>
+        <div className="min-h-screen flex flex-col bg-[#f4f6f9] font-inherit overflow-hidden">
+            <BarraSuperior />
+            <div className="flex flex-1 overflow-hidden">
+                <MenuLateral
+                    items={menuAdmin}
+                    rutaActiva={rutaActiva}
+                    onItemClick={handleMenuClick}
+                />
+                <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+                    <Outlet />
+                </main>
             </div>
         </div>
     );

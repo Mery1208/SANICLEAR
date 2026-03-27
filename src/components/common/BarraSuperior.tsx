@@ -16,11 +16,8 @@ const BarraSuperior: React.FC = () => {
     return (
         <nav className="w-full h-[80px] flex items-center justify-between px-6 bg-white border-b border-slate-200 shrink-0">
             {/* Logo y Título */}
-            <div className="flex items-center gap-3 w-[220px] shrink-0">
-                <img src={logoImg} alt="Saniclear" className="h-[35px] w-auto object-contain" />
-                <span className="text-xl font-bold text-[#1e3a5f] tracking-wide">
-                    Saniclear
-                </span>
+            <div className="flex items-center gap-3 w-[260px] shrink-0">
+                <img src={logoImg} alt="Saniclear" className="h-[50px] w-auto object-contain" />
             </div>
 
             {/* Buscador Central */}

@@ -1,19 +1,12 @@
 import React from 'react';
-import '../../css/badgets.css';
-
-type BadgeTipo = 'alta' | 'media' | 'baja' | 'abierta' | 'revision' | 'resuelta' | 'hecho' | 'en-curso' | 'pendiente';
 
 interface BadgeProps {
-    texto: string;
-    tipo: BadgeTipo;
+  cls: string;
+  label: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({ texto, tipo }) => {
-    return (
-        <span className={`badge badge-${tipo}`}>
-            {texto}
-        </span>
-    );
-};
+const Badge: React.FC<BadgeProps> = ({ cls, label }) => {
+  return <span className={`px-2 py-1 rounded-full text-xs font-semibold ${cls}`}>{label}</span>;
+}
 
 export default Badge;

@@ -1,0 +1,6 @@
+[
+  { "id": 1, "nombre": "Juan", "apellidos": "Pérez García", "email": "juan.perez@saniclear.com", "rol": "operario", "turno": "Mañana" },
+  { "id": 2, "nombre": "María", "apellidos": "Ceballos Mesías", "email": "maria.ceballos@saniclear.com", "rol": "operario", "turno": "Tarde" },
+  { "id": 3, "nombre": "Evelia", "apellidos": "Gil Paredes", "email": "evelia.gil@saniclear.com", "rol": "operario", "turno": "Noche" },
+  { "id": 4, "nombre": "Carlos", "apellidos": "Fernández", "email": "carlos.f@saniclear.com", "rol": "operario", "turno": "Mañana" }
+]

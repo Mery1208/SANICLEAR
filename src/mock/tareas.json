@@ -1,0 +1,5 @@
+[
+  { "id": 1, "zona": "UCI - Quirófano 1", "tarea": "Limpieza post-operatoria", "desc": "Limpieza profunda tras cirugía", "asignado": "Juan Pérez García", "estado": "pendiente", "prioridad": "alta" },
+  { "id": 2, "zona": "Sala Aislamiento A", "tarea": "Desinfección diaria", "desc": "Protocolo COVID estándar", "asignado": "María Ceballos Mesías", "estado": "en_curso", "prioridad": "media" },
+  { "id": 3, "zona": "Habitación 204", "tarea": "Cambio de sábanas", "desc": "Paciente dado de alta", "asignado": "Carlos Fernández", "estado": "completada", "prioridad": "baja" }
+]

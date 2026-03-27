@@ -1,0 +1,6 @@
+[
+  { "id": 1, "nombre": "UCI - Quirófano 1", "tipo": "Quirófano", "planta": 2, "metros": "45", "nivel": "alto", "estado": "Activo" },
+  { "id": 2, "nombre": "Sala Aislamiento A", "tipo": "Sala", "planta": 3, "metros": "30", "nivel": "medio", "estado": "Activo" },
+  { "id": 3, "nombre": "Planta 1 - Pasillo", "tipo": "Pasillo", "planta": 1, "metros": "120", "nivel": "bajo", "estado": "Activo" },
+  { "id": 4, "nombre": "Habitación 204", "tipo": "Habitación", "planta": 2, "metros": "20", "nivel": "bajo", "estado": "Activo" }
+]

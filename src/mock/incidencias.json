@@ -1,0 +1,4 @@
+[
+  { "id": 1, "titulo": "Aspiradora averiada", "zona": "Planta 1 - Pasillo", "prioridad": "media", "estado": "abierta", "desc": "El motor hace ruido." },
+  { "id": 2, "titulo": "Falta de stock jabón", "zona": "UCI - Quirófano 1", "prioridad": "alta", "estado": "abierta", "desc": "No queda gel." }
+]
