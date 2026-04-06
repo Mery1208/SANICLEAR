@@ -16,7 +16,7 @@ interface Tarea {
   id: number;
   zona: string;
   tarea?: string;
-  desc?: string;
+  descripcion?: string;
   asignado: string;
   estado: string;
   prioridad: string;
@@ -33,6 +33,12 @@ const ESTADO_BADGE: Record<string, string> = {
   completada:"bg-green-100 text-green-700", 
   pendiente:"bg-yellow-100 text-yellow-700", 
   en_curso:"bg-blue-100 text-blue-700" 
+};
+
+const PRIORIDAD_BADGE: Record<string, string> = { 
+  alta: "bg-red-100 text-red-700", 
+  media: "bg-yellow-100 text-yellow-700", 
+  baja: "bg-green-100 text-green-700" 
 };
 
 // Datos demo para el chart mientras se recolectan reales
@@ -52,13 +58,13 @@ const Dashboard: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ titulo:"", zona:"", operario:"", prioridad:"media", fecha:"", desc:"" });
+  const [form, setForm] = useState({ titulo:"", zona:"", operario:"", prioridad:"media", fecha:"", descripcion:"" });
   const [ok, setOk] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
     const [tRes, iRes, uRes, zRes] = await Promise.all([
-      supabase.from('tareas').select('id, zona, tarea, desc, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false }),
+      supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false }),
       supabase.from('incidencias').select('id, prioridad, estado'),
       supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario'),
       supabase.from('zonas').select('id, nombre')
@@ -80,20 +86,18 @@ const Dashboard: React.FC = () => {
   const pendientes = tareas.filter(t => t.estado === "pendiente").length;
   const alertas = incidencias.filter(i => i.prioridad === "alta" && i.estado !== "resuelta").length;
   const en_curso = tareas.filter(t => t.estado === "en_curso").length;
-  // TODO: we need fetching today's completed for real 'hoy' stat.
   const hoy = tareas.filter(t => t.estado === "hecha" || t.estado === "completada").length; 
 
   const crearTarea = async () => {
     if (!form.titulo || !form.zona || !form.operario) return;
 
-    // Obtener UUID del usuario (asumiendo formato form.operario === id)
     const userSelected = usuarios.find(u => u.id === form.operario);
     const opName = userSelected ? `${userSelected.nombre} ${userSelected.apellidos}` : form.operario;
 
     const insertData = {
       zona: form.zona,
       tarea: form.titulo,
-      desc: form.desc,
+      descripcion: form.descripcion,
       asignado: opName,
       asignado_id: form.operario,
       estado: "pendiente",
@@ -106,7 +110,7 @@ const Dashboard: React.FC = () => {
       setTareas(prev => [...prev, data[0] as Tarea]);
       setShowModal(false);
       setOk(true);
-      setForm({ titulo:"", zona:"", operario:"", prioridad:"media", fecha:"", desc:"" });
+      setForm({ titulo:"", zona:"", operario:"", prioridad:"media", fecha:"", descripcion:"" });
       setTimeout(() => setOk(false), 3000);
     } else {
       console.error(error);
@@ -121,155 +125,160 @@ const Dashboard: React.FC = () => {
     "Nuevo operario registrado: Ana Martínez",
   ];
 
-  if (loading) return <div className="p-6 text-gray-500 font-semibold">Cargando panel...</div>;
+  if (loading) return <div className="p-6 text-gray-500 font-semibold font-sans">Cargando panel...</div>;
 
   return (
-    <div>
+    <div className="font-sans">
       <div className="flex justify-between items-center mb-1">
-        <h2 className="text-xl font-bold text-gray-800">Panel de control</h2>
-        <button onClick={() => setShowModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+        <h2 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de control</h2>
+        <button onClick={() => setShowModal(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-100">
           + Crear Nueva Tarea
         </button>
       </div>
-      <p className="text-gray-500 text-sm mb-5">Resumen general: tareas activas, alertas e historial del sistema en tiempo real</p>
+      <p className="text-gray-400 text-sm mb-8 font-medium italic">Resumen general y estado del sistema en tiempo real</p>
 
-      {ok && <div className="bg-green-50 border border-green-300 text-green-700 rounded-lg p-3 mb-4 text-sm font-semibold shadow-sm">✓ Tarea creada y asignada correctamente.</div>}
+      {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          ["Tareas Pendientes", pendientes, <Clock size={20} />, "bg-yellow-50 border-yellow-200 text-yellow-700"],
-          ["Alertas Críticas",  alertas,    <AlertTriangle size={20} />, "bg-red-50 border-red-200 text-red-700"],
-          ["Completadas Hoy",   hoy,        <CheckCircle size={20} />,  "bg-green-50 border-green-200 text-green-700"],
-          ["En Curso",          en_curso,   <RefreshCw size={20} className="animate-spin-slow" />, "bg-blue-50 border-blue-200 text-blue-700"],
+          ["Tareas Pendientes", pendientes, <Clock size={22} />, "text-yellow-600 bg-yellow-50"],
+          ["Alertas Críticas",  alertas,    <AlertTriangle size={22} />, "text-red-600 bg-red-50"],
+          ["Completadas Hoy",   hoy,        <CheckCircle size={22} />,  "text-green-600 bg-green-50"],
+          ["En Curso",          en_curso,   <RefreshCw size={22} className="animate-spin-slow" />, "text-blue-600 bg-blue-50"],
         ].map(([l, v, ic, cls]) => (
-          <div key={l as string} className={`bg-white rounded-xl border p-4 shadow-sm ${cls.toString().split(" ").slice(1).join(" ")}`}>
+          <div key={l as string} className="bg-white rounded-[2rem] border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-xs text-gray-500 font-medium mb-1">{l as string}</p>
-                <p className={`text-3xl font-extrabold ${cls.toString().split(" ").pop()}`}>{v as number}</p>
+                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">{l as string}</p>
+                <p className={`text-4xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
               </div>
-              <div className="p-2 rounded-lg bg-white/50">{ic as React.ReactNode}</div>
+              <div className={`p-4 rounded-2xl ${(cls as string).split(' ')[1]}`}>
+                {ic as React.ReactNode}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-5 mb-6">
-        {/* Chart */}
-        <div className="col-span-2 bg-white rounded-xl border shadow-sm p-5">
-          <div className="flex justify-between items-center mb-1">
-            <p className="font-bold text-gray-700 text-sm">Incidencias por mes</p>
-            <div className="flex gap-3 text-xs text-gray-500">
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Abiertas</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-500 inline-block"></span> Resueltas</span>
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mb-3">Últimas estadísticas simuladas</p>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={CHART_DATA} barSize={14}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="mes" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip />
-              <Bar dataKey="Abiertas"  fill="#3B82F6" radius={[4,4,0,0]} />
-              <Bar dataKey="Resueltas" fill="#22C55E" radius={[4,4,0,0]} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="lg:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">Incidencias por mes</p>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={CHART_DATA} barSize={20}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis dataKey="mes" tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
+              <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+              <Bar dataKey="Abiertas"  fill="#3B82F6" radius={[6,6,0,0]} />
+              <Bar dataKey="Resueltas" fill="#10B981" radius={[6,6,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Activity */}
-        <div className="bg-white rounded-xl border shadow-sm p-5">
-          <p className="font-bold text-gray-700 text-sm mb-3">Actividad reciente</p>
-          <div className="flex flex-col gap-2">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">Actividad reciente</p>
+          <div className="flex flex-col gap-5">
             {actividadReciente.map((a, i) => (
-              <div key={i} className="text-xs text-gray-500 pb-2 border-b border-gray-100 last:border-0">
-                <p className="text-gray-700 font-medium">{a}</p>
-                <p className="text-gray-400 mt-0.5">Hace {i+1} min</p>
+              <div key={i} className="flex gap-4 group">
+                <div className="w-1.5 h-auto bg-gray-100 group-hover:bg-blue-400 rounded-full transition-colors"></div>
+                <div>
+                  <p className="text-xs text-gray-700 font-bold leading-relaxed">{a}</p>
+                  <p className="text-[10px] text-gray-400 font-semibold mt-1 uppercase">Hace {i+1} min</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Tasks table */}
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <div className="flex justify-between items-center px-5 py-4 border-b">
-          <p className="font-bold text-gray-700 text-sm">Tareas activas</p>
+      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Tareas activas</p>
+          <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
+            <RefreshCw size={16} />
+          </button>
         </div>
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
-            <tr>{["Zona","Tarea","Asignado a","Estado","Prioridad"].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">{h}</th>)}</tr>
-          </thead>
-          <tbody>
-            {tareas.length === 0 && (
-              <tr><td colSpan={5} className="p-4 text-center text-gray-500">No hay tareas activas.</td></tr>
-            )}
-            {tareas.map(t => (
-              <tr key={t.id} className="border-t hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium text-gray-800">{t.zona}</td>
-                <td className="px-4 py-3 text-gray-600">{t.tarea || t.desc}</td>
-                <td className="px-4 py-3 text-gray-600">{t.asignado}</td>
-                <td className="px-4 py-3"><Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100 text-gray-600"} label={t.estado === "en_curso" ? "En Curso" : t.estado.charAt(0).toUpperCase()+t.estado.slice(1)} /></td>
-                <td className="px-4 py-3"><div className={`w-4 h-4 rounded-sm shadow-sm ${t.prioridad==="alta" ? "bg-red-400" : t.prioridad==="media" ? "bg-yellow-400" : "bg-green-400"}`}></div></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50/50">
+              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad"].map(h => <th key={h} className="text-left px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {tareas.length === 0 && (
+                <tr><td colSpan={5} className="p-10 text-center text-gray-400 font-bold italic">No hay tareas activas en este momento.</td></tr>
+              )}
+              {tareas.map(t => (
+                <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
+                  <td className="px-8 py-5 font-bold text-[#1e3a5f] text-sm">{t.zona}</td>
+                  <td className="px-8 py-5 text-gray-500 text-sm font-medium">{t.tarea || t.descripcion}</td>
+                  <td className="px-8 py-5 text-[#1e3a5f] text-sm font-bold flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-[10px]">
+                      {t.asignado.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    {t.asignado}
+                  </td>
+                  <td className="px-8 py-5">
+                    <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100 text-gray-600"} label={t.estado === "en_curso" ? "En Curso" : t.estado.charAt(0).toUpperCase()+t.estado.slice(1)} />
+                  </td>
+                  <td className="px-8 py-5">
+                    <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-600"} label={t.prioridad.charAt(0).toUpperCase()+t.prioridad.slice(1)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Create task modal */}
       {showModal && (
-        <Modal title="CREAR NUEVA TAREA" onClose={() => setShowModal(false)}>
-          <div className="mb-3">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Título de la Tarea</label>
-            <input value={form.titulo} onChange={e => setForm({...form, titulo:e.target.value})}
-              placeholder="Ej: Limpieza UCI – Quirófano 3"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Zona</label>
-              <select value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="">Seleccionar zona...</option>
-                {zonas.map(z => <option key={z.id} value={z.nombre}>{z.nombre}</option>)}
-              </select>
+        <Modal title="NUEVA TAREA" onClose={() => setShowModal(false)}>
+           {/* Form content matched to new style */}
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Título de la Tarea</label>
+              <input value={form.titulo} onChange={e => setForm({...form, titulo:e.target.value})}
+                placeholder="Ej: Limpieza profunda UCI Quirófano"
+                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Asignar a</label>
-              <select value={form.operario} onChange={e => setForm({...form, operario:e.target.value})}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="">Seleccionar operario...</option>
-                {usuarios.map(u => <option key={u.id} value={u.id}>{u.nombre} {u.apellidos}</option>)}
-              </select>
+            <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+                <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
+                  rows={2} placeholder="Instrucciones especiales..."
+                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Prioridad</label>
-              <div className="flex gap-1">
-                {["alta","media","baja"].map(p => (
-                  <button key={p} onClick={() => setForm({...form, prioridad:p})}
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg border transition-colors capitalize ${form.prioridad===p ? "bg-blue-600 text-white border-blue-600 shadow-sm":"border-gray-300 text-gray-600"}`}>{p}</button>
-                ))}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
+                <select value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
+                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                  <option value="">Seleccionar...</option>
+                  {zonas.map(z => <option key={z.id} value={z.nombre}>{z.nombre}</option>)}
+                </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Operario</label>
+                <select value={form.operario} onChange={e => setForm({...form, operario:e.target.value})}
+                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                  <option value="">Seleccionar...</option>
+                  {usuarios.map(u => <option key={u.id} value={u.id}>{u.nombre} {u.apellidos}</option>)}
+                </select>
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Fecha límite</label>
-              <input type="date" value={form.fecha} onChange={e => setForm({...form, fecha:e.target.value})}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+                <div className="flex gap-4">
+                  {["alta","media","baja"].map(p => (
+                    <button key={p} onClick={() => setForm({...form, prioridad:p})}
+                      className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-2xl border transition-all ${form.prioridad===p ? "bg-[#1e3a5f] text-white border-[#1e3a5f] shadow-lg shadow-blue-900/10":"border-gray-100 bg-gray-50/50 text-gray-400 hover:bg-gray-100"}`}>
+                      {p}
+                    </button>
+                  ))}
+                </div>
             </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Descripción</label>
-            <textarea value={form.desc} onChange={e => setForm({...form, desc:e.target.value})}
-              rows={2} placeholder="Instrucciones especiales..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => setShowModal(false)} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors">Cancelar</button>
-            <button onClick={crearTarea} className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors">Crear Tarea</button>
+            <div className="flex gap-4 mt-4">
+              <button onClick={() => setShowModal(false)} className="px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
+              <button onClick={crearTarea} className="flex-1 bg-blue-500 text-white py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-xl shadow-blue-100 transition-all active:scale-[0.98]">Asignar Tarea</button>
+            </div>
           </div>
         </Modal>
       )}

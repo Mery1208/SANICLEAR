@@ -24,10 +24,12 @@ export default function Login(): React.JSX.Element {
     setLoading(true);
 
     try {
-      const user = await login(email, password);
+      const trimmedEmail = email.trim();
+      const user = await login(trimmedEmail, password);
       
       if (user) {
-        if (user.rol === 'admin') {
+        const rol = user.user_metadata?.rol || (trimmedEmail.includes('admin') ? 'admin' : 'operario');
+        if (rol === 'admin') {
           navigate('/admin');
         } else {
           navigate('/operario');
@@ -39,7 +41,8 @@ export default function Login(): React.JSX.Element {
       const message = error instanceof Error ? error.message : 'Error desconocido';
       console.error('Error de login:', message);
       alert('Error al acceder: Comprueba tu email y contraseña. \nDetalle: ' + message);
-      setLoading(false); // Solo restauramos el botón si hubo error
+    } finally {
+      setLoading(false);
     }
   };
 

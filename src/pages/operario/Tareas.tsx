@@ -43,8 +43,8 @@ const Tareas: React.FC = () => {
     return (
         <div className="max-w-[1000px] mx-auto w-full flex flex-col gap-5 pb-6">
             <div className="px-2 pt-2">
-                <h1 className="text-[26px] font-normal text-[#1e3a5f] mb-2" style={{ fontFamily: 'Kalam, cursive' }}>Mis Tareas</h1>
-                <p className="text-[14px] text-slate-600 font-medium">
+                <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">Mis Tareas</h2>
+                <p className="text-gray-400 text-sm font-medium italic">
                     Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas
                 </p>
             </div>

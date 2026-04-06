@@ -1,6 +1,8 @@
 [
-  { "id": 1, "nombre": "Juan", "apellidos": "Pérez García", "email": "juan.perez@saniclear.com", "rol": "operario", "turno": "Mañana" },
-  { "id": 2, "nombre": "María", "apellidos": "Ceballos Mesías", "email": "maria.ceballos@saniclear.com", "rol": "operario", "turno": "Tarde" },
-  { "id": 3, "nombre": "Evelia", "apellidos": "Gil Paredes", "email": "evelia.gil@saniclear.com", "rol": "operario", "turno": "Noche" },
-  { "id": 4, "nombre": "Carlos", "apellidos": "Fernández", "email": "carlos.f@saniclear.com", "rol": "operario", "turno": "Mañana" }
+  { "id": "admin-1", "nombre": "Admin", "apellidos": "Saniclear", "email": "admin@saniclear.com", "password": "Admin1234!", "rol": "admin" },
+  { "id": "oper-1", "nombre": "Juan", "apellidos": "Pérez García", "email": "juan.perez@saniclear.com", "password": "Operario123!", "rol": "operario", "turno": "Mañana" },
+  { "id": "oper-2", "nombre": "María", "apellidos": "Ceballos Mesías", "email": "maria.ceballos@saniclear.com", "password": "Operario123!", "rol": "operario", "turno": "Tarde" },
+  { "id": "oper-3", "nombre": "Evelia", "apellidos": "Gil Paredes", "email": "evelia.gil@saniclear.com", "password": "Operario123!", "rol": "operario", "turno": "Noche" },
+  { "id": "oper-4", "nombre": "Carlos", "apellidos": "Fernández", "email": "carlos.f@saniclear.com", "password": "Operario123!", "rol": "operario", "turno": "Mañana" },
+  { "id": "oper-5", "nombre": "Ana", "apellidos": "Martínez", "email": "ana.martinez@saniclear.com", "password": "Operario123!", "rol": "operario", "turno": "Tarde" }
 ]

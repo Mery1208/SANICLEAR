@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import TarjetaMetrica from '../../components/common/TarjetaMetrica';
+import Button from '../../components/Button';
+import { Plus, Bell, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 
 const tareasMock = [
     { id: 1, zona: 'Quirófano 1', tarea: 'Desinfección', asignado: 'Juan Gallén', estado: 'Hecho', prioridad: 'Alta' },
@@ -9,112 +11,123 @@ const tareasMock = [
     { id: 5, zona: 'Sala de Espera', tarea: 'Limpieza General', asignado: 'Estefanía Gil', estado: 'Fabricándose', prioridad: 'Baja' },
 ];
 
+import mockIncidencias from '../../mock/incidencias.json';
+import mockNotificaciones from '../../mock/notificaciones.json';
+
 const Panel: React.FC = () => {
-    const pendientes = tareasMock.filter(t => t.estado === 'Pendiente').length;
-    const alertas = tareasMock.filter(t => t.prioridad === 'Alta' && t.estado === 'Pendiente').length;
-    const completadas = tareasMock.filter(t => t.estado === 'Hecho').length;
-    const enCurso = tareasMock.filter(t => t.estado === 'En proceso' || t.estado === 'Fabricándose').length;
+    const [stats, setStats] = useState({
+        pendientes: tareasMock.filter(t => t.estado === 'Pendiente').length,
+        alertas: mockIncidencias.filter(i => i.prioridad === 'alta' || i.prioridad === 'critica').length,
+        completadas: tareasMock.filter(t => t.estado === 'Hecho').length,
+        enCurso: tareasMock.filter(t => t.estado === 'En proceso' || t.estado === 'Fabricándose').length,
+    });
+
+    const [chartData, setChartData] = useState([
+        { mes: 'sep', alertas: 4, resueltas: 2 },
+        { mes: 'oct', alertas: 6, resueltas: 5 },
+        { mes: 'nov', alertas: 10, resueltas: 9 },
+        { mes: 'dic', alertas: 3, resueltas: 3 },
+        { mes: 'ene', alertas: 5, resueltas: 4 },
+        { mes: 'feb', alertas: 8, resueltas: 2 },
+    ]);
 
     return (
         <div className="w-full">
             <h1 className="text-3xl font-bold text-slate-800 mb-2">Panel de control</h1>
-            <p className="text-sm text-slate-500 mb-8">
-                Resumen general: tareas activas, alertas e historial del sistema en tiempo real
+            <p className="text-sm text-slate-500 mb-8 font-semibold italic">
+                Información en tiempo real: hoy se han completado {stats.completadas} tareas
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <TarjetaMetrica label="Tareas Pendientes" valor={pendientes} color="azul" />
-                <TarjetaMetrica label="Alertas Críticas" valor={alertas} color="rojo" />
-                <TarjetaMetrica label="Completadas Hoy" valor={completadas} color="verde" />
-                <TarjetaMetrica label="En Curso" valor={enCurso} color="amarillo" />
+                <TarjetaMetrica label="Tareas Pendientes" valor={stats.pendientes} color="azul" />
+                <TarjetaMetrica label="Alertas Críticas" valor={stats.alertas} color="rojo" />
+                <TarjetaMetrica label="Completadas Hoy" valor={stats.completadas} color="verde" />
+                <TarjetaMetrica label="En Curso" valor={stats.enCurso} color="amarillo" />
             </div>
 
-            {/* Gráfico Placeholder */}
-            <div className="bg-transparent border border-slate-400 rounded-2xl p-6 mb-8 mt-4 font-inherit">
-                <h2 className="text-xl font-bold text-slate-800 mb-6">Incidencias por mes</h2>
-                <p className="text-sm text-slate-500 mb-8 mt-[-20px]">Últimos 6 meses</p>
+            {/* Gráfico Dinámico Placeholder */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 mb-8 shadow-sm font-inherit transition-all hover:shadow-md">
+                <div className="flex justify-between items-start mb-10">
+                    <div>
+                        <h2 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">Incidencias por mes</h2>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Comparativa semestral del sistema</p>
+                    </div>
+                </div>
                 
-                {/* Simulated Chart */}
-                <div className="flex items-end justify-between h-[200px] w-[80%] max-w-[600px] mx-auto pb-4 border-b border-l border-slate-300 relative">
-                    <div className="flex flex-col justify-between h-full absolute -left-8 text-xs text-slate-500 pb-4">
+                {/* Dynamic Chart Implementation */}
+                <div className="flex items-end justify-between h-[200px] w-full max-w-[800px] mx-auto pb-4 border-b border-l border-slate-100 relative pr-4">
+                    <div className="flex flex-col justify-between h-full absolute -left-8 text-[10px] font-bold text-gray-300 pb-4">
                         <span>12</span>
-                        <span>9</span>
-                        <span>6</span>
-                        <span>3</span>
+                        <span>8</span>
+                        <span>4</span>
                         <span>0</span>
                     </div>
 
-                    <div className="flex gap-1 items-end h-full flex-1 justify-center relative">
-                        <div className="w-8 bg-blue-600 h-[25%] rounded-t-sm"></div>
-                        <div className="w-8 bg-green-500 h-[15%] rounded-t-sm"></div>
-                        <span className="absolute -bottom-6 text-xs text-slate-500">sep</span>
-                    </div>
-
-                    <div className="flex gap-1 items-end h-full flex-1 justify-center relative">
-                        <div className="w-8 bg-blue-600 h-[40%] rounded-t-sm"></div>
-                        <div className="w-8 bg-green-500 h-[30%] rounded-t-sm"></div>
-                        <span className="absolute -bottom-6 text-xs text-slate-500">oct</span>
-                    </div>
-
-                    <div className="flex gap-1 items-end h-full flex-1 justify-center relative">
-                        <div className="w-8 bg-blue-600 h-[70%] rounded-t-sm"></div>
-                        <div className="w-8 bg-green-500 h-[65%] rounded-t-sm"></div>
-                        <span className="absolute -bottom-6 text-xs text-slate-500">nov</span>
-                    </div>
-
-                    <div className="flex gap-1 items-end h-full flex-1 justify-center relative">
-                        <div className="w-8 bg-blue-600 h-[20%] rounded-t-sm"></div>
-                        <div className="w-8 bg-green-500 h-[20%] rounded-t-sm"></div>
-                        <span className="absolute -bottom-6 text-xs text-slate-500">dic</span>
-                    </div>
-
-                    <div className="flex gap-1 items-end h-full flex-1 justify-center relative">
-                        <div className="w-8 bg-blue-300 h-[15%] rounded-t-sm"></div>
-                        <div className="w-8 bg-green-300 h-[10%] rounded-t-sm"></div>
-                        <span className="absolute -bottom-6 text-xs text-slate-500">ene</span>
-                    </div>
+                    {chartData.map((d, i) => (
+                        <div key={i} className="flex gap-1.5 items-end h-full flex-1 justify-center relative group">
+                            <div 
+                                className="w-4 bg-blue-600 rounded-t-lg transition-all duration-700 ease-out hover:brightness-110" 
+                                style={{ height: `${(d.alertas / 12) * 100}%` }}
+                                title={`Alertas: ${d.alertas}`}
+                            ></div>
+                            <div 
+                                className="w-4 bg-emerald-400 rounded-t-lg transition-all duration-700 ease-out hover:brightness-110" 
+                                style={{ height: `${(d.resueltas / 12) * 100}%` }}
+                                title={`Resueltas: ${d.resueltas}`}
+                            ></div>
+                            <span className="absolute -bottom-7 text-[10px] font-black text-gray-400 uppercase tracking-widest">{d.mes}</span>
+                        </div>
+                    ))}
                 </div>
-                <div className="flex gap-4 justify-end mt-8 text-xs text-slate-500">
-                    <span className="flex items-center gap-1"><div className="w-3 h-3 bg-blue-600"></div> Alertas</span>
-                    <span className="flex items-center gap-1"><div className="w-3 h-3 bg-green-500"></div> Resueltas</span>
+
+                <div className="flex gap-6 justify-center mt-12">
+                    <span className="flex items-center gap-2 text-[10px] uppercase font-black text-gray-400 tracking-widest">
+                        <div className="w-2.5 h-2.5 bg-blue-600 rounded-full shadow-lg shadow-blue-100"></div> Alertas
+                    </span>
+                    <span className="flex items-center gap-2 text-[10px] uppercase font-black text-gray-400 tracking-widest">
+                        <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-lg shadow-emerald-100"></div> Resueltas
+                    </span>
                 </div>
             </div>
 
-            {/* Actividad Reciente */}
-            <div className="bg-transparent border border-slate-400 rounded-2xl p-6 mb-8 font-inherit">
-                 <h2 className="text-xl font-bold text-slate-800 mb-2">Actividad reciente</h2>
-                 <p className="text-sm text-slate-500 mb-6">Últimas acciones del sistema</p>
+            {/* Actividad Reciente Dinámica */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 mb-8 shadow-sm font-inherit transition-all hover:shadow-md">
+                 <h2 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight mb-2">Actividad reciente</h2>
+                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-8">Cronología de acciones en tiempo real</p>
 
-                 <div className="flex flex-col gap-4">
-                     <div>
-                         <p className="text-base text-slate-800 m-0">Juan Pérez completó tarea en UCI Quirófano 3</p>
-                         <span className="text-xs text-slate-400">Hace 5 min</span>
-                     </div>
-                     <div>
-                         <p className="text-base text-slate-800 m-0">Nueva incidencia: Aspiradora averiada</p>
-                         <span className="text-xs text-slate-400">Hace 12 min</span>
-                     </div>
-                     <div>
-                         <p className="text-base text-slate-800 m-0">Notificación urgente enviada a Carlos Fernández</p>
-                         <span className="text-xs text-slate-400">Hace 30 min</span>
-                     </div>
-                     <div>
-                         <p className="text-base text-slate-800 m-0">Incidencia #3 marcada como resuelta</p>
-                         <span className="text-xs text-slate-400">Hace 55 min</span>
-                     </div>
-                     <div>
-                         <p className="text-base text-slate-800 m-0">Nuevo operario registrado: Ana Martínez</p>
-                         <span className="text-xs text-slate-400">Hace 55 min</span>
-                     </div>
+                 <div className="flex flex-col gap-6">
+                     {[
+                         { text: "Juan Pérez completó tarea en UCI Quirófano 3", time: "Hace 5 min", icon: <CheckCircle size={14} className="text-emerald-500" />, bg: "bg-emerald-50" },
+                         { text: "Nueva incidencia: Aspiradora averiada - Ana Martínez", time: "Hace 12 min", icon: <AlertTriangle size={14} className="text-amber-500" />, bg: "bg-amber-50" },
+                         { text: "Notificación urgente enviada por Admin", time: "Hace 30 min", icon: <Bell size={14} className="text-blue-500" />, bg: "bg-blue-50" },
+                         { text: "Incidencia #3 marcada como resuelta", time: "Hace 55 min", icon: <CheckCircle size={14} className="text-emerald-500" />, bg: "bg-emerald-50" },
+                         { text: "Nuevo operario registrado: Ana Martínez", time: "Hace 1h", icon: <Plus size={14} className="text-blue-500" />, bg: "bg-blue-50" },
+                     ].map((act, i) => (
+                        <div key={i} className="flex items-center gap-4 group cursor-default">
+                            <div className={`p-3 rounded-2xl ${act.bg} border border-white shadow-sm group-hover:scale-110 transition-transform`}>
+                                {act.icon}
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-slate-800 m-0">{act.text}</p>
+                                <div className="flex items-center gap-1.5 mt-1">
+                                    <Clock size={10} className="text-slate-300" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">{act.time}</span>
+                                </div>
+                            </div>
+                        </div>
+                     ))}
                  </div>
             </div>
 
             {/* Tabla de tareas */}
             <div className="bg-transparent rounded-2xl p-6 font-inherit border border-slate-400">
                 <div className="flex justify-end mb-4">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl shadow-sm transition-colors border-none text-sm cursor-pointer font-inherit">
-                        + Crear Nueva Tarea
-                    </button>
+                    <Button 
+                        text="Crear Nueva Tarea" 
+                        variant="primary" 
+                        icon={Plus} 
+                        className="py-2 px-4 shadow-sm"
+                    />
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">

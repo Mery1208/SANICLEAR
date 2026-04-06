@@ -1,0 +1,7 @@
+[
+  { "id": 1, "titulo": "SIMULACRO INCENDIO", "msg": "Mañana a las 10h en el ala este.", "tipo": "urgente", "dest": "todos", "leida": false, "fecha": "2026-03-27T09:00:00Z" },
+  { "id": 2, "titulo": "Mantenimiento", "msg": "Ascensor B fuera de servicio por revisión técnica.", "tipo": "importante", "dest": "todos", "leida": false, "fecha": "2026-03-27T08:00:00Z" },
+  { "id": 3, "titulo": "Nuevo Material", "msg": "Ya están disponibles los nuevos carros de limpieza en el almacén central.", "tipo": "informativa", "dest": "todos", "leida": true, "fecha": "2026-03-26T12:00:00Z" },
+  { "id": 4, "titulo": "Reunión de Equipo", "msg": "Breve reunión al inicio del turno de tarde en la sala de juntas.", "tipo": "importante", "dest": "turno_tarde", "leida": false, "fecha": "2026-03-27T11:00:00Z" },
+  { "id": 5, "titulo": "Actualización Protocolo", "msg": "Se ha actualizado el protocolo de desinfección en quirófanos.", "tipo": "urgente", "dest": "todos", "leida": false, "fecha": "2026-03-27T12:15:00Z" }
+]

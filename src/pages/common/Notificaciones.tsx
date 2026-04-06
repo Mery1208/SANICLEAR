@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, AlertTriangle, Info, ShieldAlert, CheckCircle } from 'lucide-react';
+import { Bell, AlertTriangle, Info, ShieldAlert, CheckCircle, Plus } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
+import Button from '../../components/Button';
 
 // Import mock
 const mockNotificaciones = [
-  { id: 1, titulo: "SIMULACRO INCENDIO", msg: "Mañana a las 10h.", tipo: "urgente", dest: "todos", leida: false, fecha: new Date().toISOString() },
-  { id: 2, titulo: "Mantenimiento", msg: "Ascensor B fuera de servicio.", tipo: "importante", dest: "todos", leida: false, fecha: new Date().toISOString() }
+  { id: 1, titulo: "SIMULACRO INCENDIO", msg: "Mañana a las 10h en el ala este.", tipo: "urgente", dest: "todos", leida: false, fecha: new Date(Date.now() - 3600000).toISOString() },
+  { id: 2, titulo: "Mantenimiento", msg: "Ascensor B fuera de servicio por revisión técnica.", tipo: "importante", dest: "todos", leida: false, fecha: new Date(Date.now() - 7200000).toISOString() },
+  { id: 3, titulo: "Nuevo Material", msg: "Ya están disponibles los nuevos carros de limpieza en el almacén central.", tipo: "informativa", dest: "todos", leida: true, fecha: new Date(Date.now() - 86400000).toISOString() },
+  { id: 4, titulo: "Reunión de Equipo", msg: "Breve reunión al inicio del turno de tarde en la sala de juntas.", tipo: "importante", dest: "turno_tarde", leida: false, fecha: new Date(Date.now() - 1800000).toISOString() },
+  { id: 5, titulo: "Actualización Protocolo", msg: "Se ha actualizado el protocolo de desinfección en quirófanos.", tipo: "urgente", dest: "todos", leida: false, fecha: new Date(Date.now() - 300000).toISOString() }
 ];
 
 interface Notificacion {
@@ -118,18 +122,26 @@ const Notificaciones: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="text-gray-500 p-6 font-semibold">Cargando notificaciones...</div>;
+  if (loading) return <div className="text-gray-500 p-6 font-semibold animate-pulse">Cargando notificaciones...</div>;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">NOTIFICACIONES</h2>
-          <p className="text-sm text-gray-500">{noLeidas > 0 ? `Tienes ${noLeidas} notificaciones sin leer.` : "Todo al día."}</p>
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Notificaciones</h2>
+          <p className="text-gray-400 text-sm font-medium italic">{noLeidas > 0 ? `Tienes ${noLeidas} notificaciones sin leer.` : "Todo al día."}</p>
         </div>
-        <div className="flex gap-2">
-          {noLeidas > 0 && <button onClick={marcarTodas} className="text-xs text-blue-600 hover:underline">Marcar todas como leídas</button>}
-          {isAdmin && <button onClick={() => setShowForm(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700">+ Crear Notificación</button>}
+        <div className="flex gap-4 items-center">
+          {noLeidas > 0 && <button onClick={marcarTodas} className="text-xs text-blue-600 hover:underline font-bold">Marcar todas como leídas</button>}
+          {isAdmin && (
+            <Button 
+              text="Crear Notificación" 
+              onClick={() => setShowForm(true)} 
+              variant="primary" 
+              icon={Plus} 
+              className="py-2 px-4 shadow-sm"
+            />
+          )}
         </div>
       </div>
 
@@ -223,9 +235,9 @@ const Notificaciones: React.FC = () => {
               rows={3} placeholder="Escribe el mensaje..."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400" />
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => setShowForm(false)} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50">Cancelar</button>
-            <button onClick={sendNotif} className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700">Enviar Notificación</button>
+          <div className="flex gap-4 mt-2">
+            <Button text="Cancelar" onClick={() => setShowForm(false)} variant="secondary" className="flex-1 py-3" />
+            <Button text="Enviar Notificación" onClick={sendNotif} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>
         </Modal>
       )}

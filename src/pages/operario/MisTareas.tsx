@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, ClipboardList, TrendingUp, Filter, Search, ChevronRight } from 'lucide-react';
 import Badge from '../../components/common/Badge';
+import Button from '../../components/Button';
 
 // Import mock
 import mockTareas from '../../mock/tareas.json';
@@ -28,16 +29,23 @@ const MisTareas: React.FC = () => {
   const fetchTareas = async () => {
     if (!usuario) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from('tareas')
-      .select('*')
-      .or(`asignado.ilike.%${usuario.nombre}%, asignado_id.eq.${usuario.id}`);
 
-    if (data && data.length > 0) {
-      setTareas(data as Tarea[]);
-    } else {
-      setTareas(mockTareas as any[]);
+    try {
+      const { data, error } = await supabase
+        .from('tareas')
+        .select('*')
+        .or(`asignado.ilike.%${usuario.nombre}%,asignado_id.eq.${usuario.id}`);
+
+      if (!error && data && data.length > 0) {
+        setTareas(data as Tarea[]);
+        setLoading(false);
+        return;
+      }
+    } catch {
+      // Tabla no existe o error de conexión, usar mock
     }
+
+    setTareas(mockTareas as any[]);
     setLoading(false);
   };
 
@@ -54,27 +62,31 @@ const MisTareas: React.FC = () => {
     // Actualizar optimista UI
     setTareas(prev => prev.map(t => t.id === id ? {...t, estado:"completada"} : t));
     
-    // Actualizar DB
-    await supabase.from('tareas').update({ estado: 'completada' }).eq('id', id);
+    // Actualizar DB (ignorar error si la tabla no existe)
+    try {
+      await supabase.from('tareas').update({ estado: 'completada' }).eq('id', id);
+    } catch {
+      // Ignorar error, la UI ya se actualizó
+    }
   };
 
   if (loading) return <div className="text-gray-500 font-semibold p-6">Cargando tareas...</div>;
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-gray-800 mb-1">Mis Tareas</h2>
-      <p className="text-gray-500 text-sm mb-4">Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas.</p>
+      <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">Mis Tareas</h2>
+      <p className="text-gray-400 text-sm font-medium italic mb-4">Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas.</p>
 
       {/* Counters */}
-      <div className="flex gap-3 mb-5 flex-wrap">
+      <div className="flex justify-center gap-5 mb-6">
         {[
           ["Alta Prioridad", alta, "bg-red-50 text-red-700 border-red-200"],
           ["Completadas", completadas, "bg-green-50 text-green-700 border-green-200"],
           ["Pendientes", pendientes, "bg-yellow-50 text-yellow-700 border-yellow-200"]
         ].map(([l, v, cls]) => (
-          <div key={l as string} className={`border rounded-lg px-4 py-2 flex items-center gap-2 ${cls}`}>
-            <span className="font-bold text-lg">{v as number}</span>
-            <span className="text-sm font-medium">{l as string}</span>
+          <div key={l as string} className={`border rounded-2xl px-8 py-5 flex flex-col items-center gap-1 min-w-[160px] ${cls}`}>
+            <span className="font-black text-3xl">{v as number}</span>
+            <span className="text-xs font-bold uppercase tracking-wide">{l as string}</span>
           </div>
         ))}
       </div>
@@ -96,15 +108,18 @@ const MisTareas: React.FC = () => {
           return (
             <div key={t.id} className={`bg-white rounded-xl border p-4 flex justify-between items-center shadow-sm ${isCompleted ? "opacity-60" : ""}`}>
               <div>
-                <p className={`font-semibold text-gray-800 ${isCompleted ? "line-through" : ""}`}>{t.zona}</p>
-                <p className={`text-gray-500 text-sm mb-1 ${isCompleted ? "line-through" : ""}`}>{t.desc || t.tarea}</p>
+                <p className={`font-semibold ${isCompleted ? "line-through decoration-green-500 decoration-2 text-green-700" : "text-gray-800"}`}>{t.zona}</p>
+                <p className={`text-sm mb-1 ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
               {!isCompleted ? (
-                <button onClick={() => completar(t.id)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ml-3 shrink-0 shadow-sm">
-                  <CheckCircle size={16} />
-                  <span>Completar</span>
-                </button>
+                    <Button 
+                      text="Hecho" 
+                      onClick={() => completar(t.id)} 
+                      variant="success" 
+                      icon={CheckCircle} 
+                      className="px-4 py-2 ml-3 shrink-0 shadow-sm"
+                    />
               ) : (
                 <span className="text-green-600 font-semibold text-sm ml-3 shrink-0 flex items-center gap-2">
                   <CheckCircle size={16} />
@@ -117,8 +132,10 @@ const MisTareas: React.FC = () => {
       </div>
 
       {/* Progress */}
-      <div className="mt-6 bg-white rounded-xl p-4 border text-center text-gray-600 font-semibold shadow-sm">
-        {completadas} / {total} Completadas
+      <div className="mt-6 flex justify-center">
+        <div className="bg-white rounded-2xl px-10 py-4 border border-green-200 text-center text-green-700 font-bold shadow-sm inline-block">
+          {completadas} / {total} Completadas
+        </div>
       </div>
     </div>
   );

@@ -120,11 +120,13 @@ export default function Formulario({ onClose }: FormularioProps): React.JSX.Elem
               <label>Contraseña Temp.</label>
               <input
                 type="password"
-                placeholder="******"
+                placeholder="Mín. 8 caracteres, mayús, minús, número y símbolo"
                 className="input-admin"
                 onChange={e => setFormData({ ...formData, password: e.target.value })}
                 required
-                minLength={6}
+                minLength={8}
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-#]).{8,}$"
+                title="Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial"
               />
             </div>
           </div>

@@ -1,21 +1,3 @@
-<<<<<<< HEAD
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
 <div align="center">
   <img src="https://via.placeholder.com/1000x300/0ea5e9/ffffff?text=SANICLEAR+Hospital+Hygiene+Management" alt="Saniclear Banner" width="100%">
   
@@ -27,15 +9,16 @@ If you are developing a production application, we recommend using TypeScript wi
   </p>
 
   <p align="center">
-    <img src="https://img.shields.io/badge/REACT-v18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
-    <img src="https://img.shields.io/badge/VITE-Lighting_Fast-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
-    <img src="https://img.shields.io/badge/TAILWIND-CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind">
+    <img src="https://img.shields.io/badge/REACT-v19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
+    <img src="https://img.shields.io/badge/VITE-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
+    <img src="https://img.shields.io/badge/TAILWIND-v4_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind">
     <img src="https://img.shields.io/badge/SUPABASE-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
+    <img src="https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
   </p>
 
   <p align="center">
     <img src="https://img.shields.io/badge/Estado-En_Desarrollo-orange?style=flat-square" alt="Estado">
-    <img src="https://img.shields.io/badge/Versión-1.0.0-blue?style=flat-square" alt="Versión">
+    <img src="https://img.shields.io/badge/Versión-0.0.0-blue?style=flat-square" alt="Versión">
     <img src="https://img.shields.io/badge/Licencia-MIT-green?style=flat-square" alt="Licencia">
   </p>
 </div>
@@ -56,10 +39,19 @@ El sistema sustituye los partes de trabajo en papel por una gestión en tiempo r
 
 ### 🎨 Frontend & Diseño
 <p>
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
-  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
-  <img src="https://img.shields.io/badge/Excalidraw-121212?style=for-the-badge&logo=excalidraw&logoColor=white" alt="Excalidraw" />
+  <img src="https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS 4" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+</p>
+
+### ⚡ Librerías y Estado
+<p>
+  <img src="https://img.shields.io/badge/Zustand-State-764ABC?style=for-the-badge&logo=react&logoColor=white" alt="Zustand" />
+  <img src="https://img.shields.io/badge/React_Router-7-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" alt="React Router" />
+  <img src="https://img.shields.io/badge/GSAP-Animations-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP" />
+  <img src="https://img.shields.io/badge/Recharts-Charts-38B2AC?style=for-the-badge&logoColor=white" alt="Recharts" />
+  <img src="https://img.shields.io/badge/Lucide-Icons-EF894D?style=for-the-badge&logoColor=white" alt="Lucide React" />
 </p>
 
 ### ☁️ Backend & Datos
@@ -74,53 +66,162 @@ El sistema sustituye los partes de trabajo en papel por una gestión en tiempo r
   <img src="https://img.shields.io/badge/GIT-E34F26?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
   <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
   <img src="https://img.shields.io/badge/NPM-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="NPM" />
+  <img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint" />
 </p>
+
 ---
 
 ## ✨ Características Clave
 
-- 🔐 **Control de Acceso (RBAC):** Sistema de autenticación seguro con roles diferenciados para Administradores y Operarios.
-- 🏥 **Gestión de Zonas y Tareas:** Asignación dinámica de limpiezas a quirófanos, habitaciones y pasillos.
-- 📱 **Diseño Mobile-First:** Interfaz optimizada para que los operarios la usen cómodamente desde tablets o móviles.
+- 🔐 **Control de Acceso (RBAC):** Sistema de autenticación seguro con roles diferenciados para Administradores y Operarios mediante Supabase Auth + Context.
+- 🏥 **Gestión de Zonas y Tareas:** Asignación dinámica de limpiezas a quirófanos, habitaciones y pasillos con gestión completa de incidencias.
+- 📱 **Diseño Mobile-First:** Interfaz optimizada para que los operarios la usen cómodamente desde tablets o móviles con layouts diferenciados.
 - ⚡ **Tiempo Real:** Actualización instantánea de estados gracias a la tecnología de Supabase.
-- 🛡️ **Seguridad Avanzada:** Implementación de Row Level Security (RLS) para proteger los datos sensibles.
-- 📊 **Dashboard Analítico:** Panel visual para el control de incidencias y métricas de limpieza.
+- 🛡️ **Seguridad Avanzada:** Implementación de Row Level Security (RLS) y autenticación mediante Context API para proteger los datos sensibles.
+- 📊 **Dashboard Analítico:** Panel visual con gráficos (Recharts) para el control de incidencias y métricas de limpieza.
+- 🎬 **Animaciones Fluidas:** Transiciones y efectos visuales con GSAP para una experiencia de usuario moderna.
+- 🗂️ **Gestión de Estado:** Estado global centralizado con Zustand para auth y datos de la aplicación.
 
 ---
 
 ## 📂 Estructura del Proyecto
 
-```bash
-saniclear/
-├── 📂 public/              # Assets estáticos (imágenes, favicon)
+```
+limpieza-hospitalaria/
+├── 📂 public/                  # Assets estáticos (imágenes, favicon)
 ├── 📂 src/
-│   ├── 📂 components/      # Componentes reutilizables (Botones, Modales, Navbar)
-│   ├── 📂 pages/           # Vistas principales (Login, Dashboard, Tareas)
-│   ├── 📂 supabase/        # Configuración del cliente y conexión DB
-│   ├── 📂 assets/          # Estilos globales e imágenes importadas
-│   ├── 📜 App.jsx          # Enrutador principal
-│   └── 📜 main.jsx         # Punto de entrada de React
-├── 📜 .env                 # Variables de entorno (NO SUBIR A GITHUB)
-├── 📜 index.html           # HTML base
-├── 📜 tailwind.config.js   # Configuración de estilos
-└── 📜 vite.config.js       # Configuración del empaquetador
-````
-🚀 Instalación y Despliegue
-🚧 SECCIÓN EN PROCESO DE REDACCIÓN
+│   ├── 📂 assets/              # Estilos globales e imágenes importadas
+│   ├── 📂 components/          # Componentes reutilizables
+│   │   ├── 📂 common/          # Componentes compartidos
+│   │   ├── 📂 operario/        # Componentes específicos del operario
+│   │   ├── 📜 Button.tsx
+│   │   ├── 📜 Footer.tsx
+│   │   ├── 📜 Formulario.tsx
+│   │   ├── 📜 Header.tsx
+│   │   ├── 📜 Navbar.tsx
+│   │   ├── 📜 ProfileModal.tsx
+│   │   ├── 📜 Sidebar.tsx
+│   │   ├── 📜 SidebarMenu.tsx
+│   │   ├── 📜 StatCard.tsx
+│   │   ├── 📜 TaskCard.tsx
+│   │   ├── 📜 TaskTable.tsx
+│   │   └── 📜 Topbar.tsx
+│   ├── 📂 context/             # Contextos de React (AuthContext)
+│   ├── 📂 css/                 # Archivos CSS específicos
+│   ├── 📂 layouts/             # Layouts por rol (Admin, Operario, Public)
+│   ├── 📂 mock/                # Datos mock para desarrollo
+│   ├── 📂 pages/               # Vistas principales
+│   │   ├── 📂 admin/           # Dashboard, Gestión Zonas, Usuarios, Incidencias, Panel
+│   │   ├── 📂 operario/        # MisTareas, Tareas, ReportarIncidencia
+│   │   ├── 📂 common/          # Perfil, Notificaciones
+│   │   ├── 📂 public/          # Landing, Login
+│   │   └── 📜 EnConstruccion.tsx
+│   ├── 📂 routes/              # Enrutamiento (AppRouter, RutaProtegida)
+│   ├── 📂 store/               # Stores Zustand (authStore, dataStore)
+│   ├── 📂 supabase/            # Cliente Supabase
+│   ├── 📜 App.tsx              # Componente raíz de la aplicación
+│   ├── 📜 index.css            # Estilos globales (Tailwind)
+│   └── 📜 main.tsx             # Punto de entrada de React
+├── 📜 .env.local               # Variables de entorno (NO SUBIR A GITHUB)
+├── 📜 eslint.config.js         # Configuración de ESLint
+├── 📜 index.html               # HTML base
+├── 📜 package.json             # Dependencias y scripts
+├── 📜 supabase_schema.sql      # Schema completo de la base de datos
+├── 📜 tsconfig.json            # Configuración de TypeScript
+├── 📜 vite-env.d.ts            # Tipos de Vite
+└── 📜 vite.config.js           # Configuración del empaquetador
+```
 
-La documentación detallada para la instalación local y el despliegue en producción (Vercel) se está finalizando. Las instrucciones completas estarán disponibles en la próxima actualización de la documentación.
+## 🚀 Instalación y Despliegue
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-📘 Diario de Desarrollo del TFG
-📋 Ficha del Proyecto
-Rol,Detalle
-👩‍💻 Alumna,María Ceballos
-👨‍🏫 Tutor,Paco Mera
-📅 Horario Seguimiento,"Martes, 16:55"
-🏥 Proyecto,Gestión Inteligente de Higiene Hospitalaria
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+### Requisitos Previos
+- Node.js (v18+)
+- Cuenta de Supabase con proyecto creado
 
-### 🗓️ MARZO 2026 — Cierre de Manuales y Segunda Evaluación
+### Instalación Local
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Mery1208/SANICLEAR.git
+cd limpieza-hospitalaria
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+# Crear archivo .env.local con:
+# VITE_SUPABASE_URL=tu_url_de_supabase
+# VITE_SUPABASE_ANON_KEY=tu_clave_anonima
+
+# 4. Ejecutar en modo desarrollo
+npm run dev
+```
+
+### Scripts Disponibles
+
+| Comando            | Descripción                          |
+|--------------------|--------------------------------------|
+| `npm run dev`      | Iniciar servidor de desarrollo       |
+| `npm run build`    | Compilar para producción             |
+| `npm run preview`  | Previsualizar build de producción    |
+| `npm run lint`     | Ejecutar linter ESLint               |
+
+---
+
+## 📘 Diario de Desarrollo del TFG
+
+### 📋 Ficha del Proyecto
+
+| Rol | Detalle |
+|-----|---------|
+| 👩‍💻 Alumna | María Ceballos |
+| 👨‍🏫 Tutor | Paco Mera |
+| 📅 Horario Seguimiento | Martes, 16:55 |
+| 🏥 Proyecto | Gestión Inteligente de Higiene Hospitalaria |
+
+---
+
+### 🗓️ MARZO 2026 — Integración de Componentes y Refinamiento
+
+#### 📍 Semana 27 | Estado Actual · Martes 27/03/2026
+
+🛠️ **Últimas implementaciones:**
+- **Páginas Demo:** Creación de páginas de demostración para presentación del proyecto.
+- **Componentes Extras:** Incorporación de componentes adicionales al ecosistema de la aplicación.
+- **Menú Lateral (Sidebar):** Implementación del menú lateral de navegación para el panel administrativo y del operario.
+- **Integración de Componentes:** Merge de ramas de componentes (PR #1) integrando tarjetas de tarea y vistas operarias.
+- **Tarjeta de Tarea (TaskCard):** Componente reutilizable para visualización de tareas del operario.
+
+---
+
+#### 📍 Semana 26 | Menú Lateral y Estructura · Martes ~20/03/2026
+
+🛠️ **Frontend:**
+- Refactorización del menú lateral con integración de rutas.
+- Conexión de vistas de gestión de usuarios con Supabase.
+- Panel de administrador con estadísticas en tiempo real.
+
+---
+
+#### 📍 Semana 25 | Componentes Operario · Martes ~13/03/2026
+
+🛠️ **Frontend:**
+- Desarrollo de la vista de tareas del operario (`MisTareas.tsx`, `Tareas.tsx`).
+- Componente `ReportarIncidencia` para que los operarios reporten problemas directamente.
+- Conexión de vistas operarias con datos reales de Supabase.
+
+---
+
+#### 📍 Semana 24 | Base y Migración a TSX · Martes ~06/03/2026
+
+🎯 **Hito:** Base sólida del proyecto con migración completa a TypeScript.
+- Commit "base" estableciendo la estructura definitiva del proyecto.
+- Todas las vistas principales operativas y conectadas a Supabase.
+- Migración de archivos JSX a TSX completada.
+
+---
+
+### 🗓️ FEBRERO 2026 — Cierre de Manuales y Vistas Principales
 
 #### 📍 Semana 20 | Entrega de Documentación · Martes 03/03/2026
 
@@ -146,7 +247,7 @@ Rol,Detalle
 
 ---
 
-### 🗓️ FEBRERO 2026 — Lógica de Negocio y Documentación
+### 🗓️ ENERO 2026 — Documentación y UX
 
 #### 📍 Semana 18 | Maratón de Documentación · Martes 17/02/2026
 
@@ -239,6 +340,8 @@ Rol,Detalle
 - Confirmación definitiva del stack: React + Vite + Tailwind + Supabase (JS).
 - Revisión de la estructura de carpetas del proyecto.
 
+> **Nota:** El proyecto posteriormente fue migrado de vuelta a TypeScript (TSX) en marzo de 2026 para mejorar la robustez del código.
+
 ---
 
 #### 📍 Semana 6 | Autenticación y Roles · Martes 04/11/2025 (aprox.)
@@ -288,4 +391,4 @@ Rol,Detalle
 
 ---
 
-*Documento vivo. Última actualización: 03/03/2026*
+*Documento vivo. Última actualización: 27/03/2026*

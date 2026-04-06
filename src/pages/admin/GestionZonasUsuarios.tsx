@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Trash2, Edit, Plus, Users, MapPin, User, Mail, Lock, Calendar, CheckCircle } from 'lucide-react';
+import { Trash2, Edit, Plus, Users, MapPin, User, Mail, Lock, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
+import Button from '../../components/Button';
 
 // Import mocks
 import mockZonas from '../../mock/zonas.json';
@@ -94,21 +95,51 @@ const GestionZonasUsuarios: React.FC = () => {
     setShowUsuarioModal(true);
   };
 
+  const [tempPass, setTempPass] = useState("");
+  const [valError, setValError] = useState("");
+
+  const validateUser = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-#])[A-Za-z\d@$!%*?&._\-#]{8,}$/;
+
+    if (!usrForm.nombre || !usrForm.email) return "El nombre y email son obligatorios.";
+    if (!emailRegex.test(usrForm.email)) return "El formato del email no es válido.";
+    if (!editUsuario && !passRegex.test(usrForm.password)) {
+      return "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&._-#).";
+    }
+    return "";
+  };
+
   const saveUsr = async () => {
-    if (!usrForm.nombre || !usrForm.email) return;
+    const errorMsg = validateUser();
+    if (errorMsg) {
+      setValError(errorMsg);
+      setTimeout(() => setValError(""), 5000);
+      return;
+    }
+    
     if (editUsuario) {
       const { password, ...updateData } = usrForm;
       const { error } = await supabase.from('usuarios').update(updateData).eq('id', editUsuario.id);
-      if (!error) setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...u, ...updateData } : u));
+      if (!error) {
+        setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...u, ...updateData } : u));
+        setConfirm("Usuario");
+      }
     } else {
+      // Simulando creación de auth y envío de email
+      const generatedPass = usrForm.password || Math.random().toString(36).slice(-8);
       const insertData = { ...usrForm, rol: "operario" };
       delete (insertData as any).password;
+      
       const { data, error } = await supabase.from('usuarios').insert([insertData]).select();
-      if (!error && data) setUsuarios(prev => [...prev, data[0]]);
+      if (!error && data) {
+        setUsuarios(prev => [...prev, data[0]]);
+        setTempPass(generatedPass);
+        setConfirm("creado");
+      }
     }
     setShowUsuarioModal(false);
-    setConfirm("Usuario");
-    setTimeout(() => setConfirm(""), 2500);
+    setTimeout(() => { setConfirm(""); setTempPass(""); }, 10000); // 10s para que vea los datos
   };
 
   const deleteUsr = async (id: string) => {
@@ -126,30 +157,52 @@ const GestionZonasUsuarios: React.FC = () => {
             {activeTab === 'zonas' ? `Tienes ${zonas.length} zonas registradas.` : `Gestión total para ${usuarios.length} operarios activos.`}
           </p>
         </div>
-        <button
-          onClick={activeTab === 'zonas' ? openNewZona : openNewUsr}
-          className="bg-blue-400 hover:bg-blue-500 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-sm transition-colors"
-        >
-          {activeTab === 'zonas' ? '+ Crear Zona' : '+ Crear Usuario'}
-        </button>
+        <Button 
+          text={activeTab === 'zonas' ? 'Crear Zona' : 'Crear Usuario'} 
+          onClick={activeTab === 'zonas' ? openNewZona : openNewUsr} 
+          variant="primary" 
+          icon={Plus} 
+          className="px-6 py-2 shadow-sm"
+        />
       </div>
 
-      {confirm && <div className="bg-green-50 border border-green-300 text-green-700 rounded-lg p-3 mb-4 text-sm font-semibold">✓ {confirm} guardado correctamente.</div>}
+      {confirm === "creado" && (
+        <div className="bg-blue-50 border border-blue-300 text-blue-700 rounded-2xl p-4 mb-6 shadow-sm flex flex-col gap-1">
+          <p className="font-bold flex items-center gap-2 text-sm"><CheckCircle size={18} /> ¡Usuario registrado correctamente!</p>
+          <p className="text-xs">Se ha enviado un correo a <span className="font-bold">{usrForm.email}</span> con sus credenciales de acceso.</p>
+          <div className="mt-2 bg-white/50 p-2 rounded-lg border border-blue-100">
+             <p className="text-[10px] uppercase font-bold text-blue-400">Contraseña temporal:</p>
+             <p className="font-mono font-bold text-sm tracking-wider">{tempPass}</p>
+          </div>
+        </div>
+      )}
+
+      {valError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 mb-4 text-xs font-bold flex items-center gap-2 animate-bounce">
+          <AlertCircle size={14} /> {valError}
+        </div>
+      )}
+
+      {confirm && confirm !== "creado" && (
+        <div className="bg-green-50 border border-green-300 text-green-700 rounded-lg p-3 mb-4 text-sm font-semibold">
+          ✓ {confirm} guardado correctamente.
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex justify-center gap-2 mb-6">
-        <button
-          onClick={() => setActiveTab('zonas')}
-          className={`px-8 py-1.5 rounded-lg text-sm font-semibold transition-colors border ${activeTab === 'zonas' ? 'bg-blue-400 text-white border-blue-400' : 'bg-white text-blue-400 border-blue-400'}`}
-        >
-          Zonas
-        </button>
-        <button
-          onClick={() => setActiveTab('usuarios')}
-          className={`px-8 py-1.5 rounded-lg text-sm font-semibold transition-colors border ${activeTab === 'usuarios' ? 'bg-blue-400 text-white border-blue-400' : 'bg-white text-blue-400 border-blue-400'}`}
-        >
-          Usuarios
-        </button>
+        <Button 
+          text="Zonas" 
+          onClick={() => setActiveTab('zonas')} 
+          variant={activeTab === 'zonas' ? 'primary' : 'secondary'} 
+          className="px-8 py-1.5"
+        />
+        <Button 
+          text="Usuarios" 
+          onClick={() => setActiveTab('usuarios')} 
+          variant={activeTab === 'usuarios' ? 'primary' : 'secondary'} 
+          className="px-8 py-1.5"
+        />
       </div>
 
       {loading ? (
@@ -230,8 +283,8 @@ const GestionZonasUsuarios: React.FC = () => {
             </div>
             <input value={zonaForm.metros} onChange={e => setZonaForm({ ...zonaForm, metros: e.target.value })} placeholder="Metros cuadrados..." className="w-full border border-blue-200 rounded-xl px-4 py-3 text-sm text-[#1e3a5f] focus:outline-none focus:ring-1 focus:ring-blue-400" />
             <div className="flex gap-4 mt-2">
-              <button onClick={() => setShowZonaModal(false)} className="flex-1 bg-gray-200 text-gray-500 py-3 rounded-xl text-sm font-bold">Cancelar</button>
-              <button onClick={saveZona} className="flex-1 bg-blue-400 text-white py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-100">Guardar</button>
+              <Button text="Cancelar" onClick={() => setShowZonaModal(false)} variant="ghost" className="flex-1 py-3" />
+              <Button text="Guardar" onClick={saveZona} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
             </div>
           </div>
         </Modal>
@@ -250,8 +303,8 @@ const GestionZonasUsuarios: React.FC = () => {
               {["Mañana", "Tarde", "Noche"].map(t => <option key={t} value={t}>{t}</option>)}
             </select>
             <div className="flex gap-4 mt-2">
-              <button onClick={() => setShowUsuarioModal(false)} className="flex-1 bg-gray-200 text-gray-500 py-3 rounded-xl text-sm font-bold">Cancelar</button>
-              <button onClick={saveUsr} className="flex-1 bg-blue-400 text-white py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-100">Guardar</button>
+              <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="ghost" className="flex-1 py-3" />
+              <Button text="Guardar" onClick={saveUsr} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
             </div>
           </div>
         </Modal>

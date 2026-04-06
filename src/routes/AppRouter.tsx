@@ -13,18 +13,11 @@ import RutaProtegida from './RutaProtegida';
 import Landing from '../pages/public/Landing';
 import Login from '../pages/public/Login';
 
-// Páginas comunes
-import Notificaciones from '../pages/common/Notificaciones';
-import Perfil from '../pages/common/Perfil';
-
 // Páginas operario
 import MisTareas from '../pages/operario/MisTareas';
-import ReportarIncidencia from '../pages/operario/ReportarIncidencia';
 
 // Páginas admin
 import Dashboard from '../pages/admin/Dashboard';
-import GestionZonasUsuarios from '../pages/admin/GestionZonasUsuarios';
-import GestionIncidencias from '../pages/admin/GestionIncidencias';
 
 // Genérica En Construcción
 import EnConstruccion from '../pages/EnConstruccion';
@@ -43,9 +36,6 @@ const AppRouter: React.FC = () => {
                 <Route element={<RutaProtegida rolPermitido="operario" />}>
                     <Route element={<OperarioLayout />}>
                         <Route path="/operario" element={<MisTareas />} />
-                        <Route path="/operario/notificaciones" element={<Notificaciones />} />
-                        <Route path="/operario/incidencias" element={<ReportarIncidencia />} />
-                        <Route path="/operario/perfil" element={<Perfil />} />
                         <Route path="/operario/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>
@@ -54,11 +44,6 @@ const AppRouter: React.FC = () => {
                 <Route element={<RutaProtegida rolPermitido="admin" />}>
                     <Route element={<AdminLayout />}>
                         <Route path="/admin" element={<Dashboard />} />
-                        <Route path="/admin/zonas" element={<GestionZonasUsuarios />} />
-                        <Route path="/admin/usuarios" element={<GestionZonasUsuarios />} />
-                        <Route path="/admin/incidencias" element={<GestionIncidencias />} />
-                        <Route path="/admin/notificaciones" element={<Notificaciones />} />
-                        <Route path="/admin/perfil" element={<Perfil />} />
                         <Route path="/admin/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>

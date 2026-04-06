@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
+import Button from '../../components/Button';
+import { Plus } from 'lucide-react';
 
 const NIVEL_BADGE: Record<string, string> = { alto:"bg-red-100 text-red-700", medio:"bg-yellow-100 text-yellow-700", bajo:"bg-green-100 text-green-700" };
 
@@ -69,9 +71,13 @@ const GestionZonas: React.FC = () => {
           <h2 className="text-xl font-bold text-gray-800">Gestión de Zonas</h2>
           <p className="text-sm text-gray-500">Tienes {zonas.length} zonas registradas.</p>
         </div>
-        <button onClick={openNewZona} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors">
-          + Crear Zona
-        </button>
+        <Button 
+          text="Crear Zona" 
+          onClick={openNewZona} 
+          variant="primary" 
+          icon={Plus} 
+          className="px-4 py-2 shadow-sm"
+        />
       </div>
 
       {confirm && <div className="bg-green-50 border border-green-300 text-green-700 rounded-lg p-3 mb-4 text-sm font-semibold shadow-sm">✓ {confirm} guardada correctamente.</div>}
@@ -92,8 +98,18 @@ const GestionZonas: React.FC = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => openEditZona(z)} className="border border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600 px-3 py-1.5 rounded-lg text-sm font-medium bg-white transition-colors">Editar</button>
-                <button onClick={() => deleteZona(z.id)} className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded-lg text-sm transition-colors">🗑</button>
+                <Button 
+                  text="Editar" 
+                  onClick={() => openEditZona(z)} 
+                  variant="secondary" 
+                  className="px-3 py-1.5"
+                />
+                <Button 
+                  text="🗑" 
+                  onClick={() => deleteZona(z.id)} 
+                  variant="danger" 
+                  className="px-2.5 py-1.5"
+                />
               </div>
             </div>
           ))}
@@ -136,9 +152,9 @@ const GestionZonas: React.FC = () => {
               </select>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => setShowZonaModal(false)} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors">Cancelar</button>
-            <button onClick={saveZona} className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">Guardar</button>
+          <div className="flex gap-4 mt-4">
+            <Button text="Cancelar" onClick={() => setShowZonaModal(false)} variant="secondary" className="flex-1 py-2.5" />
+            <Button text="Guardar" onClick={saveZona} variant="primary" className="flex-1 py-2.5 shadow-sm" />
           </div>
         </Modal>
       )}

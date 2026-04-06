@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
+import Button from '../../components/Button';
+import { Plus } from 'lucide-react';
 
 const GestionUsuarios: React.FC = () => {
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -83,9 +85,13 @@ const GestionUsuarios: React.FC = () => {
           <h2 className="text-xl font-bold text-gray-800">Gestión de Usuarios</h2>
           <p className="text-sm text-gray-500">Tienes {usuarios.length} usuarios registrados.</p>
         </div>
-        <button onClick={openNewUsr} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors">
-          + Crear Usuario
-        </button>
+        <Button 
+          text="Crear Usuario" 
+          onClick={openNewUsr} 
+          variant="primary" 
+          icon={Plus} 
+          className="px-4 py-2 shadow-sm"
+        />
       </div>
 
       {confirm && <div className="bg-green-50 border border-green-300 text-green-700 rounded-lg p-3 mb-4 text-sm font-semibold shadow-sm">✓ {confirm} guardado correctamente.</div>}
@@ -108,8 +114,20 @@ const GestionUsuarios: React.FC = () => {
                   <td className="px-4 py-3 text-gray-600">{u.turno || "No asignado"}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      <button onClick={() => openEditUsr(u)} className="border border-gray-300 text-gray-600 hover:border-blue-400 hover:text-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white transition-colors">Modificar</button>
-                      <button onClick={() => deleteUsr(u.id)} className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors">Eliminar</button>
+                    <div className="flex gap-2 justify-end">
+                      <Button 
+                        text="Modificar" 
+                        onClick={() => openEditUsr(u)} 
+                        variant="secondary" 
+                        className="px-3 py-1.5"
+                      />
+                      <Button 
+                        text="Eliminar" 
+                        onClick={() => deleteUsr(u.id)} 
+                        variant="danger" 
+                        className="px-3 py-1.5"
+                      />
+                    </div>
                     </div>
                   </td>
                 </tr>
@@ -152,9 +170,9 @@ const GestionUsuarios: React.FC = () => {
               <option>Mañana</option><option>Tarde</option><option>Noche</option>
             </select>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => setShowUsuarioModal(false)} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors">Cancelar</button>
-            <button onClick={saveUsr} className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors shadow-sm">Guardar</button>
+          <div className="flex gap-4 mt-5">
+            <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="secondary" className="flex-1 py-2.5" />
+            <Button text="Guardar" onClick={saveUsr} variant="primary" className="flex-1 py-2.5 shadow-sm" />
           </div>
         </Modal>
       )}

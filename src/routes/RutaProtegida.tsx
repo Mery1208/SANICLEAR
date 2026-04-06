@@ -7,9 +7,9 @@ interface RutaProtegidaProps {
 }
 
 const RutaProtegida: React.FC<RutaProtegidaProps> = ({ rolPermitido }) => {
-    const { usuario, cargando } = useAuth();
+    const { usuario, loading } = useAuth();
 
-    if (cargando) {
+    if (loading) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <p>Cargando...</p>
