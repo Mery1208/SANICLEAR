@@ -15,6 +15,7 @@ import Login from '../pages/public/Login';
 
 // Páginas operario
 import MisTareas from '../pages/operario/MisTareas';
+import Perfil from '../pages/common/Perfil';
 
 // Páginas admin
 import Dashboard from '../pages/admin/Dashboard';
@@ -36,6 +37,7 @@ const AppRouter: React.FC = () => {
                 <Route element={<RutaProtegida rolPermitido="operario" />}>
                     <Route element={<OperarioLayout />}>
                         <Route path="/operario" element={<MisTareas />} />
+                        <Route path="/operario/perfil" element={<Perfil />} />
                         <Route path="/operario/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>
@@ -44,6 +46,7 @@ const AppRouter: React.FC = () => {
                 <Route element={<RutaProtegida rolPermitido="admin" />}>
                     <Route element={<AdminLayout />}>
                         <Route path="/admin" element={<Dashboard />} />
+                        <Route path="/admin/perfil" element={<Perfil />} />
                         <Route path="/admin/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>

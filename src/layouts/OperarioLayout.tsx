@@ -18,7 +18,7 @@ const OperarioLayout: React.FC = () => {
         { id: 'tareas', label: 'Mis Tareas', ruta: '/operario', icon: <ClipboardList size={18} /> },
         { id: 'notificaciones', label: 'Notificaciones', ruta: '/operario/notificaciones', icon: <Bell size={18} />, disabled: true },
         { id: 'incidencias', label: 'Reportar Incidencia', ruta: '/operario/incidencias', icon: <AlertCircle size={18} />, disabled: true },
-        { id: 'perfil', label: 'Mi Perfil', ruta: '/operario/perfil', icon: <User size={18} />, disabled: true },
+        { id: 'perfil', label: 'Mi Perfil', ruta: '/operario/perfil', icon: <User size={18} /> },
     ];
 
     return (

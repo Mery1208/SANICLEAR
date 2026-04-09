@@ -139,20 +139,20 @@ const Dashboard: React.FC = () => {
 
       {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          ["Tareas Pendientes", pendientes, <Clock size={22} />, "text-yellow-600 bg-yellow-50"],
-          ["Alertas Críticas",  alertas,    <AlertTriangle size={22} />, "text-red-600 bg-red-50"],
-          ["Completadas Hoy",   hoy,        <CheckCircle size={22} />,  "text-green-600 bg-green-50"],
-          ["En Curso",          en_curso,   <RefreshCw size={22} className="animate-spin-slow" />, "text-blue-600 bg-blue-50"],
+          ["Tareas Pendientes", pendientes, <Clock size={24} />, "text-yellow-600 bg-yellow-50"],
+          ["Alertas Críticas",  alertas,    <AlertTriangle size={24} />, "text-red-600 bg-red-50"],
+          ["Completadas Hoy",   hoy,        <CheckCircle size={24} />,  "text-green-600 bg-green-50"],
+          ["En Curso",          en_curso,   <RefreshCw size={24} />, "text-blue-600 bg-blue-50"],
         ].map(([l, v, ic, cls]) => (
-          <div key={l as string} className="bg-white rounded-[2rem] border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start">
+          <div key={l as string} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">{l as string}</p>
-                <p className={`text-4xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">{l as string}</p>
+                <p className={`text-3xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
               </div>
-              <div className={`p-4 rounded-2xl ${(cls as string).split(' ')[1]}`}>
+              <div className={`p-3 rounded-xl ${(cls as string).split(' ')[1]}`}>
                 {ic as React.ReactNode}
               </div>
             </div>

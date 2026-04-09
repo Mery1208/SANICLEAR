@@ -20,7 +20,7 @@ const AdminLayout: React.FC = () => {
         { id: 'usuarios', label: 'Usuarios', ruta: '/admin/usuarios', icon: <Users size={18} />, disabled: true },
         { id: 'incidencias', label: 'Incidencias', ruta: '/admin/incidencias', icon: <AlertCircle size={18} />, disabled: true },
         { id: 'notificaciones', label: 'Notificaciones', ruta: '/admin/notificaciones', icon: <Bell size={18} />, disabled: true },
-        { id: 'perfil', label: 'Mi Perfil', ruta: '/admin/perfil', icon: <User size={18} />, disabled: true },
+        { id: 'perfil', label: 'Mi Perfil', ruta: '/admin/perfil', icon: <User size={18} /> },
     ];
 
     return (

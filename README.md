@@ -175,8 +175,8 @@ npm run dev
 | Rol | Detalle |
 |-----|---------|
 | 👩‍💻 Alumna | María Ceballos |
-| 👨‍🏫 Tutor | Paco Mera |
-| 📅 Horario Seguimiento | Martes, 16:55 |
+| 👨‍🏫 Tutor | María Mercedes Martínez Fragoso |
+| 📅 Horario Seguimiento | - |
 | 🏥 Proyecto | Gestión Inteligente de Higiene Hospitalaria |
 
 ---
@@ -383,12 +383,20 @@ npm run dev
 
 ---
 
+#### 📍 Semana 28 | Panel de Control y Perfil · Jueves 09/04/2026
+
+🛠️ **Últimas implementaciones:**
+- **Panel de Control (Admin):** Modificación para mostrar datos dinámicos en tiempo real. Gráfico de incidencias por mes (custom sin librería externa). Tabla de tareas con badges de estado y prioridad.
+- **Página de Perfil:** Nueva vista completa (`Perfil.tsx`) para que usuarios puedan editar su nombre, apellidos y cambiar su contraseña. Validación de contraseña actual contra Supabase Auth. Integración con Zustand para actualizar estado global.
+
+---
+
 #### 📍 Semana 1 | Aprobación de la Propuesta · Martes 07/10/2025
 
 🎯 **Hito:** Firma del Acta de Propuesta. Nace **Saniclear**.
-- Primera reunión con el tutor Paco Mera.
+- Primera reunión con la tutora María Mercedes Martínez Fragoso.
 - Validación de la idea y aprobación para comenzar el análisis funcional.
 
 ---
 
-*Documento vivo. Última actualización: 27/03/2026*
+*Documento vivo. Última actualización: 09/04/2026*
