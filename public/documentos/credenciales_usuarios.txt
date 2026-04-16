@@ -1,0 +1,38 @@
+LISTADO DE CREDENCIALES - SISTEMA SANICLEAR
+=============================================
+
+REQUISITOS DE CONTRASEÑA:
+- Mínimo 8 caracteres
+- Al menos 1 letra mayúscula
+- Al menos 1 letra minúscula
+- Al menos 1 número
+- Al menos 1 carácter especial (@$!%*?&._-#)
+------------------------------------------------------
+
+ADMINISTRADOR:
+  Email: admin@saniclear.com
+  Pass:  Admin1234!
+
+------------------------------------------------------
+
+OPERARIOS:
+
+  Juan Pérez (Mañana)
+  Email: juan.perez@saniclear.com
+  Pass:  Operario123!
+
+  María Ceballos (Tarde)
+  Email: maria.ceballos@saniclear.com
+  Pass:  Operario123!
+
+  Evelia Gil (Noche)
+  Email: evelia.gil@saniclear.com
+  Pass:  Operario123!
+
+  Carlos Fernández (Mañana)
+  Email: carlos.f@saniclear.com
+  Pass:  Operario123!
+
+  Ana Martínez (Tarde)
+  Email: ana.martinez@saniclear.com
+  Pass:  Operario123!
