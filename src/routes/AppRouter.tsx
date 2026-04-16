@@ -16,9 +16,11 @@ import Login from '../pages/public/Login';
 // Páginas operario
 import MisTareas from '../pages/operario/MisTareas';
 import Perfil from '../pages/common/Perfil';
+import Notificaciones from '../pages/common/Notificaciones';
 
 // Páginas admin
 import Dashboard from '../pages/admin/Dashboard';
+import GestionZonaUsuarios from '../pages/admin/GestionZonaUsuarios';
 
 // Genérica En Construcción
 import EnConstruccion from '../pages/EnConstruccion';
@@ -38,6 +40,7 @@ const AppRouter: React.FC = () => {
                     <Route element={<OperarioLayout />}>
                         <Route path="/operario" element={<MisTareas />} />
                         <Route path="/operario/perfil" element={<Perfil />} />
+                        <Route path="/operario/notificaciones" element={<Notificaciones />} />
                         <Route path="/operario/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>
@@ -46,7 +49,9 @@ const AppRouter: React.FC = () => {
                 <Route element={<RutaProtegida rolPermitido="admin" />}>
                     <Route element={<AdminLayout />}>
                         <Route path="/admin" element={<Dashboard />} />
+                        <Route path="/admin/zonas" element={<GestionZonaUsuarios />} />
                         <Route path="/admin/perfil" element={<Perfil />} />
+                        <Route path="/admin/notificaciones" element={<Notificaciones />} />
                         <Route path="/admin/*" element={<EnConstruccion />} />
                     </Route>
                 </Route>

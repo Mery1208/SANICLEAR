@@ -150,8 +150,8 @@ npm install
 
 # 3. Configurar variables de entorno
 # Crear archivo .env.local con:
-# VITE_SUPABASE_URL=tu_url_de_supabase
-# VITE_SUPABASE_ANON_KEY=tu_clave_anonima
+# VITE_SUPABASE_URL=https://zwmfzqdamdibjermgnyo.supabase.co
+# VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3bWZ6cWRhbWRpYmplcm1nbnlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMDUxNzcsImV4cCI6MjA4MjY4MTE3N30.bJtR3HBgOzzLwlB7x476MBlC44BpKiWsvkuuwekvjSY
 
 # 4. Ejecutar en modo desarrollo
 npm run dev
@@ -176,25 +176,74 @@ npm run dev
 |-----|---------|
 | 👩‍💻 Alumna | María Ceballos |
 | 👨‍🏫 Tutor | María Mercedes Martínez Fragoso |
-| 📅 Horario Seguimiento | - |
+| 📅 Horario Seguimiento | 17:05 - 18:00 |
 | 🏥 Proyecto | Gestión Inteligente de Higiene Hospitalaria |
+
+
+---
+
+### 🗓️ ABRIL 2026 — Perfil, Notificaciones y Gestión Combinada
+
+#### 📍 Semana 29 | 14-16 Abril 2026 · Estado Actual
+
+🛠️ **Implementaciones de esta semana:**
+
+1. **Gestión Combinada Zonas y Usuarios (Admin)**
+   - Ruta única /admin/zonas para ambas funcionalidades
+   - Selector de vistas (Toggle Buttons / Segmented Control) con estilo pill
+   - Botones "Zonas" y "Usuarios" con transición azul (#3b82f6)
+   - CRUD completo de zonas y usuarios en una sola página
+   - Fallback a datos mock (15 zonas, 6 usuarios)
+   - Botones Editar y Eliminar en cada tarjeta
+
+2. **Notificaciones (Admin y Operario)**
+   - Ruta /admin/notificaciones y /operario/notificaciones
+   - Vista de tarjetas para operario, tabla para admin
+   - Contadores por tipo (urgente, importante, informativa)
+   - Marcar como leída al hacer click
+   - Botón "Marcar todas como leídas"
+   - Modal crear notificación (solo admin)
+
+📊 **Estado actual:** 9 páginas funcionales
+
+---
+
+#### 📍 Semana 28 | 6-12 Abril 2026
+
+🛠️ **Implementaciones:**
+
+1. **Perfil de Usuario (Admin y Operario)**
+   - Ruta /admin/perfil y /operario/perfil
+   - Edición de nombre y apellidos
+   - Cambio de contraseña con validación de seguridad
+   - Visualización de email y turno
+   - Botón de cierre de sesión
+   - Integración con Supabase Auth
+
+2. **Mejoras Dashboard Admin**
+   - Tarjetas de contadores ajustadas en tamaño
+   - 4 bloques en una línea: Pendientes, Críticas, Hoy, En Curso
+
+🗒️ **Notas técnicas:**
+- Sistema de fallback automático a datos mock
+- Login verifica credenciales primero en Supabase Auth, luego en lista mock
 
 ---
 
 ### 🗓️ MARZO 2026 — Integración de Componentes y Refinamiento
 
-#### 📍 Semana 27 | Estado Actual · Martes 27/03/2026
+#### 📍 Semana 27 | Martes 27/03/2026
 
 🛠️ **Últimas implementaciones:**
 - **Páginas Demo:** Creación de páginas de demostración para presentación del proyecto.
 - **Componentes Extras:** Incorporación de componentes adicionales al ecosistema de la aplicación.
 - **Menú Lateral (Sidebar):** Implementación del menú lateral de navegación para el panel administrativo y del operario.
-- **Integración de Componentes:** Merge de ramas de componentes (PR #1) integrando tarjetas de tarea y vistas operarias.
+- **Integración de Componentes:** Merge de ramas de componentes integrando tarjetas de tarea y vistas operarias.
 - **Tarjeta de Tarea (TaskCard):** Componente reutilizable para visualización de tareas del operario.
 
 ---
 
-#### 📍 Semana 26 | Menú Lateral y Estructura · Martes ~20/03/2026
+#### 📍 Semana 26 | Martes ~20/03/2026
 
 🛠️ **Frontend:**
 - Refactorización del menú lateral con integración de rutas.
@@ -203,7 +252,7 @@ npm run dev
 
 ---
 
-#### 📍 Semana 25 | Componentes Operario · Martes ~13/03/2026
+#### 📍 Semana 25 | Martes ~13/03/2026
 
 🛠️ **Frontend:**
 - Desarrollo de la vista de tareas del operario (`MisTareas.tsx`, `Tareas.tsx`).
@@ -212,13 +261,26 @@ npm run dev
 
 ---
 
-#### 📍 Semana 24 | Base y Migración a TSX · Martes ~06/03/2026
+#### 📍 Semana 24 | Martes ~06/03/2026
 
 🎯 **Hito:** Base sólida del proyecto con migración completa a TypeScript.
 - Commit "base" estableciendo la estructura definitiva del proyecto.
 - Todas las vistas principales operativas y conectadas a Supabase.
 - Migración de archivos JSX a TSX completada.
+   - Marcar como leída / marcar todas
+   - Modal crear notificación (admin)
 
+3. **Gestión de Zonas (Admin)**
+   - Ruta /admin/zonas
+   - CRUD completo de zonas
+   - Badges de prioridad y estado
+   - Fallback a datos mock
+
+4. **Gestión Combinada Zonas y Usuarios**
+   - Selector de vistas (Toggle Buttons) con estilo pill
+   - Botones "Zonas" y "Usuarios" con transición azul #3b82f6
+   - CRUD de zonas y usuarios en una sola página
+   - Datos mock actualizados (15 zonas, 6 usuarios)
 ---
 
 ### 🗓️ FEBRERO 2026 — Cierre de Manuales y Vistas Principales

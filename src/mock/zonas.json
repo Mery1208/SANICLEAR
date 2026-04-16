@@ -1,6 +1,17 @@
 [
   { "id": 1, "nombre": "UCI - Quirófano 1", "tipo": "Quirófano", "planta": 2, "metros": "45", "nivel": "alto", "estado": "Activo" },
-  { "id": 2, "nombre": "Sala Aislamiento A", "tipo": "Sala", "planta": 3, "metros": "30", "nivel": "medio", "estado": "Activo" },
-  { "id": 3, "nombre": "Planta 1 - Pasillo", "tipo": "Pasillo", "planta": 1, "metros": "120", "nivel": "bajo", "estado": "Activo" },
-  { "id": 4, "nombre": "Habitación 204", "tipo": "Habitación", "planta": 2, "metros": "20", "nivel": "bajo", "estado": "Activo" }
+  { "id": 2, "nombre": "UCI - Quirófano 2", "tipo": "Quirófano", "planta": 2, "metros": "45", "nivel": "alto", "estado": "Activo" },
+  { "id": 3, "nombre": "Sala de Recuperación", "tipo": "Sala", "planta": 2, "metros": "60", "nivel": "medio", "estado": "Activo" },
+  { "id": 4, "nombre": "Sala de Urgencias", "tipo": "Sala", "planta": 1, "metros": "80", "nivel": "alto", "estado": "Activo" },
+  { "id": 5, "nombre": "Planta 1 - Pasillo Central", "tipo": "Pasillo", "planta": 1, "metros": "120", "nivel": "bajo", "estado": "Activo" },
+  { "id": 6, "nombre": "Planta 2 - Pasillo Norte", "tipo": "Pasillo", "planta": 2, "metros": "100", "nivel": "bajo", "estado": "Activo" },
+  { "id": 7, "nombre": "Habitación 201", "tipo": "Habitación", "planta": 2, "metros": "25", "nivel": "bajo", "estado": "Activo" },
+  { "id": 8, "nombre": "Habitación 202", "tipo": "Habitación", "planta": 2, "metros": "25", "nivel": "bajo", "estado": "Activo" },
+  { "id": 9, "nombre": "Habitación 203", "tipo": "Habitación", "planta": 2, "metros": "20", "nivel": "bajo", "estado": "Inactivo" },
+  { "id": 10, "nombre": "Consulta Pediatría", "tipo": "Consulta", "planta": 0, "metros": "15", "nivel": "medio", "estado": "Activo" },
+  { "id": 11, "nombre": "Consulta Cardiología", "tipo": "Consulta", "planta": 0, "metros": "15", "nivel": "medio", "estado": "Activo" },
+  { "id": 12, "nombre": "Baño UCI", "tipo": "Baño", "planta": 2, "metros": "10", "nivel": "bajo", "estado": "Activo" },
+  { "id": 13, "nombre": "Baño Quirófanos", "tipo": "Baño", "planta": 2, "metros": "12", "nivel": "bajo", "estado": "Activo" },
+  { "id": 14, "nombre": "Sala de espera planta 1", "tipo": "Sala", "planta": 1, "metros": "40", "nivel": "bajo", "estado": "Activo" },
+  { "id": 15, "nombre": "Almacén Limpieza", "tipo": "Sala", "planta": -1, "metros": "50", "nivel": "bajo", "estado": "Activo" }
 ]
