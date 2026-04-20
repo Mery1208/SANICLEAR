@@ -7,13 +7,13 @@ export interface Usuario {
   nombre: string;
   apellidos?: string;
   email: string;
-  rol: 'admin' | 'operario';
+  rol: 'superadmin' | 'admin' | 'operario';
   turno?: string;
 }
 
 interface AuthContextType {
   usuario: Usuario | null;
-  rol: 'admin' | 'operario' | null;
+  rol: 'superadmin' | 'admin' | 'operario' | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<any>;
   logout: () => Promise<void>;
@@ -22,6 +22,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MOCK_USERS: Usuario[] = [
+  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclear.com', rol: 'superadmin' },
   { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclear', email: 'admin@saniclear.com', rol: 'admin' },
   { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclear.com', rol: 'operario', turno: 'Mañana' },
   { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclear.com', rol: 'operario', turno: 'Tarde' },
@@ -31,6 +32,7 @@ const MOCK_USERS: Usuario[] = [
 ];
 
 const MOCK_PASSWORDS: Record<string, string> = {
+  'superadmin@saniclear.com': 'SuperAdmin1234!',
   'admin@saniclear.com': 'Admin1234!',
   'juan.perez@saniclear.com': 'Operario123!',
   'maria.ceballos@saniclear.com': 'Operario123!',
@@ -97,8 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUsuario(data as Usuario);
       } else {
         // Fallback: crear perfil en tabla 'usuarios' si no existe
-        const rol = email.includes('admin') ? 'admin' : 'operario';
-        const nombre = rol === 'admin' ? 'Admin' : 'Operario';
+        const rol = email.includes('superadmin') ? 'superadmin' : email.includes('admin') ? 'admin' : 'operario';
+        const nombre = rol === 'superadmin' ? 'Superadmin' : rol === 'admin' ? 'Admin' : 'Operario';
 
         try {
           const { data: newUser } = await supabase
@@ -122,8 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (mockUser) {
         setUsuario(mockUser);
       } else {
-        const rol = email.includes('admin') ? 'admin' : 'operario';
-        setUsuario({ id: uid, email, nombre: rol === 'admin' ? 'Admin' : 'Operario', rol });
+        const rol = email.includes('superadmin') ? 'superadmin' : email.includes('admin') ? 'admin' : 'operario';
+        setUsuario({ id: uid, email, nombre: rol === 'superadmin' ? 'Superadmin' : rol === 'admin' ? 'Admin' : 'Operario', rol });
       }
     }
     setLoading(false);

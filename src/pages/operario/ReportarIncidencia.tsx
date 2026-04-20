@@ -14,6 +14,7 @@ const PRIORIDADES = [
 
 const ReportarIncidencia: React.FC = () => {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({ tipo:"", zona:"", descripcion:"", prioridad:"media", urgente:false });
   const [foto, setFoto] = useState<File | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
@@ -94,15 +95,15 @@ const ReportarIncidencia: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-6 font-sans">
-      <div className="flex justify-between items-center mb-2">
-         <div>
-            <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
-            <p className="text-gray-400 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
-         </div>
-         <button className="text-gray-300 hover:text-gray-500 transition-colors">
-            <X size={28} strokeWidth={1.5} />
-         </button>
-      </div>
+          <div className="flex justify-between items-center mb-2">
+             <div>
+                <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
+                <p className="text-gray-400 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
+             </div>
+             <button onClick={() => navigate('/operario')} className="text-gray-300 hover:text-gray-500 transition-colors">
+                <X size={28} strokeWidth={1.5} />
+             </button>
+          </div>
 
       {ok && (
         <div className="fixed inset-0 bg-[#1e3a5f]/20 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">

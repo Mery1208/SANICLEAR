@@ -18,7 +18,7 @@ const AdminLayout: React.FC = () => {
         { id: 'panel', label: 'Panel Principal', ruta: '/admin', icon: <LayoutDashboard size={18} /> },
         { id: 'zonas', label: 'Gestión Zonas y Usuarios', ruta: '/admin/zonas', icon: <Map size={18} /> },
         { id: 'notificaciones', label: 'Notificaciones', ruta: '/admin/notificaciones', icon: <Bell size={18} /> },
-        { id: 'incidencias', label: 'Incidencias', ruta: '/admin/incidencias', icon: <AlertCircle size={18} />, disabled: true },
+        { id: 'incidencias', label: 'Incidencias', ruta: '/admin/incidencias', icon: <AlertCircle size={18} /> },
         { id: 'perfil', label: 'Mi Perfil', ruta: '/admin/perfil', icon: <User size={18} /> },
     ];
 

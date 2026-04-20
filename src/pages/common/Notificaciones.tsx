@@ -1,28 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, AlertTriangle, Info, ShieldAlert, CheckCircle, Plus } from 'lucide-react';
+import { Bell, ShieldAlert, CheckCircle, Plus, Search } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
 
-// Import mock
-const mockNotificaciones = [
-  { id: 1, titulo: "SIMULACRO INCENDIO", msg: "Mañana a las 10h en el ala este.", tipo: "urgente", dest: "todos", leida: false, fecha: new Date(Date.now() - 3600000).toISOString() },
-  { id: 2, titulo: "Mantenimiento", msg: "Ascensor B fuera de servicio por revisión técnica.", tipo: "importante", dest: "todos", leida: false, fecha: new Date(Date.now() - 7200000).toISOString() },
-  { id: 3, titulo: "Nuevo Material", msg: "Ya están disponibles los nuevos carros de limpieza en el almacén central.", tipo: "informativa", dest: "todos", leida: true, fecha: new Date(Date.now() - 86400000).toISOString() },
-  { id: 4, titulo: "Reunión de Equipo", msg: "Breve reunión al inicio del turno de tarde en la sala de juntas.", tipo: "importante", dest: "turno_tarde", leida: false, fecha: new Date(Date.now() - 1800000).toISOString() },
-  { id: 5, titulo: "Actualización Protocolo", msg: "Se ha actualizado el protocolo de desinfección en quirófanos.", tipo: "urgente", dest: "todos", leida: false, fecha: new Date(Date.now() - 300000).toISOString() }
-];
-
 interface Notificacion {
   id: number;
   titulo: string;
-  msg: string;
+  mensaje: string;
   tipo: 'urgente' | 'importante' | 'informativa';
   dest: string;
   leida: boolean;
   fecha: string;
+  entidad_id?: string;
+  entidades?: { nombre_hospital: string };
+  usuario_id?: string;
+  usuarios?: { nombre: string; apellidos: string };
 }
 
 const TIPO_BADGE: Record<string, string> = { 
@@ -39,9 +34,12 @@ const tipoIcon: Record<string, React.ReactNode> = {
 
 const Notificaciones: React.FC = () => {
   const { usuario, rol } = useAuth();
-  const isAdmin = rol === 'admin';
+  const isSuperadmin = rol === 'superadmin';
+  const isAdmin = rol === 'admin' || isSuperadmin; // Superadmin hereda poderes de admin
   const [notif, setNotif] = useState<Notificacion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [entidades, setEntidades] = useState<any[]>([]);
+  const [filtroEntidad, setFiltroEntidad] = useState<string>('todas');
 
   // Stats
   const noLeidas = notif.filter(n => !n.leida).length;
@@ -51,32 +49,40 @@ const Notificaciones: React.FC = () => {
   
   // Admin form
   const [showForm, setShowForm] = useState(false);
-  const [newNotif, setNewNotif] = useState({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"" });
+  const [newNotif, setNewNotif] = useState({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
   const [ok, setOk] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchNotificaciones = async () => {
     setLoading(true);
+    // Pedimos solo * para evitar errores 400 de Foreign Keys en Supabase
     let query = supabase.from('notificaciones').select('*').order('fecha', { ascending: false });
     
-    // Si no es admin, quizás solo ve las suyas y las de 'todos'
-    if (!isAdmin) {
-      // Simplificado: traemos las relevantes
-      // asumiendo dest es 'todos' o su email/nombre
+    if (isSuperadmin && filtroEntidad !== 'todas') {
+      query = query.eq('entidad_id', filtroEntidad);
+    } else if (!isAdmin) {
       query = query.or(`dest.eq.todos,dest.eq.${usuario?.nombre} ${usuario?.apellidos}`);
     }
 
     const { data, error } = await query;
-    if (data && data.length > 0) {
-      setNotif(data as Notificacion[]);
-    } else {
-      setNotif(mockNotificaciones as any[]);
+    if (error) {
+      console.error("Error cargando notificaciones:", error.message);
     }
+    setNotif((data || []) as Notificacion[]);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchNotificaciones();
-  }, [isAdmin, usuario]);
+  }, [isAdmin, isSuperadmin, usuario, filtroEntidad]);
+
+  useEffect(() => {
+    if (isSuperadmin) {
+      supabase.from('entidades').select('id, nombre_hospital').then(({data}) => {
+        if (data) setEntidades(data);
+      });
+    }
+  }, [isSuperadmin]);
 
   const marcarLeida = async (id: number) => {
     // Si ya está leida, ignoramos
@@ -103,24 +109,34 @@ const Notificaciones: React.FC = () => {
     
     const insertData = {
       titulo: newNotif.titulo,
-      msg: newNotif.mensaje,
+      mensaje: newNotif.mensaje,
       tipo: newNotif.tipo,
       dest: newNotif.dest,
       leida: false,
-      fecha: new Date().toISOString()
+      fecha: new Date().toISOString(),
+      entidad_id: isSuperadmin && newNotif.entidad_id !== 'todas' ? newNotif.entidad_id : null,
+      usuario_id: usuario?.id
     };
 
     const { data, error } = await supabase.from('notificaciones').insert([insertData]).select();
     if (!error && data) {
       setNotif(prev => [data[0] as Notificacion, ...prev]);
       setShowForm(false);
-      setNewNotif({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"" });
+      setNewNotif({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
       setOk(true);
       setTimeout(() => setOk(false), 3000);
     } else {
       console.error(error);
     }
   };
+
+  const filteredNotif = notif.filter(n => {
+    if (!searchTerm) return true;
+    const s = searchTerm.toLowerCase();
+    const hospitalName = entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global';
+    return n.titulo.toLowerCase().includes(s) ||
+           hospitalName.toLowerCase().includes(s);
+  });
 
   if (loading) return <div className="text-gray-500 p-6 font-semibold animate-pulse">Cargando notificaciones...</div>;
 
@@ -132,6 +148,28 @@ const Notificaciones: React.FC = () => {
           <p className="text-gray-400 text-sm font-medium italic">{noLeidas > 0 ? `Tienes ${noLeidas} notificaciones sin leer.` : "Todo al día."}</p>
         </div>
         <div className="flex gap-4 items-center">
+          {isAdmin && (
+            <div className="relative hidden sm:block">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Buscar por título o emisor..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white w-64"
+              />
+            </div>
+          )}
+          {isSuperadmin && (
+            <select 
+              value={filtroEntidad} 
+              onChange={(e) => setFiltroEntidad(e.target.value)}
+              className="px-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+            >
+              <option value="todas">Global (Todas)</option>
+              {entidades.map(e => <option key={e.id} value={e.id}>{e.nombre_hospital}</option>)}
+            </select>
+          )}
           {noLeidas > 0 && <button onClick={marcarTodas} className="text-xs text-blue-600 hover:underline font-bold">Marcar todas como leídas</button>}
           {isAdmin && (
             <Button 
@@ -160,16 +198,25 @@ const Notificaciones: React.FC = () => {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b">
               <tr>
-                {["Título","Destinatario","Fecha","Tipo"].map(h => <th key={h} className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">{h}</th>)}
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Título</th>
+                {isSuperadmin && <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Entidad</th>}
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Emisor</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Destinatario</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Fecha</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Tipo</th>
               </tr>
             </thead>
             <tbody>
-              {notif.length === 0 && (
-                 <tr><td colSpan={4} className="p-4 text-center text-gray-500">No hay notificaciones.</td></tr>
+              {filteredNotif.length === 0 && (
+                <tr><td colSpan={isSuperadmin ? 6 : 5} className="p-8 text-center text-gray-400 italic">No hay notificaciones que coincidan.</td></tr>
               )}
-              {notif.map(n => (
+              {filteredNotif.map(n => (
                 <tr key={n.id} className="border-b last:border-0 hover:bg-gray-50 cursor-pointer" onClick={() => marcarLeida(n.id)}>
                   <td className={`px-4 py-3 font-medium text-gray-800 ${!n.leida ? "font-bold" : ""}`}>{n.titulo}</td>
+                  {isSuperadmin && (
+                    <td className="px-4 py-3 text-gray-500 text-xs">{entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global'}</td>
+                  )}
+                  <td className="px-4 py-3 text-gray-500 text-xs font-semibold">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
                   <td className="px-4 py-3 text-gray-500">{n.dest}</td>
                   <td className="px-4 py-3 text-gray-500">{new Date(n.fecha).toLocaleString('es-ES')}</td>
                   <td className="px-4 py-3">
@@ -182,16 +229,16 @@ const Notificaciones: React.FC = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {notif.length === 0 && (
+          {filteredNotif.length === 0 && (
              <div className="p-6 text-center text-gray-500 bg-white rounded-xl border border-dashed">No tienes notificaciones recientes.</div>
           )}
-          {notif.map(n => (
+          {filteredNotif.map(n => (
             <div key={n.id} onClick={() => marcarLeida(n.id)} className={`bg-white rounded-xl border p-4 cursor-pointer hover:shadow-md transition-shadow ${!n.leida ? "border-l-4 border-l-blue-500" : ""}`}>
               <div className="flex justify-between items-start mb-1">
                 <span className="font-semibold text-gray-800 text-sm">{tipoIcon[n.tipo]} {n.titulo}</span>
                 {!n.leida && <span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 shrink-0"></span>}
               </div>
-              <p className="text-gray-500 text-xs mb-2">{n.msg}</p>
+              <p className="text-gray-500 text-xs mb-2">{n.mensaje}</p>
               <p className="text-gray-400 text-xs">{new Date(n.fecha).toLocaleString('es-ES')}</p>
             </div>
           ))}
@@ -212,6 +259,16 @@ const Notificaciones: React.FC = () => {
               ))}
             </div>
           </div>
+          {isSuperadmin && (
+            <div className="mb-3">
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Entidad Destino</label>
+              <select value={newNotif.entidad_id} onChange={e => setNewNotif({...newNotif, entidad_id: e.target.value})}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+                <option value="todas">Todas (Aviso Global)</option>
+                {entidades.map(e => <option key={e.id} value={e.id}>{e.nombre_hospital}</option>)}
+              </select>
+            </div>
+          )}
           <div className="mb-3">
             <label className="block text-xs font-semibold text-gray-600 mb-1">Destinatarios</label>
             <div className="flex gap-2">

@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
-import { Plus } from 'lucide-react';
-import mockZonas from '../../mock/zonas.json';
-import mockUsuarios from '../../mock/usuarios.json';
+import { Plus, Search, X } from 'lucide-react';
+import { useBusquedaStore } from '../../store/busquedaStore';
 
 const NIVEL_BADGE: Record<string, string> = { 
   alto: "bg-red-100 text-red-700", 
@@ -14,6 +13,7 @@ const NIVEL_BADGE: Record<string, string> = {
 };
 
 const ROL_BADGE: Record<string, string> = { 
+  superadmin: "bg-red-100 text-red-700", 
   admin: "bg-purple-100 text-purple-700", 
   operario: "bg-blue-100 text-blue-700" 
 };
@@ -21,6 +21,7 @@ const ROL_BADGE: Record<string, string> = {
 type TabType = 'zonas' | 'usuarios';
 
 const Gestion: React.FC = () => {
+  const { query } = useBusquedaStore();
   const [tab, setTab] = useState<TabType>('zonas');
   const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState("");
@@ -37,28 +38,56 @@ const Gestion: React.FC = () => {
   const [editUsuario, setEditUsuario] = useState<any>(null);
   const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana" });
 
+  // Filtros por búsqueda global
+  const zonasFiltradas = useMemo(() => {
+    if (!query.trim()) return zonas;
+    const q = query.toLowerCase();
+    return zonas.filter(z =>
+      z.nombre.toLowerCase().includes(q) ||
+      (z.tipo && z.tipo.toLowerCase().includes(q))
+    );
+  }, [zonas, query]);
+
+  const usuariosFiltrados = useMemo(() => {
+    if (!query.trim()) return usuarios;
+    const q = query.toLowerCase();
+    return usuarios.filter(u =>
+      u.nombre.toLowerCase().includes(q) ||
+      (u.apellidos && u.apellidos.toLowerCase().includes(q)) ||
+      u.email.toLowerCase().includes(q)
+    );
+  }, [usuarios, query]);
+
   // Fetch Zonas
   const fetchZonas = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('zonas').select('*').order('nombre', { ascending: true });
-    if (!error && data && data.length > 0) {
-      setZonas(data);
-    } else {
-      setZonas(mockZonas);
+    try {
+      const result = await supabase.from('zonas').select('*').order('nombre', { ascending: true });
+
+      if (result?.error) throw result.error;
+      setZonas(result.data || []);
+    } catch (err: any) {
+      console.error('Error fetching zonas:', err);
+      setZonas([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Fetch Usuarios
   const fetchUsuarios = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('usuarios').select('*').order('nombre', { ascending: true });
-    if (!error && data && data.length > 0) {
-      setUsuarios(data);
-    } else {
-      setUsuarios(mockUsuarios);
+    try {
+      const result = await supabase.from('usuarios').select('*').order('nombre', { ascending: true });
+
+      if (result?.error) throw result.error;
+      setUsuarios(result.data || []);
+    } catch (err: any) {
+      console.error('Error fetching usuarios:', err);
+      setUsuarios([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -156,7 +185,14 @@ const Gestion: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold text-gray-800">Gestión de Zonas y Usuarios</h2>
           <p className="text-sm text-gray-500">
-            {tab === 'zonas' ? `Tienes ${zonas.length} zonas registradas.` : `Tienes ${usuarios.length} usuarios registrados.`}
+            {tab === 'zonas'
+              ? query
+                ? `Mostrando ${zonasFiltradas.length} de ${zonas.length} zonas`
+                : `Tienes ${zonas.length} zonas registradas.`
+              : query
+              ? `Mostrando ${usuariosFiltrados.length} de ${usuarios.length} usuarios`
+              : `Tienes ${usuarios.length} usuarios registrados.`
+            }
           </p>
         </div>
         <Button
@@ -201,44 +237,58 @@ const Gestion: React.FC = () => {
       ) : tab === 'zonas' ? (
         // Zonas list
         <div className="flex flex-col gap-3">
-          {zonas.length === 0 && <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay zonas.</div>}
-          {zonas.map(z => (
-            <div key={z.id} className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
-              <div>
-                <p className="font-bold text-gray-800 text-lg">{z.nombre}</p>
-                <p className="text-sm text-gray-500">Planta {z.planta} · {z.metros} m² · {z.tipo}</p>
-                <div className="flex gap-2 mt-2">
-                  <Badge cls={NIVEL_BADGE[z.nivel] || "bg-gray-100 text-gray-700"} label={`Prioridad ${z.nivel}`} />
-                  <Badge cls={z.estado === 'Activo' ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} label={z.estado} />
+          {zonasFiltradas.length === 0 && query ? (
+            <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">
+              No se encontraron zonas para "{query}".
+            </div>
+          ) : zonasFiltradas.length === 0 ? (
+            <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay zonas.</div>
+          ) : (
+            zonasFiltradas.map(z => (
+              <div key={z.id} className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
+                <div>
+                  <p className="font-bold text-gray-800 text-lg">{z.nombre}</p>
+                  <p className="text-sm text-gray-500">Planta {z.planta} · {z.metros} m² · {z.tipo}</p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge cls={NIVEL_BADGE[z.nivel] || "bg-gray-100 text-gray-700"} label={`Prioridad ${z.nivel}`} />
+                    <Badge cls={z.estado === 'Activo' ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} label={z.estado} />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-3 py-1.5" />
+                  <Button text="Eliminar" onClick={() => deleteZona(z.id)} variant="danger" className="px-3 py-1.5" />
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-3 py-1.5" />
-                <Button text="Eliminar" onClick={() => deleteZona(z.id)} variant="danger" className="px-3 py-1.5" />
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       ) : (
         // Usuarios list
         <div className="flex flex-col gap-3">
-          {usuarios.length === 0 && <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay usuarios.</div>}
-          {usuarios.map(u => (
-            <div key={u.id} className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
-              <div>
-                <p className="font-bold text-gray-800 text-lg">{u.nombre} {u.apellidos}</p>
-                <p className="text-sm text-gray-500">{u.email}</p>
-                <div className="flex gap-2 mt-2">
-                  <Badge cls={ROL_BADGE[u.rol] || "bg-gray-100 text-gray-700"} label={u.rol === 'admin' ? 'Administrador' : 'Operario'} />
-                  {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
+          {usuariosFiltrados.length === 0 && query ? (
+            <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">
+              No se encontraron usuarios para "{query}".
+            </div>
+          ) : usuariosFiltrados.length === 0 ? (
+            <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay usuarios.</div>
+          ) : (
+            usuariosFiltrados.map(u => (
+              <div key={u.id} className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
+                <div>
+                  <p className="font-bold text-gray-800 text-lg">{u.nombre} {u.apellidos}</p>
+                  <p className="text-sm text-gray-500">{u.email}</p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge cls={ROL_BADGE[u.rol] || "bg-gray-100 text-gray-700"} label={u.rol === 'superadmin' ? 'Super Admin' : u.rol === 'admin' ? 'Administrador' : 'Operario'} />
+                    {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5" />
+                  <Button text="Eliminar" onClick={() => deleteUsuario(u.id)} variant="danger" className="px-3 py-1.5" />
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5" />
-                <Button text="Eliminar" onClick={() => deleteUsuario(u.id)} variant="danger" className="px-3 py-1.5" />
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       )}
 
@@ -304,7 +354,7 @@ const Gestion: React.FC = () => {
           <div className="mb-3">
             <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
             <input value={usuarioForm.email} onChange={e => setUsuarioForm({ ...usuarioForm, email: e.target.value })}
-              placeholder="Ej: juan@hospital.com"
+              placeholder="Ej: juan@gmail.com"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
           </div>
           <div className="grid grid-cols-2 gap-3 mb-4">
@@ -314,6 +364,7 @@ const Gestion: React.FC = () => {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
                 <option value="operario">Operario</option>
                 <option value="admin">Administrador</option>
+                <option value="superadmin">Super Administrador</option>
               </select>
             </div>
             <div>

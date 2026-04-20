@@ -6,7 +6,7 @@ interface Usuario {
   nombre: string;
   apellidos?: string;
   email: string;
-  rol: 'admin' | 'operario';
+  rol: 'superadmin' | 'admin' | 'operario';
   turno?: string;
 }
 

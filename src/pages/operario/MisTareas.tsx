@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircle, Clock, AlertCircle, ClipboardList, TrendingUp, Filter, Search, ChevronRight } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, ClipboardList, TrendingUp, Filter, Search, ChevronRight, RefreshCw } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/Button';
-
-// Import mock
-import mockTareas from '../../mock/tareas.json';
+import { useBusquedaStore } from '../../store/busquedaStore';
 
 interface Tarea {
   id: number;
@@ -23,59 +21,176 @@ const PRIORIDAD_LABEL: Record<string, string> = { alta:"Prioridad Alta", media:"
 
 const MisTareas: React.FC = () => {
   const { usuario } = useAuth();
+  const { query, clearQuery } = useBusquedaStore();
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTareas = async () => {
     if (!usuario) return;
     setLoading(true);
+    setError(null);
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Timeout: Supabase no responde')), 10000)
+    );
 
     try {
-      const { data, error } = await supabase
+      const dataPromise = supabase
         .from('tareas')
         .select('*')
         .or(`asignado.ilike.%${usuario.nombre}%,asignado_id.eq.${usuario.id}`);
 
-      if (!error && data && data.length > 0) {
-        setTareas(data as Tarea[]);
-        setLoading(false);
-        return;
-      }
-    } catch {
-      // Tabla no existe o error de conexión, usar mock
-    }
+      const result = await Promise.race([dataPromise, timeoutPromise]) as any;
 
-    setTareas(mockTareas as any[]);
-    setLoading(false);
+      if (result?.error) {
+        const errMsg = result.error?.message || result.message || String(result.error);
+        if (errMsg.includes('relation') || errMsg.includes('does not exist')) {
+          throw new Error('Tabla tareas no existe en Supabase. Ejecuta el schema SQL.');
+        }
+        throw new Error(errMsg);
+      }
+
+      setTareas((result.data || []) as Tarea[]);
+    } catch (err: any) {
+      console.error('Error fetching tareas:', err);
+      if (err.message.includes('Timeout')) {
+        setError('Conexión con Supabase timeout.');
+      } else {
+        setError(err.message || 'Error al cargar tareas.');
+      }
+      setTareas([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchTareas();
+    if (usuario) {
+      fetchTareas();
+    }
   }, [usuario]);
 
-  const alta = tareas.filter(t => t.prioridad === "alta" && (t.estado === "pendiente" || t.estado === "en_curso")).length;
-  const completadas = tareas.filter(t => t.estado === "completada" || t.estado === "hecha").length;
-  const pendientes = tareas.filter(t => t.estado === "pendiente" || t.estado === "en_curso").length;
-  const total = tareas.length;
+  // Filtrar por búsqueda global
+  const tareasFiltradas = useMemo(() => {
+    if (!query.trim()) return tareas;
+    const q = query.toLowerCase();
+    return tareas.filter(t =>
+      t.zona.toLowerCase().includes(q) ||
+      (t.tarea && t.tarea.toLowerCase().includes(q)) ||
+      (t.desc && t.desc.toLowerCase().includes(q))
+    );
+  }, [tareas, query]);
+
+  const alta = tareasFiltradas.filter(t => t.prioridad === "alta" && (t.estado === "pendiente" || t.estado === "en_curso")).length;
+  const completadas = tareasFiltradas.filter(t => t.estado === "completada" || t.estado === "hecha").length;
+  const pendientes = tareasFiltradas.filter(t => t.estado === "pendiente" || t.estado === "en_curso").length;
+  const total = tareasFiltradas.length;
 
   const completar = async (id: number) => {
-    // Actualizar optimista UI
+    // Optimistic update
     setTareas(prev => prev.map(t => t.id === id ? {...t, estado:"completada"} : t));
-    
-    // Actualizar DB (ignorar error si la tabla no existe)
+
     try {
-      await supabase.from('tareas').update({ estado: 'completada' }).eq('id', id);
-    } catch {
-      // Ignorar error, la UI ya se actualizó
+      const { error } = await supabase.from('tareas').update({ estado: 'completada' }).eq('id', id);
+      if (error) {
+        console.error('Error completando tarea:', error);
+        alert(`Error: ${error.message}`);
+        fetchTareas(); // Revertir con recarga
+      }
+    } catch (err: any) {
+      console.error('Error completando tarea:', err);
+      alert(`Error: ${err.message || 'Verifica conexión con Supabase'}`);
+      fetchTareas();
     }
   };
 
-  if (loading) return <div className="text-gray-500 font-semibold p-6">Cargando tareas...</div>;
+  const handleRetry = () => {
+    fetchTareas();
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 font-sans">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <RefreshCw size={32} className="animate-spin text-blue-500" />
+          <p className="text-gray-500 font-semibold">Cargando tareas...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 font-sans">
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6 mb-6">
+          <h3 className="font-bold mb-2 text-lg">Error al cargar tareas</h3>
+          <p className="text-sm mb-4">{error}</p>
+          <div className="flex gap-3">
+            <button onClick={handleRetry} className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+              <RefreshCw size={16} />
+              Reintentar
+            </button>
+            {error.includes('Tabla') && (
+              <a href="SUPABASE_SETUP.md" target="_blank" rel="noopener noreferrer"
+                 className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm font-semibold transition-colors">
+                Ver guía de configuración
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (tareasFiltradas.length === 0) {
+    return (
+      <div className="p-6 font-sans">
+        <div className={`rounded-2xl p-8 text-center ${query ? 'bg-blue-50 border border-blue-200 text-blue-800' : 'bg-gray-50 border border-gray-200 text-gray-700'}`}>
+          {query ? <Search size={48} className="mx-auto mb-4 text-blue-400" /> : <CheckCircle size={48} className="mx-auto mb-4 text-gray-400" />}
+          <h3 className="font-bold mb-2 text-xl">
+            {query ? `No se encontraron tareas para "${query}"` : "No tienes tareas asignadas"}
+          </h3>
+          <p className="text-sm mb-4 max-w-md mx-auto">
+            {query
+              ? "Prueba con otro término de búsqueda o limpia el filtro"
+              : "El supervisor te asignará tareas cuando haya zonas y tareas creadas en el sistema."}
+          </p>
+          <div className="flex gap-3 justify-center">
+            {query && (
+              <button onClick={clearQuery} className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm font-semibold flex items-center gap-2">
+                <Search size={16} />
+                Limpiar búsqueda
+              </button>
+            )}
+            {!query && (
+              <button onClick={handleRetry} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold flex items-center gap-2">
+                <RefreshCw size={16} />
+                Actualizar
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">Mis Tareas</h2>
-      <p className="text-gray-400 text-sm font-medium italic mb-4">Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas.</p>
+      <div className="flex justify-between items-center mb-1">
+        <div>
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Mis Tareas</h2>
+          <p className="text-gray-400 text-sm font-medium italic mb-4">
+            {query ? `Filtrando por: "${query}"` : "Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas."}
+          </p>
+        </div>
+        {query && (
+          <button onClick={clearQuery} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+            <Search size={16} />
+            Limpiar filtro
+          </button>
+        )}
+      </div>
 
       {/* Counters */}
       <div className="flex justify-center gap-5 mb-6">
@@ -93,10 +208,7 @@ const MisTareas: React.FC = () => {
 
       {/* Task list */}
       <div className="flex flex-col gap-3">
-        {tareas.length === 0 && (
-          <div className="p-6 text-center text-gray-500 bg-white rounded-xl border border-dashed">No tienes tareas asignadas actualmente.</div>
-        )}
-        {[...tareas].sort((a,b) => {
+        {[...tareasFiltradas].sort((a,b) => {
           const ord: Record<string, number> = {alta:0, media:1, baja:2};
           const aComp = a.estado === "completada" || a.estado === "hecha";
           const bComp = b.estado === "completada" || b.estado === "hecha";
@@ -113,11 +225,11 @@ const MisTareas: React.FC = () => {
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
               {!isCompleted ? (
-                    <Button 
-                      text="Hecho" 
-                      onClick={() => completar(t.id)} 
-                      variant="success" 
-                      icon={CheckCircle} 
+                    <Button
+                      text="Hecho"
+                      onClick={() => completar(t.id)}
+                      variant="success"
+                      icon={CheckCircle}
                       className="px-4 py-2 ml-3 shrink-0 shadow-sm"
                     />
               ) : (

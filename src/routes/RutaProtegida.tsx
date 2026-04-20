@@ -3,7 +3,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface RutaProtegidaProps {
-    rolPermitido: 'admin' | 'operario';
+    rolPermitido: 'superadmin' | 'admin' | 'operario';
+    
 }
 
 const RutaProtegida: React.FC<RutaProtegidaProps> = ({ rolPermitido }) => {

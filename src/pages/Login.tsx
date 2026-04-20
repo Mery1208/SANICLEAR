@@ -2,19 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 import logoImg from '../assets/img/logo.png';
 
 export default function Login(): React.JSX.Element {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigate = useNavigate();
   const { login, usuario } = useAuth();
 
   // Redirigir si el usuario ya está logueado
   useEffect(() => {
     if (usuario) {
-      if (usuario.rol === 'admin') navigate('/admin');
+      if (usuario.rol === 'superadmin') navigate('/superadmin');
+      else if (usuario.rol === 'admin') navigate('/admin');
       else navigate('/operario');
     }
   }, [usuario, navigate]);
@@ -28,8 +31,10 @@ export default function Login(): React.JSX.Element {
       const user = await login(trimmedEmail, password);
       
       if (user) {
-        const rol = user.user_metadata?.rol || (trimmedEmail.includes('admin') ? 'admin' : 'operario');
-        if (rol === 'admin') {
+        const rol = user.user_metadata?.rol || (trimmedEmail.includes('superadmin') ? 'superadmin' : trimmedEmail.includes('admin') ? 'admin' : 'operario');
+        if (rol === 'superadmin') {
+          navigate('/superadmin');
+        } else if (rol === 'admin') {
           navigate('/admin');
         } else {
           navigate('/operario');
@@ -71,13 +76,24 @@ export default function Login(): React.JSX.Element {
 
             <div className="input-group">
               <label>Contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                disabled={loading}
-              />
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  disabled={loading}
+                  style={{ width: '100%', paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors"
+                  style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
             <div className="forgot-password">

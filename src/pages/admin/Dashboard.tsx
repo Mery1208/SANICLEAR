@@ -1,16 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Clock, AlertTriangle, CheckCircle, RefreshCw, PlusCircle, History } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle, RefreshCw, PlusCircle, History, Search, X } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
+import { useBusquedaStore } from '../../store/busquedaStore';
 
-// Import mock data for testing
-import mockZonas from '../../mock/zonas.json';
-import mockUsuarios from '../../mock/usuarios.json';
-import mockTareas from '../../mock/tareas.json';
-import mockIncidencias from '../../mock/incidencias.json';
-import mockChartData from '../../mock/chartData.json';
+interface Tarea {
+  id: number;
+  zona: string;
+  tarea?: string;
+  descripcion?: string;
+  asignado: string;
+  estado: string;
+  prioridad: string;
+}
+
+interface Incidencia {
+  id: number;
+  prioridad: string;
+  estado: string;
+}
 
 interface Tarea {
   id: number;
@@ -41,47 +51,98 @@ const PRIORIDAD_BADGE: Record<string, string> = {
   baja: "bg-green-100 text-green-700" 
 };
 
-// Datos demo para el chart mientras se recolectan reales
-const CHART_DATA = [
-  { mes:"Nov", Abiertas:4, Resueltas:3 },
-  { mes:"Dic", Abiertas:7, Resueltas:5 },
-  { mes:"Ene", Abiertas:5, Resueltas:6 },
-  { mes:"Feb", Abiertas:8, Resueltas:7 },
-  { mes:"Mar", Abiertas:3, Resueltas:2 },
-];
 
 const Dashboard: React.FC = () => {
+  const { query } = useBusquedaStore();
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [incidencias, setIncidencias] = useState<Incidencia[]>([]);
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [zonas, setZonas] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ titulo:"", zona:"", operario:"", prioridad:"media", fecha:"", descripcion:"" });
   const [ok, setOk] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
-    const [tRes, iRes, uRes, zRes] = await Promise.all([
-      supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false }),
-      supabase.from('incidencias').select('id, prioridad, estado'),
-      supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario'),
-      supabase.from('zonas').select('id, nombre')
-    ]);
+    setError(null);
 
-    // Usar datos reales si existen, sino usar mock para demo
-    setTareas(tRes.data && tRes.data.length > 0 ? (tRes.data as Tarea[]) : (mockTareas as any[]));
-    setIncidencias(iRes.data && iRes.data.length > 0 ? (iRes.data as Incidencia[]) : (mockIncidencias as any[]));
-    setUsuarios(uRes.data && uRes.data.length > 0 ? (uRes.data || []) : mockUsuarios);
-    setZonas(zRes.data && zRes.data.length > 0 ? (zRes.data || []) : mockZonas);
-    
-    setLoading(false);
+    // Timeout de 10 segundos para no quedar cargando eternamente
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Timeout: Supabase no responde')), 10000)
+    );
+
+    try {
+      const dataPromise = Promise.all([
+        supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false }),
+        supabase.from('incidencias').select('id, prioridad, estado, created_at'),
+        supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario'),
+        supabase.from('zonas').select('id, nombre')
+      ]);
+
+      const [tRes, iRes, uRes, zRes] = await Promise.race([dataPromise, timeoutPromise]) as any;
+
+      // Verificar errores de Supabase
+      if (tRes.error) throw new Error(`Tabla tareas: ${tRes.error.message}`);
+      if (iRes.error) throw new Error(`Tabla incidencias: ${iRes.error.message}`);
+      if (uRes.error) throw new Error(`Tabla usuarios: ${uRes.error.message}`);
+      if (zRes.error) throw new Error(`Tabla zonas: ${zRes.error.message}`);
+
+      setTareas((tRes.data || []) as Tarea[]);
+      setIncidencias((iRes.data || []) as Incidencia[]);
+      setUsuarios(uRes.data || []);
+      setZonas(zRes.data || []);
+    } catch (err: any) {
+      console.error('Dashboard fetch error:', err);
+      if (err.message.includes('Timeout')) {
+        setError('Conexión con Supabase timeout. Verifica que la base de datos esté disponible.');
+      } else if (err.message.includes('relation') || err.message.includes('does not exist')) {
+        setError(`Tabla no configurada en Supabase. Ejecuta el schema SQL. Detalle: ${err.message}`);
+      } else {
+        setError(err.message || 'Error al cargar datos de Supabase.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Filtrar tareas por búsqueda
+  const tareasFiltradas = useMemo(() => {
+    if (!query.trim()) return tareas;
+    const q = query.toLowerCase();
+    return tareas.filter(t =>
+      t.zona.toLowerCase().includes(q) ||
+      (t.tarea && t.tarea.toLowerCase().includes(q)) ||
+      (t.descripcion && t.descripcion.toLowerCase().includes(q)) ||
+      t.asignado.toLowerCase().includes(q)
+    );
+  }, [tareas, query]);
+
+  // Calcular CHART_DATA real basado en incidencias de Supabase
+  const chartData = useMemo(() => {
+    if (incidencias.length === 0) return [];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const counts: Record<string, { mes: string; Abiertas: number; Resueltas: number }> = {};
+    
+    incidencias.forEach((i: any) => {
+      if (!i.created_at) return;
+      const d = new Date(i.created_at);
+      const mName = months[d.getMonth()];
+      if (!counts[mName]) {
+        counts[mName] = { mes: mName, Abiertas: 0, Resueltas: 0 };
+      }
+      if (i.estado === 'resuelta') counts[mName].Resueltas++;
+      else counts[mName].Abiertas++;
+    });
+    
+    return Object.values(counts);
+  }, [incidencias]);
 
   const pendientes = tareas.filter(t => t.estado === "pendiente").length;
   const alertas = incidencias.filter(i => i.prioridad === "alta" && i.estado !== "resuelta").length;
@@ -105,7 +166,7 @@ const Dashboard: React.FC = () => {
     };
 
     const { data, error } = await supabase.from('tareas').insert([insertData]).select();
-    
+
     if (!error && data) {
       setTareas(prev => [...prev, data[0] as Tarea]);
       setShowModal(false);
@@ -114,7 +175,7 @@ const Dashboard: React.FC = () => {
       setTimeout(() => setOk(false), 3000);
     } else {
       console.error(error);
-      alert('Error guardando la tarea');
+      alert(`Error guardando la tarea: ${error?.message || 'Verifica conexión con Supabase'}`);
     }
   };
 
@@ -127,19 +188,59 @@ const Dashboard: React.FC = () => {
 
   if (loading) return <div className="p-6 text-gray-500 font-semibold font-sans">Cargando panel...</div>;
 
+  if (error) {
+    return (
+      <div className="p-6 font-sans">
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6 mb-6">
+          <h3 className="font-bold mb-2">Error al cargar datos</h3>
+          <p className="text-sm mb-4">{error}</p>
+          <div className="flex gap-3">
+            <button onClick={fetchData} className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded-lg text-sm font-semibold transition-colors">
+              Reintentar
+            </button>
+            <a href="https://supabase.com/docs" target="_blank" rel="noopener noreferrer"
+               className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm font-semibold transition-colors">
+              Ver documentation Supabase
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="font-sans">
       <div className="flex justify-between items-center mb-1">
-        <h2 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de control</h2>
-        <button onClick={() => setShowModal(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-100">
+        <div>
+          <h2 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de control</h2>
+          <p className="text-gray-400 text-sm mb-2 font-medium italic">Resumen general y estado del sistema en tiempo real</p>
+          {(zonas.length === 0 || usuarios.length === 0) && (
+            <p className="text-amber-600 text-sm font-semibold bg-amber-50 px-3 py-2 rounded-lg inline-block mt-2">
+              ⚠️ Datos mínimos no configurados. Ve a <strong>Gestión Zonas y Usuarios</strong> para añadir zonas y operarios.
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => {
+            if (zonas.length === 0 || usuarios.length === 0) {
+              alert('Primero debes crear al menos una zona y un operario en "Gestión Zonas y Usuarios"');
+              return;
+            }
+            setShowModal(true);
+          }}
+          disabled={zonas.length === 0 || usuarios.length === 0}
+          className={`${zonas.length === 0 || usuarios.length === 0
+            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+            : 'bg-blue-500 hover:bg-blue-600 text-white'
+          } px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-100`}
+        >
           + Crear Nueva Tarea
         </button>
       </div>
-      <p className="text-gray-400 text-sm mb-8 font-medium italic">Resumen general y estado del sistema en tiempo real</p>
 
       {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           ["Tareas Pendientes", pendientes, <Clock size={24} />, "text-yellow-600 bg-yellow-50"],
           ["Alertas Críticas",  alertas,    <AlertTriangle size={24} />, "text-red-600 bg-red-50"],
@@ -148,11 +249,11 @@ const Dashboard: React.FC = () => {
         ].map(([l, v, ic, cls]) => (
           <div key={l as string} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center">
-              <div>
-                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">{l as string}</p>
+              <div className="min-w-0 flex-1 pr-2">
+                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest truncate" title={l as string}>{l as string}</p>
                 <p className={`text-3xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
               </div>
-              <div className={`p-3 rounded-xl ${(cls as string).split(' ')[1]}`}>
+              <div className={`p-3 rounded-xl shrink-0 ${(cls as string).split(' ')[1]}`}>
                 {ic as React.ReactNode}
               </div>
             </div>
@@ -163,8 +264,13 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
           <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">Incidencias por mes</p>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={CHART_DATA} barSize={20}>
+          {chartData.length === 0 ? (
+             <div className="h-[240px] flex items-center justify-center text-gray-400 font-semibold text-sm border-2 border-dashed border-gray-100 rounded-2xl">
+               Aún no hay datos históricos de incidencias
+             </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={240} initialDimension={{ width: 10, height: 240 }}>
+              <BarChart data={chartData} barSize={20}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis dataKey="mes" tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
@@ -172,7 +278,8 @@ const Dashboard: React.FC = () => {
               <Bar dataKey="Abiertas"  fill="#3B82F6" radius={[6,6,0,0]} />
               <Bar dataKey="Resueltas" fill="#10B981" radius={[6,6,0,0]} />
             </BarChart>
-          </ResponsiveContainer>
+            </ResponsiveContainer>
+          )}
         </div>
 
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
@@ -204,10 +311,12 @@ const Dashboard: React.FC = () => {
               <tr>{["Zona","Tarea","Asignado","Estado","Prioridad"].map(h => <th key={h} className="text-left px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {tareas.length === 0 && (
-                <tr><td colSpan={5} className="p-10 text-center text-gray-400 font-bold italic">No hay tareas activas en este momento.</td></tr>
+              {(query ? tareasFiltradas : tareas).length === 0 && (
+                <tr><td colSpan={5} className="p-10 text-center text-gray-400 font-bold italic">
+                  {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
+                </td></tr>
               )}
-              {tareas.map(t => (
+              {(query ? tareasFiltradas : tareas).map(t => (
                 <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
                   <td className="px-8 py-5 font-bold text-[#1e3a5f] text-sm">{t.zona}</td>
                   <td className="px-8 py-5 text-gray-500 text-sm font-medium">{t.tarea || t.descripcion}</td>
@@ -232,8 +341,20 @@ const Dashboard: React.FC = () => {
 
       {showModal && (
         <Modal title="NUEVA TAREA" onClose={() => setShowModal(false)}>
-           {/* Form content matched to new style */}
           <div className="flex flex-col gap-6">
+            {zonas.length === 0 || usuarios.length === 0 ? (
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-semibold">
+                ⚠️ No puedes crear tareas hasta que al menos exista:
+                <ul className="list-disc ml-5 mt-2">
+                  {zonas.length === 0 && <li>Una zona (en Gestión Zonas)</li>}
+                  {usuarios.length === 0 && <li>Un operario (en Gestión Usuarios)</li>}
+                </ul>
+                <button onClick={() => setShowModal(false)} className="mt-3 px-4 py-2 bg-amber-100 hover:bg-amber-200 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors">
+                  Cerrar
+                </button>
+              </div>
+            ) : (
+              <>
             <div className="flex flex-col gap-1.5">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Título de la Tarea</label>
               <input value={form.titulo} onChange={e => setForm({...form, titulo:e.target.value})}
@@ -277,8 +398,13 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex gap-4 mt-4">
               <button onClick={() => setShowModal(false)} className="px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
-              <button onClick={crearTarea} className="flex-1 bg-blue-500 text-white py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-xl shadow-blue-100 transition-all active:scale-[0.98]">Asignar Tarea</button>
+              <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
+                className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] ${!form.titulo || !form.zona || !form.operario ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 shadow-blue-100'}`}>
+                Asignar Tarea
+              </button>
             </div>
+              </>
+            )}
           </div>
         </Modal>
       )}

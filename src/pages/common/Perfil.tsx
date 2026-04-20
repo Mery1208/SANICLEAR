@@ -4,16 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import { Shield, LogOut, Camera, Save, X } from 'lucide-react';
-
-const MOCK_PASSWORDS: Record<string, string> = {
-  'admin@saniclear.com': 'Admin1234!',
-  'juan.perez@saniclear.com': 'Operario123!',
-  'maria.ceballos@saniclear.com': 'Operario123!',
-  'evelia.gil@saniclear.com': 'Operario123!',
-  'carlos.f@saniclear.com': 'Operario123!',
-  'ana.martinez@saniclear.com': 'Operario123!',
-};
+import { Shield, LogOut, Camera, Save, X, Eye, EyeOff } from 'lucide-react';
 
 const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-#])[A-Za-z\d@$!%*?&._\-#]{8,}$/;
 
@@ -33,6 +24,9 @@ const Perfil: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassActual, setShowPassActual] = useState(false);
+  const [showPassNueva, setShowPassNueva] = useState(false);
+  const [showPassConfirmar, setShowPassConfirmar] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -62,10 +56,7 @@ const Perfil: React.FC = () => {
           password: form.passwordActual,
         });
         passCorrecta = !verifyError;
-      } catch {
-        // Si Supabase no responde, verificar contra mock
-        passCorrecta = MOCK_PASSWORDS[usuario.email] === form.passwordActual;
-      }
+      } catch (err) { console.error(err); }
 
       if (!passCorrecta) {
         setError("La contraseña actual no es correcta.");
@@ -103,11 +94,6 @@ const Perfil: React.FC = () => {
           password: form.passwordNueva,
         });
         if (authError) throw authError;
-
-        // Actualizar mock local si aplica
-        if (MOCK_PASSWORDS[usuario.email]) {
-          MOCK_PASSWORDS[usuario.email] = form.passwordNueva;
-        }
       }
 
       // Actualizar store local
@@ -196,21 +182,36 @@ const Perfil: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-1.5 md:col-span-2">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wide ml-1">Contraseña Actual</label>
-                <input type="password" value={form.passwordActual} onChange={e => setForm({...form, passwordActual:e.target.value})}
-                  placeholder="Introduce tu contraseña actual..."
-                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all" />
+                <div className="relative">
+                  <input type={showPassActual ? "text" : "password"} value={form.passwordActual} onChange={e => setForm({...form, passwordActual:e.target.value})}
+                    placeholder="Introduce tu contraseña actual..."
+                    className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 pr-12 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all" />
+                  <button type="button" onClick={() => setShowPassActual(!showPassActual)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors">
+                    {showPassActual ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wide ml-1">Nueva Contraseña</label>
-                <input type="password" value={form.passwordNueva} onChange={e => setForm({...form, passwordNueva:e.target.value})}
-                  placeholder="Mín. 8 caracteres, mayús, minús, número y carácter especial"
-                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all" />
+                <div className="relative">
+                  <input type={showPassNueva ? "text" : "password"} value={form.passwordNueva} onChange={e => setForm({...form, passwordNueva:e.target.value})}
+                    placeholder="Mín. 8 caracteres, mayús, minús, número y carácter especial"
+                    className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 pr-12 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all" />
+                  <button type="button" onClick={() => setShowPassNueva(!showPassNueva)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors">
+                    {showPassNueva ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wide ml-1">Confirmar Contraseña</label>
-                <input type="password" value={form.passwordConfirmar} onChange={e => setForm({...form, passwordConfirmar:e.target.value})}
-                  placeholder="Repite la nueva contraseña"
-                  className={`w-full border rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all ${form.passwordConfirmar && form.passwordNueva !== form.passwordConfirmar ? 'border-red-300 focus:ring-red-200' : 'border-blue-50'}`} />
+                <div className="relative">
+                  <input type={showPassConfirmar ? "text" : "password"} value={form.passwordConfirmar} onChange={e => setForm({...form, passwordConfirmar:e.target.value})}
+                    placeholder="Repite la nueva contraseña"
+                    className={`w-full border rounded-2xl bg-gray-50/50 px-5 pr-12 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all ${form.passwordConfirmar && form.passwordNueva !== form.passwordConfirmar ? 'border-red-300 focus:ring-red-200' : 'border-blue-50'}`} />
+                  <button type="button" onClick={() => setShowPassConfirmar(!showPassConfirmar)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors">
+                    {showPassConfirmar ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
                 {form.passwordConfirmar && form.passwordNueva !== form.passwordConfirmar && (
                   <p className="text-[10px] text-red-500 font-bold ml-1 mt-1">Las contraseñas no coinciden</p>
                 )}

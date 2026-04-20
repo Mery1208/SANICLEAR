@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
-import { AlertTriangle, CheckCircle, Clock, TrendingUp, Filter, Search, ChevronRight, Plus } from 'lucide-react';
-
-import mockIncidencias from '../../mock/incidencias.json';
+import { AlertTriangle, CheckCircle, Clock, TrendingUp, Plus, CheckCircle2 } from 'lucide-react';
 
 const ESTADO_BADGE: Record<string, string> = { 
   abierta: "bg-red-50 text-red-500 border border-red-100", 
@@ -29,29 +27,50 @@ const GestionIncidencias: React.FC = () => {
   const [selected, setSelected] = useState<any>(null);
   const [notaTexto, setNotaTexto] = useState("");
   const [ok, setOk] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createForm, setCreateForm] = useState({ tipo:"", zona:"", descripcion:"", prioridad:"media", urgente:false });
+  const [operarios, setOperarios] = useState<any[]>([]);
 
   const fetchIncidencias = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('incidencias').select('*').order('created_at', { ascending: false });
-    
-    if (!error && data && data.length > 0) {
-      setIncidencias(data);
-    } else {
-      // Fallback a mock data y mapear usuario_id a nombre si es necesario
-      const mapped = mockIncidencias.map(i => ({
+    const { data, error } = await supabase
+      .from('incidencias')
+      .select(`
+        id,
+        titulo,
+        zona,
+        tipo,
+        prioridad,
+        estado,
+        descripcion,
+        created_at,
+        usuario_id,
+        usuarios (nombre, apellidos)
+      `)
+      .order('created_at', { ascending: false });
+
+    // Ahora entra si no hay error y data existe, ¡incluso si data.length es 0 (BD vacía)!
+    if (!error && data) {
+      const mapped = (data as any[]).map(i => ({
         ...i,
-        operario: i.usuario_id === 'oper-1' ? 'Juan Pérez' : 
-                  i.usuario_id === 'oper-5' ? 'Ana Martínez' : 
-                  i.usuario_id === 'oper-2' ? 'María Ceballos' : 'Sistema'
+        operario: i.usuarios ? `${i.usuarios.nombre} ${i.usuarios.apellidos}` : 'Sin asignar'
       }));
       setIncidencias(mapped);
+    } else if (error) {
+      console.error('Error cargando incidencias desde Supabase:', error.message);
     }
     setLoading(false);
   };
 
   useEffect(() => {
     fetchIncidencias();
+    fetchOperarios();
   }, []);
+
+  const fetchOperarios = async () => {
+    const { data } = await supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
+    if (data) setOperarios(data);
+  };
 
   const stats = {
     abiertas: incidencias.filter(i => i.estado === "abierta").length,
@@ -63,24 +82,56 @@ const GestionIncidencias: React.FC = () => {
   const categories = ["Equipo", "Material", "Acceso", "Zona", "Otro"];
   const getCatCount = (cat: string) => incidencias.filter(i => i.tipo === cat).length;
 
-  const filtered = incidencias.filter(i => {
-    const matchStatus = 
-        filterStatus === 'Todas' ? true :
-        filterStatus === 'Abiertas' ? i.estado === 'abierta' :
-        filterStatus === 'En Revisión' ? (i.estado === 'en_revision' || i.estado === 'en_proceso') :
-        i.estado === 'resuelta';
-    
-    const matchCat = filterCategory ? i.tipo === filterCategory : true;
-    return matchStatus && matchCat;
-  });
+  const filteredIncidencias = useMemo(() => {
+    return incidencias.filter(i => {
+      const matchStatus =
+          filterStatus === 'Todas' ? true :
+          filterStatus === 'Abiertas' ? i.estado === 'abierta' :
+          filterStatus === 'En Revisión' ? (i.estado === 'en_revision' || i.estado === 'en_proceso') :
+          i.estado === 'resuelta';
+
+      const matchCat = filterCategory ? i.tipo === filterCategory : true;
+      return matchStatus && matchCat;
+    });
+  }, [incidencias, filterStatus, filterCategory]);
 
   const updateEstado = async (id: number, estado: string, notas: string) => {
-    const { error } = await supabase.from('incidencias').update({ estado, notas }).eq('id', id);
+    const { error } = await supabase.from('incidencias').update({ estado }).eq('id', id);
     if (!error) {
-      setIncidencias(prev => prev.map(i => i.id === id ? {...i, estado, notas} : i));
+      setIncidencias(prev => prev.map(i => i.id === id ? {...i, estado} : i));
       setSelected(null);
       setOk("¡Estado actualizado!");
       setTimeout(() => setOk(""), 3000);
+    }
+  };
+
+  const handleCreateIncidencia = async () => {
+    if (!createForm.tipo || !createForm.zona || !createForm.descripcion) return;
+    setLoading(true);
+
+    const insertData = {
+      titulo: `${createForm.tipo} - ${createForm.zona}`,
+      tipo: createForm.tipo,
+      zona: createForm.zona,
+      prioridad: createForm.urgente ? "critica" : createForm.prioridad,
+      estado: "abierta",
+      descripcion: createForm.descripcion,
+      usuario_id: null,
+      operario: "Sin asignar"
+    };
+
+    const { error } = await supabase.from('incidencias').insert([insertData]);
+
+    setLoading(false);
+    if (!error) {
+      setShowCreateModal(false);
+      setOk("¡Incidencia creada!");
+      fetchIncidencias();
+      setCreateForm({ tipo:"", zona:"", descripcion:"", prioridad:"media", urgente:false });
+      setTimeout(() => setOk(""), 3000);
+    } else {
+      console.error(error);
+      alert('Error al crear la incidencia');
     }
   };
 
@@ -93,30 +144,31 @@ const GestionIncidencias: React.FC = () => {
           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
           <p className="text-gray-400 text-sm font-medium italic">Revisa, asigna y resuelve reportes técnicos</p>
         </div>
-        <Button 
-          text="Nueva Incidencia" 
-          variant="primary" 
-          icon={Plus} 
+        <Button
+          text="Nueva Incidencia"
+          onClick={() => setShowCreateModal(true)}
+          variant="primary"
+          icon={Plus}
           className="py-2 px-5 shadow-lg shadow-blue-100"
         />
       </div>
 
       {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 text-sm font-bold animate-bounce">✓ {ok}</div>}
 
-      {/* Stats row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Stats row — 4 en una línea como Dashboard */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          ["Abierta", stats.abiertas, <AlertTriangle size={20} />, "text-red-500 bg-red-50"],
-          ["Resuelta", stats.resueltas, <CheckCircle size={20} />, "text-green-500 bg-green-50"],
-          ["En Revisión", stats.en_revision, <Clock size={20} />, "text-orange-500 bg-orange-50"],
-          ["Total mes", stats.total, <TrendingUp size={20} />, "text-blue-500 bg-blue-50"]
-        ].map(([l, v, icon, cls]) => (
-          <div key={l as string} className="bg-white rounded-2xl border border-gray-100 p-5 flex justify-between items-center shadow-sm">
+          ["Abierta", stats.abiertas, <AlertTriangle size={24} />, "text-red-600 bg-red-50"],
+          ["Resuelta", stats.resueltas, <CheckCircle size={24} />, "text-green-600 bg-green-50"],
+          ["En Revisión", stats.en_revision, <Clock size={24} />, "text-orange-600 bg-orange-50"],
+          ["Total", stats.total, <TrendingUp size={24} />, "text-blue-600 bg-blue-50"]
+        ].map(([l, v, ic, cls]) => (
+          <div key={l as string} className="bg-white rounded-2xl border border-gray-100 p-5 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
             <div>
-               <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">{l as string}</p>
-               <p className={`text-2xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+              <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">{l as string}</p>
+              <p className={`text-3xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
             </div>
-            <div className={`p-3 rounded-xl ${(cls as string).split(' ')[1]}`}>{icon as any}</div>
+            <div className={`p-3 rounded-xl ${(cls as string).split(' ')[1]}`}>{ic as React.ReactNode}</div>
           </div>
         ))}
       </div>
@@ -155,10 +207,10 @@ const GestionIncidencias: React.FC = () => {
               <tr>{["#","Título","Tipo","Zona","Operario","Prioridad","Estado","Fecha",""].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.length === 0 && (
-                <tr><td colSpan={9} className="p-10 text-center text-gray-400 font-bold italic">No se han encontrado reportes con estos filtros.</td></tr>
-              )}
-              {filtered.map(i => (
+               {filteredIncidencias.length === 0 && (
+                 <tr><td colSpan={9} className="p-10 text-center text-gray-400 font-bold italic">No se han encontrado reportes con estos filtros.</td></tr>
+               )}
+               {filteredIncidencias.map(i => (
                 <tr key={i.id} className="hover:bg-blue-50/10 transition-colors">
                   <td className="px-6 py-4 text-[11px] font-bold text-gray-300">#{i.id}</td>
                   <td className="px-6 py-4 font-bold text-[#1e3a5f] text-[13px]">{i.titulo}</td>
@@ -189,9 +241,72 @@ const GestionIncidencias: React.FC = () => {
          </div>
       </div>
 
+      {/* Modal Crear Incidencia */}
+      {showCreateModal && (
+        <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)}>
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
+              <select value={createForm.tipo} onChange={e => setCreateForm({...createForm, tipo:e.target.value})}
+                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                <option value="">Seleccionar...</option>
+                {["Equipo","Material","Acceso","Zona","Otro"].map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
+              <input value={createForm.zona} onChange={e => setCreateForm({...createForm, zona:e.target.value})}
+                placeholder="Ej: UCI - Planta 2"
+                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+              <textarea value={createForm.descripcion} onChange={e => setCreateForm({...createForm, descripcion:e.target.value})}
+                rows={4} placeholder="Describe el problema..."
+                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+              <div className="grid grid-cols-4 gap-3">
+                {["baja","media","alta","critica"].map(p => (
+                  <button key={p} type="button"
+                    onClick={() => !createForm.urgente && setCreateForm({...createForm, prioridad: p})}
+                    disabled={createForm.urgente}
+                    className={`px-3 py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-wider transition-all ${createForm.urgente && p === 'critica' ? 'bg-red-100 text-red-800 border-red-300 ring-2 ring-red-200' : createForm.prioridad === p ? 'bg-blue-100 text-blue-800 border-blue-300 ring-2 ring-blue-100' : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                    {p.charAt(0).toUpperCase() + p.slice(1)}
+                  </button>
+                ))}
+              </div>
+              {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3 bg-red-50/30 p-3 rounded-2xl cursor-pointer hover:bg-red-50/50 transition-colors"
+                onClick={() => setCreateForm({...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad})}>
+                <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-red-200"}`}>
+                  {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
+                </div>
+                <label className="text-xs text-red-700 font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
+              </div>
+            </div>
+
+            <div className="flex gap-4 mt-2">
+              <button onClick={() => setShowCreateModal(false)} className="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
+              <button onClick={handleCreateIncidencia} disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion}
+                className="flex-1 bg-blue-500 text-white py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-lg shadow-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                {loading ? "Creando..." : "Crear Incidencia"}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {/* Modal Detail View matched to Screenshot 2 */}
       {selected && (
-        <Modal title="" onClose={() => setSelected(null)}>
+        <Modal title={selected.titulo} onClose={() => setSelected(null)}>
           <div className="p-2">
             <div className="flex justify-between items-start mb-6">
                <div>
@@ -227,6 +342,13 @@ const GestionIncidencias: React.FC = () => {
                   {selected.descripcion || selected.desc}
                 </div>
             </div>
+
+            {selected.foto_url && (
+              <div className="mb-8">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Foto Adjunta</p>
+                <img src={selected.foto_url} alt="Incidencia" className="rounded-2xl max-h-64 object-cover border border-gray-100 shadow-sm" />
+              </div>
+            )}
 
             <div className="mb-8">
                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-3">Cambiar estado:</p>

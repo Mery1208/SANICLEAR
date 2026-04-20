@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Activity, ShieldCheck, Users, BarChart3, Smartphone, Globe, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { gsap } from 'gsap';
 import Navbar from '../components/Navbar';
@@ -10,6 +10,7 @@ import medicoImg from '../assets/img/medico.avif';
 import pasilloImg from '../assets/img/pasillo.avif';
 
 export default function Landing(): React.JSX.Element {
+  const navigate = useNavigate();
 
   useEffect(() => {
     // animacion de entrada del hero con gsap
@@ -63,9 +64,7 @@ export default function Landing(): React.JSX.Element {
               críticos. La solución completa para hospitales modernos.
             </p>
             <div className="hero-buttons">
-              <Link to="/login">
-                <Button text="Entrar al Portal" variant="primary" icon={ArrowRight} />
-              </Link>
+              <Button text="Entrar al Portal" variant="primary" icon={ArrowRight} onClick={() => navigate('/login')} />
               <a href="#sobre-nosotros">
                 <Button text="Conocer Más" variant="secondary" />
               </a>
@@ -239,9 +238,7 @@ export default function Landing(): React.JSX.Element {
             Únete a los hospitales que ya confían en SANICLEAR para optimizar sus procesos
             de higiene y garantizar la máxima seguridad.
           </p>
-          <Link to="/login">
-            <Button text="Comenzar Ahora" variant="primary" icon={ArrowRight} />
-          </Link>
+          <Button text="Comenzar Ahora" variant="primary" icon={ArrowRight} onClick={() => navigate('/login')} />
         </div>
       </section>
 

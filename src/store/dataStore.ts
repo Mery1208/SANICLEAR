@@ -1,7 +1,5 @@
 import { create } from 'zustand';
 import { supabase } from '../supabase/client';
-import mockNotif from '../mock/notificaciones.json';
-import mockIncid from '../mock/incidencias.json';
 
 interface DataState {
   notifCount: number;
@@ -15,31 +13,32 @@ interface DataState {
 export const useDataStore = create<DataState>((set, get) => ({
   notifCount: 0,
   incidCount: 0,
-  
+
   setNotifCount: (notifCount) => set({ notifCount }),
   setIncidCount: (incidCount) => set({ incidCount }),
 
   fetchCounts: async () => {
-    // Calculamos counts de mocks como fallback
-    const mockNotifCount = (mockNotif as any[]).filter((n: any) => !n.leida).length;
-    const mockIncidCount = (mockIncid as any[]).filter((i: any) => i.estado === 'abierta').length;
+    try {
+      const [nRes, iRes] = await Promise.all([
+        supabase.from('notificaciones').select('*', { count: 'exact', head: true }).eq('leida', false),
+        supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('estado', 'abierta')
+      ]);
 
-    // Contar notificaciones no leídas
-    const { count: nRef, error: nErr } = await supabase
-      .from('notificaciones')
-      .select('*', { count: 'exact', head: true })
-      .eq('leida', false);
-    
-    // Contar incidencias abiertas
-    const { count: iRef, error: iErr } = await supabase
-      .from('incidencias')
-      .select('*', { count: 'exact', head: true })
-      .eq('estado', 'abierta');
+      if (nRes.error) {
+        console.warn('notificaciones table error (ignorado):', nRes.error.message);
+      }
+      if (iRes.error) {
+        console.warn('incidencias table error (ignorado):', iRes.error.message);
+      }
 
-    set({ 
-      notifCount: (!nErr && nRef !== null && nRef > 0) ? nRef : mockNotifCount,
-      incidCount: (!iErr && iRef !== null && iRef > 0) ? iRef : mockIncidCount
-    });
+      set({
+        notifCount: nRes.count || 0,
+        incidCount: iRes.count || 0
+      });
+    } catch (err) {
+      console.warn('Error fetching counts (ignorado):', err);
+      set({ notifCount: 0, incidCount: 0 });
+    }
   },
 
   setupRealtime: () => {
