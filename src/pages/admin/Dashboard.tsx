@@ -22,21 +22,6 @@ interface Incidencia {
   estado: string;
 }
 
-interface Tarea {
-  id: number;
-  zona: string;
-  tarea?: string;
-  descripcion?: string;
-  asignado: string;
-  estado: string;
-  prioridad: string;
-}
-
-interface Incidencia {
-  id: number;
-  prioridad: string;
-  estado: string;
-}
 
 const ESTADO_BADGE: Record<string, string> = { 
   hecha:"bg-green-100 text-green-700", 
