@@ -29,58 +29,116 @@
 
 ## 📖 Descripción del Proyecto
 
-**Saniclear** es una aplicación web tipo SPA (Single Page Application) diseñada para digitalizar y optimizar los procesos de limpieza en entornos hospitalarios. 
+**Saniclear** es una aplicación web tipo SPA (Single Page Application) desarrollada con React 19 y TypeScript, diseñada para digitalizar y optimizar los procesos de limpieza en entornos hospitalarios bajo una arquitectura multicéntrica.
 
-El sistema sustituye los partes de trabajo en papel por una gestión en tiempo real, permitiendo trazar quién limpió qué zona y cuándo. Diferencia claramente entre **Supervisores** (gestión y control) y **Operarios** (validación de tareas en movilidad).
+El sistema sustituye los partes de trabajo en papel por una gestión en tiempo real, permitiendo trazar quién limpió qué zona y cuándo. Distingue claramente entre **tres roles** diferenciados:
+
+- **Superadmin** – Control maestro de la plataforma, gestión de múltiples hospitales y panel de métricas globales
+- **Administrador** – Gestión local de un hospital/entidad (zonas, usuarios, tareas, incidencias)
+- **Operario** – Vista móvil para visualizar y completar tareas, reportar incidencias
 
 ---
 
 ## 🛠️ Tecnologías y Herramientas
 
 ### 🎨 Frontend & Diseño
-<p>
-  <img src="https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 19" />
-  <img src="https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS 4" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-</p>
+- **React 19.2** – Biblioteca UI con Hooks y Concurrent Mode
+- **Vite 7** – Empaquetador ultrarrápido con HMR
+- **TypeScript 5.9** – Tipado estático
+- **Tailwind CSS 4** – Framework utility-first, diseño Mobile-First
+- **GSAP** – Animaciones fluidas (transiciones, scroll-trigger)
+- **Recharts** – Librería de gráficos (BarChart, LineChart)
+- **Lucide React** – Iconografía SVG consistente
 
-### ⚡ Librerías y Estado
-<p>
-  <img src="https://img.shields.io/badge/Zustand-State-764ABC?style=for-the-badge&logo=react&logoColor=white" alt="Zustand" />
-  <img src="https://img.shields.io/badge/React_Router-7-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" alt="React Router" />
-  <img src="https://img.shields.io/badge/GSAP-Animations-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP" />
-  <img src="https://img.shields.io/badge/Recharts-Charts-38B2AC?style=for-the-badge&logoColor=white" alt="Recharts" />
-  <img src="https://img.shields.io/badge/Lucide-Icons-EF894D?style=for-the-badge&logoColor=white" alt="Lucide React" />
-</p>
+### ⚡ Gestión de Estado
+- **Zustand 5** – State management global (auth, contadores en tiempo real)
+- **React Context API** – Proveedor de autenticación (AuthContext)
 
-### ☁️ Backend & Datos
-<p>
-  <img src="https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E" alt="Supabase" />
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-</p>
+### ⚙️ Librerías de Utilidad
+- **React Router DOM 7** – Enrutamiento SPA con protección de rutas
+- **date-fns** – Utilidades de fechas (formato, comparación)
+- **uuid** – Generación de identificadores únicos
 
-### ⚙️ Herramientas de Desarrollo
-<p>
-  <img src="https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code" />
-  <img src="https://img.shields.io/badge/GIT-E34F26?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
-  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
-  <img src="https://img.shields.io/badge/NPM-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="NPM" />
-  <img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint" />
-</p>
+### ☁️ Backend as a Service
+- **Supabase** – Plataforma BaaS (PostgreSQL + Auth + Storage + Realtime)
+- **PostgreSQL** – Base de datos relacional
+  - **Row Level Security (RLS)** – Seguridad a nivel de fila activada en todas las tablas
+  - **Triggers** – Sincronización automática `auth.users` → `public.usuarios`
+  - **Policies** – Políticas granulares por rol
+- **Supabase Auth** – Autenticación con JWT + bcrypt
+- **Supabase Storage** – Almacenamiento de archivos (fotos de incidencias)
+- **Supabase Realtime** – WebSockets para actualizaciones instantáneas
+
+### 🛠️ Herramientas de Desarrollo
+- **ESLint 9** – Linter con reglas TypeScript
+- **Git + GitHub** – Control de versiones
+- **Vercel** – Plataforma de despliegue (opcional)
 
 ---
 
 ## ✨ Características Clave
 
-- 🔐 **Control de Acceso (RBAC):** Sistema de autenticación seguro con roles diferenciados para Administradores y Operarios mediante Supabase Auth + Context.
-- 🏥 **Gestión de Zonas y Tareas:** Asignación dinámica de limpiezas a quirófanos, habitaciones y pasillos con gestión completa de incidencias.
-- 📱 **Diseño Mobile-First:** Interfaz optimizada para que los operarios la usen cómodamente desde tablets o móviles con layouts diferenciados.
-- ⚡ **Tiempo Real:** Actualización instantánea de estados gracias a la tecnología de Supabase.
-- 🛡️ **Seguridad Avanzada:** Implementación de Row Level Security (RLS) y autenticación mediante Context API para proteger los datos sensibles.
-- 📊 **Dashboard Analítico:** Panel visual con gráficos (Recharts) para el control de incidencias y métricas de limpieza.
-- 🎬 **Animaciones Fluidas:** Transiciones y efectos visuales con GSAP para una experiencia de usuario moderna.
-- 🗂️ **Gestión de Estado:** Estado global centralizado con Zustand para auth y datos de la aplicación.
+### 🔐 Sistema RBAC Multi-Rol
+- **3 niveles de acceso:** Superadmin (global), Administrador (local), Operario (ejecución)
+- **Autenticación segura** con Supabase Auth (bcrypt, JWT)
+- **Row Level Security (RLS)** en todas las tablas – cada usuario solo ve sus datos asignados
+- **Integridad referencial** con `ON DELETE SET NULL` y `ON DELETE CASCADE`
+
+### 🏥 Módulos Implementados
+
+#### 1. Módulo de Tareas (Core)
+- Trazabilidad completa de limpiezas (asignación → en curso → completada)
+- Prioridades: alta (roja), media (amarilla), baja (verde)
+- Asignación a operarios específicos
+- Búsqueda y filtrado en tiempo real
+- Optimistic UI: actualización instantánea al completar
+
+#### 2. Módulo de Incidencias
+- Reporte de problemas: Equipo, Material, Acceso, Zona, Otros
+- Prioridad ajustable + **marcar como urgente** (fija a `critica`)
+- Adjuntar foto desde cámara (hasta 5 MB, subida automática a Supabase Storage)
+- Estados: `abierta` → `en_revision`/`en_proceso` → `resuelta`
+- Panel de revisión para admin con modal de detalle y cambio de estado
+- Comentarios de resolución
+
+#### 3. Módulo de Notificaciones
+- Sistema de mensajería interna asíncrona
+- Tipos: urgente, importante, informativa
+- Segmentación por destinatario: `todos`, `turno_mañana`, `turno_tarde`, `personal`
+- Superadmin puede filtrar por entidad (multicéntrico)
+- Acción: marcar como leída (individual o masivo)
+- Vistas diferenciadas: tabla (admin/superadmin) vs tarjetas (operario)
+
+#### 4. Módulo de Gestión de Zonas y Usuarios
+- **Página unificada** (`/admin/zonas`) con toggle Zonas/Usuarios
+- CRUD completo de zonas (nombre, tipo, planta, m², prioridad, estado)
+- CRUD completo de usuarios (nombre, apellidos, email, rol, turno)
+- Badges por rol (colores diferenciados)
+- Fallback a datos mock para desarrollo sin conexión
+
+#### 5. Panel Superadmin (Multicéntrico)
+- **Panel Global** (`/superadmin`) – Vista agregada de todas las entidades
+  - Métricas consolidadas (usuarios, zonas, tareas, incidencias críticas)
+  - Carga operativa por zona (top 6) con algoritmo de peso (tareas + incidencias*2)
+  - Nivel de riesgo: `Crítico`, `Vigilancia`, `Estable`
+- **Estadísticas** (`/superadmin/estadisticas`) – Gráficas históricas 6 meses
+  - LineChart: incidencias vs tareas completadas
+  - LineChart: productividad vs carga operativa
+  - Zonas más exigidas (top 4)
+  - **Motor predictivo** con:
+    - Media móvil de 3 periodos
+    - Extrapolación lineal
+    - Sugerencia de personal (carga_prevista / 6)
+- **Métricas por Entidad** (`/superadmin/entidades/:id/metricas`)
+  - Zoom por hospital individual
+  - Igual gráficas que globales, filtradas
+
+#### 6. Módulo de Perfil
+- Edición de datos personales (nombre, apellidos)
+- Cambio de contraseña con validación
+- Visualización de email y turno
+- Cierre de sesión
+- Integración con Supabase Auth
 
 ---
 
@@ -88,55 +146,55 @@ El sistema sustituye los partes de trabajo en papel por una gestión en tiempo r
 
 ```
 limpieza-hospitalaria/
-├── 📂 public/                  # Assets estáticos (imágenes, favicon)
-├── 📂 src/
-│   ├── 📂 assets/              # Estilos globales e imágenes importadas
+├── 📂 public/                  # Assets estáticos
+│   ├── 📂 img/                 # Logos e imágenes
+│   └── 📂 documentos/          # Documentación del proyecto
+│       ├── 📄 MER.md          # Modelo Entidad-Relación (DB)
+│       ├── 📄 diagrama_clases.md # Diagrama de clases UML
+│       ├── 📄 MANUAL_TECNICO.md   # Guía técnica
+│       ├── 📄 MANUAL_USUARIO.md   # Guía de usuario
+│       └── 📄 MANUAL_DESPLIEGUE.md # Instrucciones de instalación
+│
+├── 📂 src/                     # Código fuente TypeScript/React
+│   ├── 📂 assets/              # Imágenes importadas + CSS global
 │   ├── 📂 components/          # Componentes reutilizables
-│   │   ├── 📂 common/          # Componentes compartidos
-│   │   ├── 📂 operario/        # Componentes específicos del operario
-│   │   ├── 📜 Button.tsx
-│   │   ├── 📜 Footer.tsx
-│   │   ├── 📜 Formulario.tsx
-│   │   ├── 📜 Header.tsx
-│   │   ├── 📜 Navbar.tsx
-│   │   ├── 📜 ProfileModal.tsx
-│   │   ├── 📜 Sidebar.tsx
-│   │   ├── 📜 SidebarMenu.tsx
-│   │   ├── 📜 StatCard.tsx
-│   │   ├── 📜 TaskCard.tsx
-│   │   ├── 📜 TaskTable.tsx
-│   │   └── 📜 Topbar.tsx
-│   ├── 📂 context/             # Contextos de React (AuthContext)
-│   ├── 📂 css/                 # Archivos CSS específicos
-│   ├── 📂 layouts/             # Layouts por rol (Admin, Operario, Public)
-│   ├── 📂 mock/                # Datos mock para desarrollo
-│   ├── 📂 pages/               # Vistas principales
-│   │   ├── 📂 admin/           # Dashboard, Gestión Zonas, Usuarios, Incidencias, Panel
-│   │   ├── 📂 operario/        # MisTareas, Tareas, ReportarIncidencia
-│   │   ├── 📂 common/          # Perfil, Notificaciones
+│   │   ├── 📂 common/          # Badge, Button, Modal, StatCard, etc.
+│   │   └── 📂 operario/        # TarjetaTarea, ContadorTareas, NotificacionItem
+│   ├── 📂 context/             # AuthContext (proveedor autenticación)
+│   ├── 📂 css/                 # Estilos específicos por rol
+│   ├── 📂 layouts/             # AdminLayout, OperarioLayout, SuperadminLayout
+│   ├── 📂 pages/               # Vistas de la aplicación
+│   │   ├── 📂 admin/           # Dashboard, GestionZonaUsuarios, GestionIncidencias
+│   │   ├── 📂 common/          # Notificaciones, Perfil
+│   │   ├── 📂 operario/        # MisTareas, ReportarIncidencia, Tareas
 │   │   ├── 📂 public/          # Landing, Login
-│   │   └── 📜 EnConstruccion.tsx
-│   ├── 📂 routes/              # Enrutamiento (AppRouter, RutaProtegida)
-│   ├── 📂 store/               # Stores Zustand (authStore, dataStore)
-│   ├── 📂 supabase/            # Cliente Supabase
-│   ├── 📜 App.tsx              # Componente raíz de la aplicación
-│   ├── 📜 index.css            # Estilos globales (Tailwind)
-│   └── 📜 main.tsx             # Punto de entrada de React
-├── 📜 .env.local               # Variables de entorno (NO SUBIR A GITHUB)
-├── 📜 eslint.config.js         # Configuración de ESLint
+│   │   └── 📂 superadmin/      # PanelGlobal, EstadisticasSuperadmin, MetricasEntidad
+│   ├── 📂 routes/              # AppRouter (definición de rutas), RutaProtegida
+│   ├── 📂 store/               # Zustand stores (authStore, dataStore, busquedaStore)
+│   ├── 📂 supabase/            # Cliente Supabase (client.ts)
+│   ├── 📜 App.tsx
+│   ├── 📜 main.tsx
+│   └── 📜 index.css
+│
+├── 📜 .env.local               # Variables de entorno (NO COMMIT)
+├── 📜 .env.example             # Ejemplo de variables
+├── 📜 eslint.config.js         # Linter ESLint
 ├── 📜 index.html               # HTML base
-├── 📜 package.json             # Dependencias y scripts
-├── 📜 supabase_schema.sql      # Schema completo de la base de datos
-├── 📜 tsconfig.json            # Configuración de TypeScript
-├── 📜 vite-env.d.ts            # Tipos de Vite
-└── 📜 vite.config.js           # Configuración del empaquetador
+├── 📜 package.json             # Dependencias y scripts NPM
+├── 📜 tsconfig.json            # Configuración TypeScript
+├── 📜 vite.config.js           # Configuración Vite
+├── 📜 README.md                # Documentación principal del proyecto
+└── 📜 AGENTS.md               # Configuración Kilo CLI
+
 ```
+
+---
 
 ## 🚀 Instalación y Despliegue
 
 ### Requisitos Previos
 - Node.js (v18+)
-- Cuenta de Supabase con proyecto creado
+- Cuenta en Supabase con proyecto creado
 
 ### Instalación Local
 
@@ -150,12 +208,14 @@ npm install
 
 # 3. Configurar variables de entorno
 # Crear archivo .env.local con:
-# VITE_SUPABASE_URL=https://zwmfzqdamdibjermgnyo.supabase.co
-# VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3bWZ6cWRhbWRpYmplcm1nbnlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMDUxNzcsImV4cCI6MjA4MjY4MTE3N30.bJtR3HBgOzzLwlB7x476MBlC44BpKiWsvkuuwekvjSY
+VITE_SUPABASE_URL=https://[TU-PROYECTO].supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 # 4. Ejecutar en modo desarrollo
 npm run dev
 ```
+
+Accede a: http://localhost:5173
 
 ### Scripts Disponibles
 
@@ -165,6 +225,12 @@ npm run dev
 | `npm run build`    | Compilar para producción             |
 | `npm run preview`  | Previsualizar build de producción    |
 | `npm run lint`     | Ejecutar linter ESLint               |
+
+### Despliegue en Producción
+
+1. Ejecutar `npm run build`
+2. Subir carpeta `dist/` a Vercel/Netlify
+3. Configurar variables de entorno en la plataforma
 
 ---
 
@@ -182,110 +248,59 @@ npm run dev
 
 ---
 
-### 🗓️ ABRIL 2026 — Perfil, Notificaciones y Gestión Combinada
+### 🗓️ ABRIL 2026 — Recta Final, Superadmin y Supabase
 
-#### 📍 Semana 29 | 14-16 Abril 2026 · Estado Actual
+#### 📍 Semana 31 | 25-27 Abril 2026 · Estado Final
 
-🛠️ **Implementaciones de esta semana:**
-
-1. **Gestión Combinada Zonas y Usuarios (Admin)**
-   - Ruta única /admin/zonas para ambas funcionalidades
-   - Selector de vistas (Toggle Buttons / Segmented Control) con estilo pill
-   - Botones "Zonas" y "Usuarios" con transición azul (#3b82f6)
-   - CRUD completo de zonas y usuarios en una sola página
-   - Fallback a datos mock (15 zonas, 6 usuarios)
-   - Botones Editar y Eliminar en cada tarjeta
-
-2. **Notificaciones (Admin y Operario)**
-   - Ruta /admin/notificaciones y /operario/notificaciones
-   - Vista de tarjetas para operario, tabla para admin
-   - Contadores por tipo (urgente, importante, informativa)
-   - Marcar como leída al hacer click
-   - Botón "Marcar todas como leídas"
-   - Modal crear notificación (solo admin)
-
-📊 **Estado actual:** 9 páginas funcionales
+✨ **Refinamiento y Seguridad:**
+- **25 y 26 de Abril:** Conexión completa de la aplicación con la base de datos real en Supabase. Resolución profunda de errores de código y configuración de las políticas de seguridad (RLS) en todas las tablas. Testing completo de flujos.
+- **27 de Abril:** Últimos retoques de diseño general, corrección de errores finales de consultas SQL y cruce de datos (Foreign Keys) en Supabase. Documentación actualizada (diagrama de clases, MER, manuales técnico y de usuario).
 
 ---
 
-#### 📍 Semana 28 | 6-12 Abril 2026
+#### 📍 Semana 30 | 23-24 Abril 2026 · Módulo de Incidencias y Notificaciones
+
+👑 **Nuevos Módulos:**
+- **23 de Abril:** Desarrollo e integración completa del módulo de Incidencias. Reportes de operarios con foto adjunta, niveles de prioridad (Baja, Media, Alta, Crítica), estados de resolución y panel de gestión para administradores.
+- **24 de Abril:** Implementación del sistema de Notificaciones interno. Admin puede enviar mensajes segmentados por tipo (Urgente/Importante/Informativa) y destinatario (Turnos o Todos). Operario recibe bandeja con contador no-leídas.
+
+---
+
+#### 📍 Semana 29 | 21-22 Abril 2026 · Consolidación y Superadmin
 
 🛠️ **Implementaciones:**
-
-1. **Perfil de Usuario (Admin y Operario)**
-   - Ruta /admin/perfil y /operario/perfil
-   - Edición de nombre y apellidos
-   - Cambio de contraseña con validación de seguridad
-   - Visualización de email y turno
-   - Botón de cierre de sesión
-   - Integración con Supabase Auth
-
-2. **Mejoras Dashboard Admin**
-   - Tarjetas de contadores ajustadas en tamaño
-   - 4 bloques en una línea: Pendientes, Críticas, Hoy, En Curso
-
-🗒️ **Notas técnicas:**
-- Sistema de fallback automático a datos mock
-- Login verifica credenciales primero en Supabase Auth, luego en lista mock
+- **21 de Abril:** Desarrollo del nuevo rol de `superadmin` con privilegios globales y creación de sus vistas exclusivas:
+  - Panel Global (vista agregada de todas las entidades)
+  - Estadísticas Superadmin (gráficas históricas y motor predictivo)
+  - Métricas por Entidad (zoom por hospital)
+- **22 de Abril:** Integración del motor predictivo básico: cálculo de media móvil de 3 periodos y proyección lineal para sugerencia de personal y detección de zonas con mayor presión.
 
 ---
 
-### 🗓️ MARZO 2026 — Integración de Componentes y Refinamiento
+#### 📍 Semana 28 | 14-16 Abril 2026 · Gestión Combinada y Refinamiento
+
+🛠️ **Mejoras de UX:**
+- **14 de Abril:** Implementación de gestión combinada Zonas y Usuarios en una sola página (`/admin/zonas`) con toggle buttons estilo pill y transición azul (#3b82f6).
+- **15 de Abril:** Actualización del Dashboard Admin con contadores en una línea (Pendientes, Críticas, Hoy, En Curso).
+- **16 de Abril:** Añadido Perfil de Usuario completo para Admin y Operario (edición de nombre, cambio de contraseña con validación Supabase Auth).
+
+---
 
 #### 📍 Semana 27 | Martes 27/03/2026
 
-🛠️ **Últimas implementaciones:**
-- **Páginas Demo:** Creación de páginas de demostración para presentación del proyecto.
-- **Componentes Extras:** Incorporación de componentes adicionales al ecosistema de la aplicación.
-- **Menú Lateral (Sidebar):** Implementación del menú lateral de navegación para el panel administrativo y del operario.
-- **Integración de Componentes:** Merge de ramas de componentes integrando tarjetas de tarea y vistas operarias.
-- **Tarjeta de Tarea (TaskCard):** Componente reutilizable para visualización de tareas del operario.
+🎯 **Hito:** Finalización y entrega de todos los manuales del proyecto.
 
----
-
-#### 📍 Semana 26 | Martes ~20/03/2026
-
-🛠️ **Frontend:**
-- Refactorización del menú lateral con integración de rutas.
-- Conexión de vistas de gestión de usuarios con Supabase.
-- Panel de administrador con estadísticas en tiempo real.
-
----
-
-#### 📍 Semana 25 | Martes ~13/03/2026
-
-🛠️ **Frontend:**
-- Desarrollo de la vista de tareas del operario (`MisTareas.tsx`, `Tareas.tsx`).
-- Componente `ReportarIncidencia` para que los operarios reporten problemas directamente.
-- Conexión de vistas operarias con datos reales de Supabase.
-
----
-
-#### 📍 Semana 24 | Martes ~06/03/2026
-
-🎯 **Hito:** Base sólida del proyecto con migración completa a TypeScript.
-- Commit "base" estableciendo la estructura definitiva del proyecto.
-- Todas las vistas principales operativas y conectadas a Supabase.
-- Migración de archivos JSX a TSX completada.
-   - Marcar como leída / marcar todas
-   - Modal crear notificación (admin)
-
-3. **Gestión de Zonas (Admin)**
-   - Ruta /admin/zonas
-   - CRUD completo de zonas
-   - Badges de prioridad y estado
-   - Fallback a datos mock
-
-4. **Gestión Combinada Zonas y Usuarios**
-   - Selector de vistas (Toggle Buttons) con estilo pill
-   - Botones "Zonas" y "Usuarios" con transición azul #3b82f6
-   - CRUD de zonas y usuarios en una sola página
-   - Datos mock actualizados (15 zonas, 6 usuarios)
+📂 Documentos entregados:
+- ✅ **Manual Técnico:** Arquitectura, base de datos, Triggers y RLS.
+- ✅ **Manual de Usuario:** Guía paso a paso para Supervisor y Operario con capturas de pantalla.
+- ✅ **Manual de Despliegue:** Guía de instalación local y despliegue en Vercel.
+- ✅ **Manual de Evaluación:** Autoevaluación del progreso del proyecto.
+- ✅ **Manual de Seguimiento:** Trazabilidad del desarrollo semanal entregado al tutor.
 ---
 
 ### 🗓️ FEBRERO 2026 — Cierre de Manuales y Vistas Principales
 
-#### 📍 Semana 20 | Entrega de Documentación · Martes 03/03/2026
+#### 📍 Semana 27 | Martes 27/03/2026
 
 🎯 **Hito:** Finalización y entrega de todos los manuales del proyecto.
 
@@ -296,11 +311,9 @@ npm run dev
 - ✅ **Manual de Evaluación:** Autoevaluación del progreso del proyecto.
 - ✅ **Manual de Seguimiento:** Trazabilidad del desarrollo semanal entregado al tutor.
 
-🗒️ Estado general al cierre de la 2ª evaluación: vistas principales operativas y conectadas a Supabase. Pendiente para las próximas semanas: módulo de incidencias, notificaciones y refinamiento mobile.
-
 ---
 
-#### 📍 Semana 19 | Lógica de Negocio y Paneles · Martes 24/02/2026
+#### 📍 Semana 26 | Lógica de Negocio y Paneles · Martes 24/02/2026
 
 🛠️ **En desarrollo (Frontend):**
 - **Panel de Control (Admin):** Refactorización del Dashboard conectando datos reales de Supabase. Estadísticas en tiempo real: tareas pendientes, en curso y completadas; incidencias abiertas.

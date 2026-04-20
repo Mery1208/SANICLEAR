@@ -4,8 +4,8 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1e3a5f;" value="&lt;b&gt;DIAGRAMA DE FLUJO PRINCIPAL - SANICLEAR&lt;/b&gt;" vertex="1">
-          <mxGeometry height="40" width="500" x="600" y="20" as="geometry" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1e3a5f;" value="&lt;b&gt;DIAGRAMA DE FLUJO - SANICLEAR&lt;/b&gt;&lt;br&gt;&lt;font size='12'&gt;Arquitectura SPA con Supabase, RLS y RBAC&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="500" x="600" y="10" as="geometry" />
         </mxCell>
         <mxCell id="inicio" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#1e3a5f;fontSize=12;fontFamily=Helvetica;" value="&lt;b&gt;INICIO&lt;/b&gt;&lt;br&gt;Usuario accede a la app" vertex="1">
           <mxGeometry height="70" width="140" x="830" y="80" as="geometry" />
@@ -45,6 +45,87 @@
         </mxCell>
         <mxCell id="dec_rol" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#3b82f6;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;Rol del&lt;/b&gt;&lt;br&gt;usuario?" vertex="1">
           <mxGeometry height="90" width="140" x="830" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="superadmin_entidades" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;ENTIDADES&lt;/b&gt;&lt;br&gt;Gestión de hospitales&lt;br&gt;&lt;i&gt;Ruta: /superadmin/entidades&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="200" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="superadmin_stats" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;ESTADÍSTICAS&lt;/b&gt;&lt;br&gt;Gráficas históricas +&lt;br&gt;Motor predictivo IA&lt;br&gt;&lt;i&gt;Ruta: /superadmin/estadisticas&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="190" x="200" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="dashboard" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;DASHBOARD&lt;/b&gt;&lt;br&gt;Panel de Control Admin&lt;br&gt;&lt;i&gt;Ruta: /admin&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="1060" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="mistareas" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;MIS TAREAS&lt;/b&gt;&lt;br&gt;Tareas del operario&lt;br&gt;&lt;i&gt;Ruta: /operario&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="580" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="menu_superadmin" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1e3a5f;" value="&lt;b&gt;MENU SUPERADMIN&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="190" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="menu_admin" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1e3a5f;" value="&lt;b&gt;MENU ADMINISTRADOR&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="1090" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_zonas" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Gestion Zonas+Users&lt;br&gt;&lt;i&gt;/admin/zonas&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="1080" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_notif" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/admin/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="1210" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_perfil" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/admin/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="1350" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="menu_op" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1e3a5f;" value="&lt;b&gt;MENU OPERARIO&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="580" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="op_notif" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/operario/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="480" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="op_incid" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Reportar Incidencia&lt;br&gt;&lt;i&gt;/operario/reportar-incidencia&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="620" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="op_perfil" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/operario/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="770" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_notif" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/admin/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="1210" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_perfil" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily:Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/admin/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="1350" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="menu_op" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#1e3a5f;" value="&lt;b&gt;MENU OPERARIO&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="180" x="580" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="op_notif" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/operario/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="480" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="op_incid" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Reportar Incidencia&lt;br&gt;&lt;i&gt;/operario/reportar-incidencia&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="620" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="op_perfil" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/operario/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="770" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_zonas" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Gestion Zonas&lt;br&gt;&lt;i&gt;/admin/zonas&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="1080" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_notif" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/admin/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="1210" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_incid" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Gestion Incidencias&lt;br&gt;&lt;i&gt;/admin/incidencias&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="1380" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="dashboard" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;DASHBOARD&lt;/b&gt;&lt;br&gt;Panel de Control&lt;br&gt;&lt;i&gt;Ruta: /admin&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="1060" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="mistareas" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;MIS TAREAS&lt;/b&gt;&lt;br&gt;Tareas del operario&lt;br&gt;&lt;i&gt;Ruta: /operario&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="580" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="op_notif" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/operario/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="480" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="op_incid" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Reportar Incidencia&lt;br&gt;&lt;i&gt;/operario/reportar-incidencia&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="620" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="op_perfil" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily:Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/operario/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="770" y="1030" as="geometry" />
         </mxCell>
         <mxCell id="dashboard" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;fontColor=#ffffff;strokeColor=#0f2942;fontSize=12;fontFamily=Helvetica;fontStyle=1;" value="&lt;b&gt;DASHBOARD&lt;/b&gt;&lt;br&gt;Panel de Control&lt;br&gt;&lt;i&gt;Ruta: /admin&lt;/i&gt;" vertex="1">
           <mxGeometry height="70" width="180" x="1060" y="880" as="geometry" />
@@ -125,34 +206,88 @@
         <mxCell id="f15" edge="1" parent="1" source="sesion_local" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#22c55e;strokeWidth=2;" target="dec_rol">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="f16" edge="1" parent="1" source="dec_rol" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#1e3a5f;strokeWidth=2;fontStyle=1;fontSize=11;" target="dashboard" value="Admin">
+        <mxCell id="admin_notif" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Notificaciones&lt;br&gt;&lt;i&gt;/admin/notificaciones&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="130" x="1210" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_perfil" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily:Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/admin/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="1350" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="superadmin_metrics" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily=Helvetica;" value="Métricas por Entidad&lt;br&gt;&lt;i&gt;/superadmin/entidades/:id/metricas&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="70" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_perfil" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#e0e7ff;strokeColor=#6366f1;fontSize=10;fontFamily:Helvetica;" value="Mi Perfil&lt;br&gt;&lt;i&gt;/admin/perfil&lt;/i&gt;" vertex="1">
+          <mxGeometry height="50" width="120" x="1350" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="sup_f1" edge="1" parent="1" source="superadmin_entidades" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth:1;dashed:1;" target="superadmin_stats">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="f17" edge="1" parent="1" source="dec_rol" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#1e3a5f;strokeWidth=2;fontStyle=1;fontSize=11;" target="mistareas" value="Operario">
+        <mxCell id="sup_f2" edge="1" parent="1" source="superadmin_entidades" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth:1;dashed:1;" target="superadmin_metrics">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="f18" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="admin_zonas">
+        <mxCell id="admin_f_perfil" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth:1;dashed:1;" target="admin_perfil">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="f19" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="admin_usuarios">
+        <mxCell id="storage_upload" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;SUPABASE STORAGE&lt;/b&gt;&lt;br&gt;Subir foto incidencia&lt;br&gt;&lt;i&gt;Bucket: fotos/incidencias/&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="620" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="storage_save" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#dcfce7;strokeColor=#22c55e;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;Guardar URL&lt;/b&gt;&lt;br&gt;foto_url en tabla&lt;br&gt;incidencias" vertex="1">
+          <mxGeometry height="60" width="160" x="620" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="f27" edge="1" parent="1" source="op_incid" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3b82f6;strokeWidth=2;" target="storage_upload" value="Foto (opcional)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="f20" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="admin_incid">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="f21" edge="1" parent="1" source="mistareas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="op_notif">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="f22" edge="1" parent="1" source="mistareas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="op_incid">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="f23" edge="1" parent="1" source="mistareas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;exitX=1;exitY=1;exitDx=0;exitDy=0;" target="op_perfil">
+        <mxCell id="f28" edge="1" parent="1" source="storage_upload" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#22c55e;strokeWidth=2;" target="storage_save">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="ley_box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9fafb;strokeColor=#d1d5db;" value="" vertex="1">
           <mxGeometry height="50" width="480" x="40" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="ley_txt" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;LEYENDA:&lt;/b&gt;  &lt;font color=&quot;#3b82f6&quot;&gt;● Paginas&lt;/font&gt;  &lt;font color=&quot;#22c55e&quot;&gt;● Acciones Auth&lt;/font&gt;  &lt;font color=&quot;#f59e0b&quot;&gt;● Decisiones&lt;/font&gt;  &lt;font color=&quot;#ef4444&quot;&gt;● Errores&lt;/font&gt;  &lt;font color=&quot;#1e3a5f&quot;&gt;● Destinos Finales&lt;/font&gt;  &lt;font color=&quot;#6366f1&quot;&gt;● Subpaginas&lt;/font&gt;" vertex="1">
+        <mxCell id="ley_txt" parent="1" style="text;html=1;strokeColor:none;fillColor:none;align=left;verticalAlign=middle;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;LEYENDA:&lt;/b&gt;  &lt;font color=&quot;#3b82f6&quot;&gt;● Paginas&lt;/font&gt;  &lt;font color=&quot;#22c55e&quot;&gt;● Acciones Auth/Éxito&lt;/font&gt;  &lt;font color=&quot;#f59e0b&quot;&gt;● Decisiones&lt;/font&gt;  &lt;font color=&quot;#ef4444&quot;&gt;● Errores&lt;/font&gt;  &lt;font color=&quot;#1e3a5f&quot;&gt;● Destinos Finales&lt;/font&gt;  &lt;font color=&quot;#6366f1&quot;&gt;● Subpaginas&lt;/font&gt;  &lt;font color=&quot;#fef3c7&quot;&gt;● Procesos&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="460" x="50" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="f17" edge="1" parent="1" source="dec_rol" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#1e3a5f;strokeWidth=2;fontStyle=1;fontSize=11;" target="mistareas" value="Operario">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f18" edge="1" parent="1" source="dec_rol" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#1e3a5f;strokeWidth=2;fontStyle=1;fontSize=11;" target="superadmin_entidades" value="Superadmin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f19" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="admin_zonas">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f20" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth:1;dashed=1;" target="admin_notif">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f21" edge="1" parent="1" source="dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="admin_incid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f22" edge="1" parent="1" source="mistareas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="op_notif">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f23" edge="1" parent="1" source="mistareas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="op_incid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f24" edge="1" parent="1" source="mistareas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;exitX=1;exitY=1;exitDx=0;exitDy=0;" target="op_perfil">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f25" edge="1" parent="1" source="superadmin_entidades" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6366f1;strokeWidth=1;dashed=1;" target="superadmin_stats">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f26" edge="1" parent="1" source="op_incid" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3b82f6;strokeWidth=2;" target="storage_upload" value="Foto (opcional)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="storage_upload" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;SUPABASE STORAGE&lt;/b&gt;&lt;br&gt;Subir foto incidencia&lt;br&gt;&lt;i&gt;Bucket: fotos/incidencias/&lt;/i&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="620" y="1220" as="geometry" />
+        </mxCell>
+        <mxCell id="storage_save" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#dcfce7;strokeColor=#22c55e;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;Guardar URL&lt;/b&gt;&lt;br&gt;foto_url en tabla&lt;br&gt;incidencias" vertex="1">
+          <mxGeometry height="60" width="160" x="620" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="f27" edge="1" parent="1" source="storage_upload" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#22c55e;strokeWidth=2;" target="storage_save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ley_box" parent="1" style="rounded=1;whiteSpace:wrap;html=1;fillColor=#f9fafb;strokeColor=#d1d5db;" value="" vertex="1">
+          <mxGeometry height="50" width="480" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ley_txt" parent="1" style="text;html=1;strokeColor:none;fillColor:none;align=left;verticalAlign=middle;fontSize=11;fontFamily=Helvetica;" value="&lt;b&gt;LEYENDA:&lt;/b&gt;  &lt;font color=&quot;#3b82f6&quot;&gt;● Paginas&lt;/font&gt;  &lt;font color=&quot;#22c55e&quot;&gt;● Acciones Auth/Éxito&lt;/font&gt;  &lt;font color=&quot;#f59e0b&quot;&gt;● Decisiones&lt;/font&gt;  &lt;font color=&quot;#ef4444&quot;&gt;● Errores&lt;/font&gt;  &lt;font color=&quot;#1e3a5f&quot;&gt;● Destinos Finales&lt;/font&gt;  &lt;font color=&quot;#6366f1&quot;&gt;● Subpaginas&lt;/font&gt;  &lt;font color=&quot;#fef3c7&quot;&gt;● Procesos&lt;/font&gt;" vertex="1">
           <mxGeometry height="30" width="460" x="50" y="35" as="geometry" />
         </mxCell>
       </root>
