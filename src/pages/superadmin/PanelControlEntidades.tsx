@@ -108,7 +108,7 @@ const PanelControlEntidades: React.FC = () => {
 
   return (
     <div className="font-sans">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 sm:mb-8">
         <div>
           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
             Control de entidades
@@ -118,30 +118,31 @@ const PanelControlEntidades: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex gap-4 items-center">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row gap-3 items-center w-full lg:w-auto">
+          <div className="relative w-full sm:w-auto">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
               type="text" 
               placeholder="Buscar entidad..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all w-64"
+              className="pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all w-full sm:w-64"
             />
           </div>
           <button
             onClick={fetchEntidades}
-            className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-bold text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors shrink-0"
             title="Actualizar"
           >
             <RefreshCw size={18} />
+            <span className="hidden sm:inline">Actualizar</span>
           </button>
           <button
             onClick={() => abrirModal()}
-            className="inline-flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-black uppercase tracking-widest rounded-xl transition-all duration-200 cursor-pointer border-none bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 text-sm font-black uppercase tracking-widest rounded-xl transition-all duration-200 cursor-pointer border-none bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100 whitespace-nowrap shrink-0"
           >
             <Plus size={18} />
-            Nueva Entidad
+            <span>Nueva Entidad</span>
           </button>
         </div>
       </div>
@@ -167,22 +168,22 @@ const PanelControlEntidades: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           {filteredEntidades.map((entidad) => (
             <div key={entidad.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 flex flex-col group">
-              <div className="flex justify-between items-start mb-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 group-hover:scale-110 transition-transform">
-                    <Building2 size={24} />
+              <div className="flex justify-between items-start mb-5 gap-2">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 group-hover:scale-110 transition-transform">
+                    <Building2 size={20} />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-black text-[#1e3a5f] leading-tight truncate max-w-[200px]">{entidad.nombre_hospital}</h3>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{entidad.codigo}</p>
+                  <div className="min-w-0">
+                    <h3 className="text-sm sm:text-lg font-black text-[#1e3a5f] leading-tight truncate max-w-[140px] sm:max-w-[200px]">{entidad.nombre_hospital}</h3>
+                    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">{entidad.codigo}</p>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={() => abrirModal(entidad)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Editar">
-                    <Edit2 size={16} />
+                <div className="flex gap-1 sm:gap-2 shrink-0">
+                  <button onClick={() => abrirModal(entidad)} className="p-1.5 sm:p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg sm:rounded-xl transition-colors" title="Editar">
+                    <Edit2 size={14} />
                   </button>
-                  <button onClick={() => handleEliminar(entidad.id, entidad.nombre_hospital)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors" title="Eliminar">
-                    <Trash2 size={16} />
+                  <button onClick={() => handleEliminar(entidad.id, entidad.nombre_hospital)} className="p-1.5 sm:p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg sm:rounded-xl transition-colors" title="Eliminar">
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
@@ -211,7 +212,7 @@ const PanelControlEntidades: React.FC = () => {
                 />
               </div>
 
-              <div className="flex gap-3 pt-5 border-t border-gray-50">
+          <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-gray-50">
                 <Button
                   text="Controlar"
                   variant="primary"
@@ -240,7 +241,7 @@ const PanelControlEntidades: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre del Hospital</label>
               <input value={form.nombre_hospital || ''} onChange={e => setForm({...form, nombre_hospital: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: Hospital Central" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Código</label>
                 <input value={form.codigo || ''} onChange={e => setForm({...form, codigo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: HC-01" />
@@ -250,7 +251,7 @@ const PanelControlEntidades: React.FC = () => {
                 <input value={form.ciudad || ''} onChange={e => setForm({...form, ciudad: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: Madrid" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Plan</label>
                 <select value={form.plan_tipo || 'basic'} onChange={e => setForm({...form, plan_tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none bg-white">

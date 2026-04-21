@@ -17,28 +17,29 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<any>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MOCK_USERS: Usuario[] = [
-  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclear.com', rol: 'superadmin' },
-  { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclear', email: 'admin@saniclear.com', rol: 'admin' },
-  { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclear.com', rol: 'operario', turno: 'Mañana' },
-  { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclear.com', rol: 'operario', turno: 'Tarde' },
-  { id: 'oper-3', nombre: 'Evelia', apellidos: 'Gil Paredes', email: 'evelia.gil@saniclear.com', rol: 'operario', turno: 'Noche' },
-  { id: 'oper-4', nombre: 'Carlos', apellidos: 'Fernández', email: 'carlos.f@saniclear.com', rol: 'operario', turno: 'Mañana' },
-  { id: 'oper-5', nombre: 'Ana', apellidos: 'Martínez', email: 'ana.martinez@saniclear.com', rol: 'operario', turno: 'Tarde' },
+  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclears.com', rol: 'superadmin' },
+  { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclears', email: 'admin@saniclears.com', rol: 'admin' },
+  { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclears.com', rol: 'operario', turno: 'Mañana' },
+  { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclears.com', rol: 'operario', turno: 'Tarde' },
+  { id: 'oper-3', nombre: 'Evelia', apellidos: 'Gil Paredes', email: 'evelia.gil@saniclears.com', rol: 'operario', turno: 'Noche' },
+  { id: 'oper-4', nombre: 'Carlos', apellidos: 'Fernández', email: 'carlos.f@saniclears.com', rol: 'operario', turno: 'Mañana' },
+  { id: 'oper-5', nombre: 'Ana', apellidos: 'Martínez', email: 'ana.martinez@saniclears.com', rol: 'operario', turno: 'Tarde' },
 ];
 
 const MOCK_PASSWORDS: Record<string, string> = {
-  'superadmin@saniclear.com': 'SuperAdmin1234!',
-  'admin@saniclear.com': 'Admin1234!',
-  'juan.perez@saniclear.com': 'Operario123!',
-  'maria.ceballos@saniclear.com': 'Operario123!',
-  'evelia.gil@saniclear.com': 'Operario123!',
-  'carlos.f@saniclear.com': 'Operario123!',
-  'ana.martinez@saniclear.com': 'Operario123!',
+  'superadmin@saniclears.com': 'SuperAdmin1234!',
+  'admin@saniclears.com': 'Admin1234!',
+  'juan.perez@saniclears.com': 'Operario123!',
+  'maria.ceballos@saniclears.com': 'Operario123!',
+  'evelia.gil@saniclears.com': 'Operario123!',
+  'carlos.f@saniclears.com': 'Operario123!',
+  'ana.martinez@saniclears.com': 'Operario123!',
 };
 
 function findMockUser(email: string, password: string): Usuario | null {
@@ -73,7 +74,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
     // 2. Escuchar cambios
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        // Forzamos redirección al perfil con la etiqueta de recuperación
+        window.location.href = '/perfil?recovery=true';
+      }
+
       setSession(session);
       if (session) {
         fetchProfile(session.user.id, session.user.email!);
@@ -148,6 +154,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (!error && data.user) {
         setSession(data.session);
+        await fetchProfile(data.user.id, data.user.email!);
         return data.user;
       }
 
@@ -171,6 +178,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     throw new Error('Credenciales incorrectas. Verifica tu email y contraseña.');
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/perfil?recovery=true`,
+    });
+    if (error) throw error;
+  };
+
   const logout = async () => {
     try {
       await supabase.auth.signOut();
@@ -181,7 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ usuario, rol: usuario?.rol || null, loading, login, logout }}>
+    <AuthContext.Provider value={{ usuario, rol: usuario?.rol || null, loading, login, logout, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

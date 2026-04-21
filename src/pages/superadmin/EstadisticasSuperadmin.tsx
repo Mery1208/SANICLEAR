@@ -264,27 +264,29 @@ const EstadisticasSuperadmin: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {forecastCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-2xl border border-gray-100 p-5 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
-            <div className="min-w-0 flex-1 pr-2">
-              <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1 truncate" title={card.title}>
-                {card.title}
-              </p>
-              <p className={`text-3xl font-black ${card.tone.split(' ')[0]}`}>{card.value.split(' ')[0]}</p>
-            </div>
-            <div className={`p-3 rounded-xl shrink-0 ${card.tone.split(' ')[1]}`}>
-              <span className={card.tone.split(' ')[0]}>
-                {card.title.includes('Predicción') ? (
-                  <Brain size={24} />
-                ) : card.title.includes('Carga') ? (
-                  <LineChartIcon size={24} />
-                ) : card.title.includes('Personal') ? (
-                  <Users size={24} />
-                ) : (
-                  <AlertTriangle size={24} />
-                )}
-              </span>
+          <div key={card.title} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>
+                  {card.title}
+                </p>
+                <p className={`text-xl lg:text-2xl font-black ${card.tone.split(' ')[0]}`}>{card.value.split(' ')[0]}</p>
+              </div>
+              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.tone.split(' ')[1]}`}>
+                <span className={card.tone.split(' ')[0]}>
+                  {card.title.includes('Predicción') ? (
+                    <Brain size={20} />
+                  ) : card.title.includes('Carga') ? (
+                    <LineChartIcon size={20} />
+                  ) : card.title.includes('Personal') ? (
+                    <Users size={20} />
+                  ) : (
+                    <AlertTriangle size={20} />
+                  )}
+                </span>
+              </div>
             </div>
           </div>
         ))}

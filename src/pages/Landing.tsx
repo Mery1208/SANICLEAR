@@ -85,7 +85,7 @@ export default function Landing(): React.JSX.Element {
           <div className="about-text anim slide-right">
             <h2>Una Solución Nacida de la Necesidad</h2>
             <p>
-              SANICLEAR nació en 2024 cuando un grupo de profesionales sanitarios
+              SANICLEARS nació en 2024 cuando un grupo de profesionales sanitarios
               identificó un desafío crítico: <strong>la gestión manual de las tareas de limpieza
                 hospitalaria era ineficiente y propensa a errores.</strong>
             </p>
@@ -95,7 +95,7 @@ export default function Landing(): React.JSX.Element {
               y la eficiencia operativa.
             </p>
             <p>
-              Así surgió SANICLEAR: <u>una plataforma digital diseñada específicamente
+              Así surgió SANICLEARS: <u>una plataforma digital diseñada específicamente
                 para transformar la gestión de higiene en entornos hospitalarios</u>,
               garantizando trazabilidad completa, supervisión en tiempo real y
               comunicación fluida entre todo el personal.
@@ -173,7 +173,7 @@ export default function Landing(): React.JSX.Element {
       {/* Pasos */}
       <section className="steps-section">
         <div className="steps-header anim fade-up">
-          <h2>Cómo Funciona SANICLEAR</h2>
+          <h2>Cómo Funciona SANICLEARS</h2>
           <p>Implementación simple en 3 pasos</p>
         </div>
         <div className="steps-wrapper">
@@ -207,7 +207,7 @@ export default function Landing(): React.JSX.Element {
           <div className="testimonial-text anim slide-right">
             <h2>Resultados Reales, Impacto Medible</h2>
             <blockquote>
-              "Desde que implementamos SANICLEAR, hemos reducido el tiempo de gestión administrativa en un 60% y mejorado significativamente la trazabilidad de nuestros procesos de limpieza."
+              "Desde que implementamos SANICLEARS, hemos reducido el tiempo de gestión administrativa en un 60% y mejorado significativamente la trazabilidad de nuestros procesos de limpieza."
             </blockquote>
             <div className="testimonial-author">
               <CheckCircle size={20} color="#2563EB" />
@@ -235,7 +235,7 @@ export default function Landing(): React.JSX.Element {
         <div className="cta-content anim fade-up">
           <h2>¿Listo para Transformar la Gestión de tu Hospital?</h2>
           <p>
-            Únete a los hospitales que ya confían en SANICLEAR para optimizar sus procesos
+            Únete a los hospitales que ya confían en SANICLEARS para optimizar sus procesos
             de higiene y garantizar la máxima seguridad.
           </p>
           <Button text="Comenzar Ahora" variant="primary" icon={ArrowRight} onClick={() => navigate('/login')} />

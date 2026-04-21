@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="https://via.placeholder.com/1000x300/0ea5e9/ffffff?text=SANICLEAR+Hospital+Hygiene+Management" alt="Saniclear Banner" width="100%">
+  <img src="https://via.placeholder.com/1000x300/0ea5e9/ffffff?text=SANICLEARS+Hospital+Hygiene+Management" alt="Saniclears Banner" width="100%">
   
-  <h1 align="center">🏥 SANICLEAR</h1>
+  <h1 align="center">🏥 SANICLEARS</h1>
   
   <p align="center">
     <strong>Gestión Inteligente de Higiene Hospitalaria</strong><br>
@@ -29,7 +29,7 @@
 
 ## 📖 Descripción del Proyecto
 
-**Saniclear** es una aplicación web tipo SPA (Single Page Application) desarrollada con React 19 y TypeScript, diseñada para digitalizar y optimizar los procesos de limpieza en entornos hospitalarios bajo una arquitectura multicéntrica.
+**Saniclears** es una aplicación web tipo SPA (Single Page Application) desarrollada con React 19 y TypeScript, diseñada para digitalizar y optimizar los procesos de limpieza en entornos hospitalarios bajo una arquitectura multicéntrica.
 
 El sistema sustituye los partes de trabajo en papel por una gestión en tiempo real, permitiendo trazar quién limpió qué zona y cuándo. Distingue claramente entre **tres roles** diferenciados:
 
@@ -200,7 +200,7 @@ limpieza-hospitalaria/
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/Mery1208/SANICLEAR.git
+git clone https://github.com/Mery1208/SANICLEARS.git
 cd limpieza-hospitalaria
 
 # 2. Instalar dependencias
@@ -468,7 +468,7 @@ Accede a: http://localhost:5173
 
 #### 📍 Semana 1 | Aprobación de la Propuesta · Martes 07/10/2025
 
-🎯 **Hito:** Firma del Acta de Propuesta. Nace **Saniclear**.
+🎯 **Hito:** Firma del Acta de Propuesta. Nace **Saniclears**.
 - Primera reunión con la tutora María Mercedes Martínez Fragoso.
 - Validación de la idea y aprobación para comenzar el análisis funcional.
 

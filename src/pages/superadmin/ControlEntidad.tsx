@@ -246,8 +246,8 @@ const ControlEntidad: React.FC = () => {
 
   return (
     <div className="font-sans">
-      <div className="flex items-center gap-4 mb-8">
-        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -258,20 +258,22 @@ const ControlEntidad: React.FC = () => {
       
       {actionMessage && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ {actionMessage}</div>}
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {[
           { title: 'Usuarios', value: counts.usuarios, icon: <Users size={24} />, accent: 'text-blue-600 bg-blue-50' },
           { title: 'Zonas', value: counts.zonas, icon: <MapPinned size={24} />, accent: 'text-violet-600 bg-violet-50' },
           { title: 'Tareas Activas', value: counts.tareas, icon: <Clock size={24} />, accent: 'text-amber-600 bg-amber-50' },
           { title: 'Incidencias', value: counts.incidencias, icon: <AlertTriangle size={24} />, accent: 'text-red-600 bg-red-50' },
         ].map((card) => (
-          <div key={card.title} className="bg-white rounded-2xl border border-blue-100 p-5 flex justify-between items-center shadow-sm">
-            <div>
-              <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">{card.title}</p>
-              <p className={`text-3xl font-black ${card.accent.split(' ')[0]}`}>{card.value}</p>
-            </div>
-            <div className={`p-3 rounded-xl ${card.accent.split(' ')[1]}`}>
-              <span className={card.accent.split(' ')[0]}>{card.icon}</span>
+          <div key={card.title} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>{card.title}</p>
+                <p className={`text-xl lg:text-2xl font-black ${card.accent.split(' ')[0]}`}>{card.value}</p>
+              </div>
+              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.accent.split(' ')[1]}`}>
+                {card.icon}
+              </div>
             </div>
           </div>
         ))}
@@ -280,25 +282,25 @@ const ControlEntidad: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Tareas de la entidad */}
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
             <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Tareas Activas del Centro</p>
             <button onClick={() => openTarea()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Tarea"><Plus size={18} /></button>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
               <thead className="bg-gray-50/50">
-                <tr>{["Zona","Asignado","Estado","Acción"].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+                <tr>{["Zona","Asignado","Estado","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {tareasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay tareas pendientes.</td></tr>)}
                 {tareasActivas.map((t: any) => (
                   <tr key={t.id} className="hover:bg-blue-50/20">
-                    <td className="px-6 py-4 font-bold text-[#1e3a5f] text-xs">{t.zona}</td>
-                    <td className="px-6 py-4 text-[#1e3a5f] text-xs font-bold">{t.asignado}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] text-xs whitespace-nowrap">{t.zona}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] text-xs font-bold whitespace-nowrap">{t.asignado}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100"} label={t.estado} />
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                       <button onClick={() => handleCompletarTarea(t.id)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Completar"><CheckCircle size={16} /></button>
                       <button onClick={() => openTarea(t)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
                       <button onClick={() => deleteTarea(t.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
@@ -312,25 +314,25 @@ const ControlEntidad: React.FC = () => {
         
         {/* Incidencias de la entidad */}
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
             <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Incidencias Abiertas</p>
             <button onClick={() => openIncid()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Incidencia"><Plus size={18} /></button>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
               <thead className="bg-gray-50/50">
-                <tr>{["Título","Zona","Prioridad","Acción"].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+                <tr>{["Título","Zona","Prioridad","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {incidenciasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay incidencias críticas ni abiertas.</td></tr>)}
                 {incidenciasActivas.map((i: any) => (
                   <tr key={i.id} className="hover:bg-red-50/20">
-                    <td className="px-6 py-4 font-bold text-[#1e3a5f] text-xs truncate max-w-[150px]" title={i.titulo}>{i.titulo}</td>
-                    <td className="px-6 py-4 text-gray-500 text-xs font-semibold">{i.zona}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] text-xs min-w-[150px]">{i.titulo}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs font-semibold whitespace-nowrap">{i.zona}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <Badge cls={PRIORIDAD_BADGE[i.prioridad] || "bg-gray-100"} label={i.prioridad} />
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                       <button onClick={() => handleResolverIncidencia(i.id)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Resolver"><CheckCircle size={16} /></button>
                       <button onClick={() => openIncid(i)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
                       <button onClick={() => deleteIncid(i.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
@@ -346,7 +348,7 @@ const ControlEntidad: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Administradores y Personal */}
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
             <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Personal del Centro</p>
             <div className="flex items-center gap-3">
               <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block">Control Total</span>
@@ -356,24 +358,24 @@ const ControlEntidad: React.FC = () => {
           <div className="overflow-x-auto flex-1">
             <table className="w-full">
               <thead className="bg-gray-50/50">
-                <tr>{["Nombre","Rol","Acción"].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+                <tr>{["Nombre","Rol","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {personal.length === 0 && (<tr><td colSpan={3} className="p-8 text-center text-gray-400 font-bold italic">No hay personal asignado.</td></tr>)}
                 {personal.map((u: any) => (
                   <tr key={u.id} className="hover:bg-blue-50/20">
-                    <td className="px-6 py-4">
-                      <p className="font-bold text-[#1e3a5f] text-sm">{u.nombre} {u.apellidos}</p>
-                      <p className="text-xs text-gray-400">{u.email}</p>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                      <p className="font-bold text-[#1e3a5f] text-sm truncate max-w-[150px]">{u.nombre} {u.apellidos}</p>
+                      <p className="text-xs text-gray-400 truncate max-w-[150px]">{u.email}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       {u.rol === 'admin' ? (
                         <Badge cls="bg-purple-100 text-purple-700" label="Administrador" />
                       ) : (
                         <Badge cls="bg-gray-100 text-gray-600" label="Operario" />
                       )}
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                       <button onClick={() => handleOpenEditUser(u)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
                       <button onClick={() => handleDeleteUser(u.id, `${u.nombre} ${u.apellidos}`)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
                     </td>
@@ -386,26 +388,26 @@ const ControlEntidad: React.FC = () => {
 
         {/* Últimas Notificaciones */}
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+              <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
             <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Últimas Notificaciones</p>
             <button onClick={() => openNotif()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Notificación"><Plus size={18} /></button>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
               <thead className="bg-gray-50/50">
-                <tr>{["Título","Tipo","Emisor","Destino","Acción"].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+                    <tr>{["Título","Tipo","Emisor","Destino","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {notificacionesEntidad.length === 0 && (<tr><td colSpan={5} className="p-8 text-center text-gray-400 font-bold italic">No hay notificaciones recientes.</td></tr>)}
                 {notificacionesEntidad.map((n: any) => (
                   <tr key={n.id} className="hover:bg-blue-50/20">
-                    <td className="px-6 py-4 font-bold text-[#1e3a5f] text-xs truncate max-w-[150px]">{n.titulo}</td>
-                    <td className="px-6 py-4">
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] text-xs min-w-[150px]">{n.titulo}</td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <Badge cls={n.tipo === 'urgente' ? 'bg-red-100 text-red-700' : n.tipo === 'importante' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} label={n.tipo} />
                     </td>
-                    <td className="px-6 py-4 text-gray-500 text-xs font-semibold">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
-                    <td className="px-6 py-4 text-gray-500 text-xs font-semibold">{n.dest}</td>
-                  <td className="px-6 py-4 flex gap-2">
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs font-semibold whitespace-nowrap">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs font-semibold whitespace-nowrap">{n.dest}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                     {n.entidad_id ? (
                        <>
                          <button onClick={() => openNotif(n)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
@@ -427,7 +429,7 @@ const ControlEntidad: React.FC = () => {
       {showUserModal && (
         <Modal title={editUser ? `EDITAR: ${editUser.nombre} ${editUser.apellidos}` : "NUEVO USUARIO"} onClose={() => setShowUserModal(false)}>
           <div className="flex flex-col gap-4 mb-4">
-            <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre</label>
                 <input value={userForm.nombre} onChange={e => setUserForm({...userForm, nombre: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="Nombre" />
@@ -441,7 +443,7 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label>
               <input type="email" value={userForm.email} onChange={e => setUserForm({...userForm, email: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="usuario@gmail.com" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Rol en la Entidad</label>
                 <select value={userForm.rol} onChange={e => setUserForm({...userForm, rol: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
@@ -459,7 +461,7 @@ const ControlEntidad: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-4 mt-6">
+              <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-6">
             <Button text="Cancelar" variant="secondary" onClick={() => setShowUserModal(false)} className="flex-1 py-3" />
             <Button text={editUser ? "Guardar Cambios" : "Crear Usuario"} variant="primary" onClick={handleSaveUser} className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>
@@ -478,7 +480,7 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Descripción</label>
               <input value={tareaForm.descripcion} onChange={e => setTareaForm({...tareaForm, descripcion: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="Detalles de la tarea..." />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Zona</label>
                 <select value={tareaForm.zona} onChange={e => setTareaForm({...tareaForm, zona: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
@@ -497,7 +499,7 @@ const ControlEntidad: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label>
                 <select value={tareaForm.estado} onChange={e => setTareaForm({...tareaForm, estado: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
@@ -516,7 +518,7 @@ const ControlEntidad: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-4 mt-6">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-6">
             <Button text="Cancelar" variant="secondary" onClick={() => setShowTareaModal(false)} className="flex-1 py-3" />
             <Button text="Guardar Tarea" variant="primary" onClick={saveTarea} className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>
@@ -535,7 +537,7 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Descripción</label>
               <input value={incidForm.descripcion} onChange={e => setIncidForm({...incidForm, descripcion: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="Detalles de la incidencia..." />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Zona</label>
                 <select value={incidForm.zona} onChange={e => setIncidForm({...incidForm, zona: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
@@ -562,7 +564,7 @@ const ControlEntidad: React.FC = () => {
               </select>
             </div>
           </div>
-          <div className="flex gap-4 mt-6">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-6">
             <Button text="Cancelar" variant="secondary" onClick={() => setShowIncidModal(false)} className="flex-1 py-3" />
             <Button text="Guardar Incidencia" variant="primary" onClick={saveIncid} className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>
@@ -581,7 +583,7 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Mensaje</label>
               <textarea value={notifForm.mensaje} onChange={e => setNotifForm({...notifForm, mensaje: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white resize-none" rows={3} placeholder="Escribe el mensaje..."></textarea>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
                 <select value={notifForm.tipo} onChange={e => setNotifForm({...notifForm, tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
@@ -601,7 +603,7 @@ const ControlEntidad: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-4 mt-6">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-6">
             <Button text="Cancelar" variant="secondary" onClick={() => setShowNotifModal(false)} className="flex-1 py-3" />
             <Button text="Guardar Notificación" variant="primary" onClick={saveNotif} className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>

@@ -9,7 +9,7 @@ const SaniclearLogo: React.FC<SaniclearLogoProps> = ({ size = "normal" }) => {
   return (
     <div className={`flex items-center gap-2 font-bold text-blue-600 ${s}`}>
       <span className="bg-blue-600 text-white rounded-lg px-1.5 py-0.5 text-sm">✚</span>
-      <span className="tracking-wide">Saniclear</span>
+      <span className="tracking-wide">Saniclears</span>
     </div>
   );
 }

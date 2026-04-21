@@ -7,32 +7,50 @@ REQUISITOS DE CONTRASEÑA:
 - Al menos 1 letra minúscula
 - Al menos 1 número
 - Al menos 1 carácter especial (@$!%*?&._-#)
+
 ------------------------------------------------------
 
-ADMINISTRADOR:
-  Email: admin@saniclear.com
+Administrador (Superadmin/Admin):
+
+Correo: superadmin@saniclear.com
+Contraseña: SuperAdmin1234!
+
+------------------------------------------------------
+
+ADMINISTRADORES:
+
+  Elena Ruiz (Mañana)
+  Email: elenaruiz@gmail.com
   Pass:  Admin1234!
+
+  Alberto Vera
+  Email: albertovera@gmail.com
+  Pass:  Admin1234!
+
+  Kike Ambrona
+  Email: kikeambrona@gmail.com
+  Pass:  Admin1234!
+
+YO
+Email: admin@gmail.com
+Pass:  Admin1234!
 
 ------------------------------------------------------
 
 OPERARIOS:
 
-  Juan Pérez (Mañana)
-  Email: juan.perez@saniclear.com
+  Luis Ramirez 
+  Email: luizramirez@gmail.com
+  Pass:  LuisR14!
+
+  Carmen Diaz 
+  Email: carmendiaz@gmail.com
   Pass:  Operario123!
 
-  María Ceballos (Tarde)
-  Email: maria.ceballos@saniclear.com
+  Laura Gómez
+  Email: lauragomez@gmail.com
   Pass:  Operario123!
 
-  Evelia Gil (Noche)
-  Email: evelia.gil@saniclear.com
-  Pass:  Operario123!
-
-  Carlos Fernández (Mañana)
-  Email: carlos.f@saniclear.com
-  Pass:  Operario123!
-
-  Ana Martínez (Tarde)
-  Email: ana.martinez@saniclear.com
+  Ana 
+  Email: ana@gmail.com
   Pass:  Operario123!

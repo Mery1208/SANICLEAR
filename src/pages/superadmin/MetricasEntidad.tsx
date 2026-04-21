@@ -125,7 +125,7 @@ const MetricasEntidad: React.FC = () => {
   return (
     <div className="font-sans">
       <div className="flex items-center gap-4 mb-8">
-        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -135,28 +135,30 @@ const MetricasEntidad: React.FC = () => {
       </div>
 
       {/* Tarjetas de IA */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {forecastCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-2xl border border-gray-100 p-5 flex justify-between items-center shadow-sm">
-            <div className="min-w-0 flex-1 pr-2">
-              <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1 truncate" title={card.title}>{card.title}</p>
-              <p className={`text-3xl font-black ${card.tone.split(' ')[0]}`}>{card.value.split(' ')[0]}</p>
-            </div>
-            <div className={`p-3 rounded-xl shrink-0 ${card.tone.split(' ')[1]}`}>
-              <span className={card.tone.split(' ')[0]}>{card.icon}</span>
+          <div key={card.title} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>{card.title}</p>
+                <p className={`text-xl lg:text-2xl font-black ${card.tone.split(' ')[0]}`}>{card.value.split(' ')[0]}</p>
+              </div>
+              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.tone.split(' ')[1]}`}>
+                <span className={card.tone.split(' ')[0]}>{card.icon}</span>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex flex-col">
+        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8 flex flex-col overflow-hidden">
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">
               Evolución Mensual de Carga Operativa
             </p>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="h-[300px] w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 10, height: 300 }}>
               <LineChart data={datosGrafica} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -171,7 +173,7 @@ const MetricasEntidad: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex flex-col">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8 flex flex-col">
            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 mb-5">
               <Activity size={24} />
            </div>
@@ -188,7 +190,7 @@ const MetricasEntidad: React.FC = () => {
 
       {/* Inteligencia Artificial / Previsiones */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
           <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
             Zonas con mayor presión operativa
           </p>
@@ -208,7 +210,7 @@ const MetricasEntidad: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
           <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
             Motor predictivo (IA)
           </p>

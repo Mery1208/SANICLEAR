@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { LayoutDashboard, Map, AlertCircle, Bell, User } from 'lucide-react';
 import BarraSuperior from '../components/common/BarraSuperior';
@@ -7,12 +7,22 @@ import { useDataStore } from '../store/dataStore';
 
 const AdminLayout: React.FC = () => {
     const { fetchCounts, setupRealtime } = useDataStore();
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
         fetchCounts();
         const cleanup = setupRealtime();
         return cleanup;
     }, []);
+
+    // Escuchar evento de toggle del menú
+    useEffect(() => {
+        const handleToggle = () => setMenuOpen(prev => !prev);
+        window.addEventListener('toggle-mobile-menu', handleToggle);
+        return () => window.removeEventListener('toggle-mobile-menu', handleToggle);
+    }, []);
+
+    const closeMenu = useCallback(() => setMenuOpen(false), []);
 
     const menuAdmin = [
         { id: 'panel', label: 'Panel Principal', ruta: '/admin', icon: <LayoutDashboard size={18} /> },
@@ -23,11 +33,11 @@ const AdminLayout: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#f4f6f9] font-inherit overflow-hidden">
+        <div className="min-h-screen flex flex-col bg-[#f4f6f9] font-inherit">
             <BarraSuperior />
             <div className="flex flex-1 overflow-hidden">
-                <MenuLateral items={menuAdmin} />
-                <main className="flex-1 p-6 md:p-10 overflow-y-auto font-sans">
+                <MenuLateral items={menuAdmin} isOpen={menuOpen} onClose={closeMenu} />
+                <main className="flex-1 p-3 md:p-6 lg:p-10 overflow-y-auto font-sans min-h-[calc(100vh-3.5rem)] lg:min-h-screen">
                     <Outlet />
                 </main>
             </div>
