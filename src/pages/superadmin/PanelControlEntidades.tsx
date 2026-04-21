@@ -6,7 +6,6 @@ import {
   RefreshCw,
   Plus,
   MapPin,
-  Users,
   Activity,
   ShieldCheck,
   Edit2,
@@ -17,7 +16,6 @@ import { supabase } from '../../supabase/client';
 import Button from '../../components/Button';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
-import { useAuth } from '../../context/AuthContext';
 
 interface Entidad {
   id: string;
@@ -31,7 +29,6 @@ interface Entidad {
 
 const PanelControlEntidades: React.FC = () => {
   const navigate = useNavigate();
-  const { usuario, rol } = useAuth();
   const [entidades, setEntidades] = useState<Entidad[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +47,7 @@ const PanelControlEntidades: React.FC = () => {
       const { data, error } = await supabase
         .from('entidades')
         .select('id, nombre_hospital, codigo, ciudad, plan_tipo, activa, max_usuarios')
-        .order('fecha_alta', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw new Error(error.message);
 

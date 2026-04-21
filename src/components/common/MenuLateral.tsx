@@ -18,36 +18,44 @@ interface MenuLateralProps {
 }
 
 const MenuLateral: React.FC<MenuLateralProps> = ({ items, isOpen = false, onClose }) => {
+    const handleCloseClick = () => {
+        if (onClose) onClose();
+    };
+    
     return (
         <>
             <div 
                 className={`
-                    fixed inset-0 bg-black/50 z-40 lg:hidden
+                    fixed inset-0 bg-black/50 z-40 
                     transition-opacity duration-300
                     ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
                 `}
-                onClick={onClose}
+                onClick={handleCloseClick}
             />
 
             <aside className={`
-                w-[280px] h-full
+                w-[280px] 
                 bg-[#92ccf8] border-r border-[#7ab9ee] 
                 overflow-y-auto shrink-0 flex flex-col 
                 font-sans z-50
-                fixed lg:relative top-0 left-0 
-                h-screen lg:h-[calc(100vh-3.5rem)] xl:h-[calc(100vh-5.625rem)]
+                fixed lg:fixed
+                top-[70px] lg:top-[90px]
+                left-0 
+                bottom-0
+                h-screen
                 transition-transform duration-300 ease-in-out
-                ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             `}>
+                {/* Botón cerrar alineado arriba con la barra superior */}
                 <button 
-                    className="lg:hidden absolute top-3 right-3 p-2 rounded-lg hover:bg-blue-200 transition-colors z-10"
-                    onClick={onClose}
+                    className="absolute top-3 right-3 p-2 rounded-lg hover:bg-blue-200 transition-colors z-50 bg-white"
+                    onClick={handleCloseClick}
                     aria-label="Cerrar menu"
                 >
-                    <X size={28} />
+                    <X size={24} className="text-slate-600" />
                 </button>
 
-                <nav className="flex flex-col gap-2 mt-14 lg:mt-4 px-4 py-4">
+                <nav className="flex flex-col gap-2 mt-[70px] lg:mt-[90px] px-4 py-4">
                     {items.map(item => {
                         if (item.disabled) {
                             return (

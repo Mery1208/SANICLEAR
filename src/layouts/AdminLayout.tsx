@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { LayoutDashboard, Map, AlertCircle, Bell, User } from 'lucide-react';
 import BarraSuperior from '../components/common/BarraSuperior';
 import MenuLateral from '../components/common/MenuLateral';
+import AppFooter from '../components/common/AppFooter';
 import { useDataStore } from '../store/dataStore';
 
 const AdminLayout: React.FC = () => {
@@ -18,8 +19,13 @@ const AdminLayout: React.FC = () => {
     // Escuchar evento de toggle del menú
     useEffect(() => {
         const handleToggle = () => setMenuOpen(prev => !prev);
+        const handleClose = () => setMenuOpen(false);
         window.addEventListener('toggle-mobile-menu', handleToggle);
-        return () => window.removeEventListener('toggle-mobile-menu', handleToggle);
+        window.addEventListener('close-mobile-menu', handleClose);
+        return () => {
+            window.removeEventListener('toggle-mobile-menu', handleToggle);
+            window.removeEventListener('close-mobile-menu', handleClose);
+        };
     }, []);
 
     const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -34,13 +40,14 @@ const AdminLayout: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-[#f4f6f9] font-inherit">
-            <BarraSuperior />
-            <div className="flex flex-1 overflow-hidden">
-                <MenuLateral items={menuAdmin} isOpen={menuOpen} onClose={closeMenu} />
-                <main className="flex-1 p-3 md:p-6 lg:p-10 overflow-y-auto font-sans min-h-[calc(100vh-3.5rem)] lg:min-h-screen">
+            <MenuLateral items={menuAdmin} isOpen={menuOpen} onClose={closeMenu} />
+            <main className="flex-1 flex flex-col overflow-hidden">
+                <BarraSuperior />
+                <div className="flex-1 p-3 md:p-6 lg:p-10 overflow-y-auto font-sans">
                     <Outlet />
-                </main>
-            </div>
+                </div>
+                <AppFooter />
+            </main>
         </div>
     );
 };

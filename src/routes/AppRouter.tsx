@@ -13,6 +13,10 @@ import RutaProtegida from './RutaProtegida';
 // Páginas públicas
 import Landing from '../pages/public/Landing';
 import Login from '../pages/public/Login';
+import PoliticaPrivacidad from '../pages/public/PoliticaPrivacidad';
+import Terminos from '../pages/public/Terminos';
+import Seguridad from '../pages/public/Seguridad';
+import Cookies from '../pages/public/Cookies';
 
 // Páginas admin
 import Dashboard from '../pages/admin/Dashboard';
@@ -42,6 +46,10 @@ const AppRouter: React.FC = () => {
                 <Route element={<PublicLayout />}>
                     <Route path="/" element={<Landing />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/privacidad" element={<PoliticaPrivacidad />} />
+                    <Route path="/terminos" element={<Terminos />} />
+                    <Route path="/seguridad" element={<Seguridad />} />
+                    <Route path="/cookies" element={<Cookies />} />
                 </Route>
 
                 {/* Rutas operario (protegidas) */}

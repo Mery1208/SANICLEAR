@@ -4,11 +4,7 @@ import { LogOut, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import logoImg from '../../assets/img/logo.png';
 
-interface BarraSuperiorProps {
-    onMenuClick?: () => void;
-}
-
-const BarraSuperior: React.FC<BarraSuperiorProps> = ({ onMenuClick }) => {
+const BarraSuperior: React.FC = () => {
     const { logout, usuario, rol } = useAuth();
     const navigate = useNavigate();
 
@@ -21,13 +17,21 @@ const BarraSuperior: React.FC<BarraSuperiorProps> = ({ onMenuClick }) => {
         navigate('/');
     };
 
+    const handleMenuClick = () => {
+        window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
+    };
+    
+    const handleCloseClick = () => {
+        window.dispatchEvent(new CustomEvent('close-mobile-menu'));
+    };
+
     return (
         <nav className="w-full h-[70px] sm:h-[90px] flex items-center justify-between px-3 sm:px-6 bg-white border-b border-slate-200 shrink-0 font-sans overflow-hidden">
             {/* Logo y Título */}
             <div className="flex items-center gap-1 sm:gap-3 w-auto sm:w-[300px] shrink-1 sm:shrink-0">
                 <button 
-                    onClick={onMenuClick}
-                    className="lg:hidden p-1.5 sm:p-2 -ml-1 sm:-ml-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
+                    onClick={handleMenuClick}
+                    className="p-1.5 sm:p-2 -ml-1 sm:-ml-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
                     aria-label="Abrir menú"
                 >
                     <Menu size={24} className="w-6 h-6 sm:w-7 sm:h-7" />
