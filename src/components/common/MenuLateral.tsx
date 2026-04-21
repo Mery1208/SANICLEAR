@@ -30,15 +30,12 @@ const MenuLateral: React.FC<MenuLateralProps> = ({ items, isOpen = false, onClos
             />
 
             <aside className={`
-                w-[280px] 
-                w-[280px]
+                w-[280px] h-full
                 bg-[#92ccf8] border-r border-[#7ab9ee] 
                 overflow-y-auto shrink-0 flex flex-col 
                 font-sans z-50
-                fixed lg:sticky top-0 left-0 
-                h-screen 
-                fixed inset-y-0 left-0 
-                lg:static lg:h-full lg:min-h-[calc(100vh-90px)]
+                fixed lg:relative top-0 left-0 
+                h-screen lg:h-[calc(100vh-3.5rem)] xl:h-[calc(100vh-5.625rem)]
                 transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>

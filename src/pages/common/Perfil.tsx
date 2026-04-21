@@ -117,18 +117,18 @@ const Perfil: React.FC = () => {
   if (!usuario) return <p className="p-6">Cargando...</p>;
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-200">
-        <div className="min-w-0 flex-1">
+    <div className="w-full flex flex-col gap-6 font-sans">
+      <div className="flex justify-between items-center w-full">
+        <div className="text-left">
           <h2 className="text-xl sm:text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Mi Cuenta</h2>
-          <p className="text-gray-400 text-xs sm:text-sm font-medium italic truncate">Configura tu perfil personal y preferencias.</p>
+          <p className="text-gray-400 text-xs sm:text-sm font-medium italic">Configura tu perfil.</p>
         </div>
         <Button
           text="Cerrar Sesión"
           onClick={handleLogout}
           variant="danger"
           icon={LogOut}
-          className="w-full sm:w-auto px-4 sm:px-6 py-2.5 shadow-sm text-xs sm:text-sm shrink-0"
+          className="px-3 py-2 text-xs shrink-0"
         />
       </div>
 
@@ -138,15 +138,15 @@ const Perfil: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Columna Izquierda: Avatar */}
         <div className="md:col-span-1 lg:col-span-1">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center flex flex-col items-center">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xl font-bold relative shadow-lg shadow-blue-100 mb-3">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center flex flex-col items-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-bold relative shadow-lg shadow-blue-100 mb-4">
               {usuario.nombre?.charAt(0)}{usuario.apellidos?.charAt(0)}
-              <span className="absolute bottom-0 right-0 w-5 h-5 bg-white rounded-full flex items-center justify-center text-blue-600 shadow-md">
-                <Camera size={10} />
+              <span className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-blue-600 shadow-md">
+                <Camera size={14} />
               </span>
             </div>
-            <h3 className="text-base font-bold text-[#1e3a5f]">{usuario.nombre} {usuario.apellidos}</h3>
-            <p className="text-xs font-bold text-blue-400 uppercase tracking-wider">{isAdmin ? "ADMIN" : "OPERARIO"}</p>
+            <h3 className="text-xl font-black text-[#1e3a5f]">{usuario.nombre} {usuario.apellidos}</h3>
+            <p className="text-sm font-bold text-blue-500 uppercase tracking-wider mt-1">{isAdmin ? "ADMINISTRADOR" : "OPERARIO"}</p>
           </div>
         </div>
 
@@ -236,10 +236,11 @@ const Perfil: React.FC = () => {
             </div>
             <p className="text-[10px] text-gray-400 italic ml-1 mt-4">Deja los campos de contraseña vacíos si no deseas cambiarla.</p>
 
-            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4 mt-auto pt-12 border-t mt-12">
+            <div className="flex justify-center gap-3 mt-8">
               <button onClick={() => setForm({ nombre: usuario.nombre || "", apellidos: usuario.apellidos || "", passwordActual: "", passwordNueva: "", passwordConfirmar: "" })}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-bold text-gray-400 bg-gray-50 hover:bg-gray-100 transition-colors uppercase tracking-wider">
-                <X size={14} className="inline mr-2" />
+                className="px-8 py-3 rounded-xl text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                <X size={16} className="inline mr-2" />
                 Restablecer
               </button>
               <Button
@@ -248,7 +249,7 @@ const Perfil: React.FC = () => {
                 variant="primary"
                 icon={Save}
                 disabled={loading}
-                className="w-full sm:w-auto px-6 py-2.5 shadow-lg shadow-blue-100 text-sm font-bold"
+                className="px-8 py-3 text-sm font-bold"
               />
             </div>
           </div>

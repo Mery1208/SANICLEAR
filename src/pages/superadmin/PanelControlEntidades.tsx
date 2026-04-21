@@ -106,42 +106,41 @@ const PanelControlEntidades: React.FC = () => {
     );
   }, [entidades, searchTerm]);
 
-  return (
-    <div className="font-sans">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6 sm:mb-8">
-        <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
-            Control de entidades
+return (
+    <div className="font-sans w-full">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 w-full">
+        <div className="text-left w-full md:w-auto">
+          <h2 className="text-xl sm:text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
+            Control entidades
           </h2>
-          <p className="text-gray-400 text-sm font-medium italic">
-            Listado maestro para acceder, supervisar y controlar cada hospital del sistema.
+          <p className="text-gray-400 text-xs sm:text-sm font-medium italic">
+            Listado maestro.
           </p>
         </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 items-center w-full lg:w-auto">
-          <div className="relative w-full sm:w-auto">
+          
+        <div className="flex flex-row items-center gap-2 w-full md:w-auto">
+          <div className="relative flex-1 md:flex-none">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
               type="text" 
-              placeholder="Buscar entidad..." 
+              placeholder="Buscar..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all w-full sm:w-64"
+              className="pl-10 pr-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all w-32 md:w-48"
             />
           </div>
           <button
             onClick={fetchEntidades}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-bold text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors shrink-0"
+            className="flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
             title="Actualizar"
           >
-            <RefreshCw size={18} />
-            <span className="hidden sm:inline">Actualizar</span>
+            <RefreshCw size={16} />
           </button>
           <button
             onClick={() => abrirModal()}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 text-sm font-black uppercase tracking-widest rounded-xl transition-all duration-200 cursor-pointer border-none bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100 whitespace-nowrap shrink-0"
+            className="flex items-center justify-center gap-1 py-2 px-4 text-sm font-bold rounded-xl transition-all duration-200 cursor-pointer border-none bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
           >
-            <Plus size={18} />
+            <Plus size={16} />
             <span>Nueva Entidad</span>
           </button>
         </div>
