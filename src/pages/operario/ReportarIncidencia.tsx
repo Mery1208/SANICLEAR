@@ -94,9 +94,9 @@ const ReportarIncidencia: React.FC = () => {
   const tipos = ["Equipo","Material","Acceso","Zona","Otros"];
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col gap-6 font-sans">
-          <div className="flex justify-between items-center mb-2">
-             <div>
+    <div className="flex flex-col gap-6 font-sans w-full">
+          <div className="flex justify-between items-start mb-2">
+             <div className="text-left">
                 <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
                 <p className="text-gray-400 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
              </div>
@@ -119,8 +119,8 @@ const ReportarIncidencia: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm p-10 max-w-4xl mx-auto">
-        <div className="flex flex-col gap-8">
+      <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-gray-100 shadow-sm p-6 sm:p-10 w-full">
+        <div className="flex flex-col gap-6 sm:gap-8">
             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
                <select value={form.tipo} onChange={e => setForm({...form, tipo:e.target.value})}
@@ -200,7 +200,7 @@ const ReportarIncidencia: React.FC = () => {
               variant="primary" 
               icon={Send} 
               disabled={loading || !form.tipo || !form.zona || !form.descripcion}
-              className="w-full py-3.5 shadow-lg shadow-blue-100"
+              className="w-full py-4 sm:py-5 text-sm sm:text-base shadow-lg shadow-blue-100"
             />
         </div>
       </div>
