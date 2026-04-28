@@ -248,6 +248,18 @@ Accede a: http://localhost:5173
 
 ---
 
+### 🗓️ MAYO 2026 — Pulido Final y UI/UX
+
+#### 📍 Semana 32 | Corrección de Bugs y Consistencia Visual
+
+✨ **Mejoras de Interfaz y Estabilidad:**
+- **Estandarización de Paneles:** Alineación corregida en las cabeceras de Admin y Superadmin (`Dashboard`, `GestionZonaUsuarios`, `PanelGlobal`) utilizando un sistema Flexbox homogéneo y responsivo.
+- **Modales de Prevención:** Sustitución global de las alertas nativas (`window.confirm`) por ventanas `Modal` personalizadas (con diseño de advertencia) para la eliminación irreversible de datos (usuarios, zonas, entidades).
+- **Optimización de Gráficos:** El gráfico de Recharts del Dashboard ahora inyecta dinámicamente los 6 meses previos para garantizar una representación temporal coherente, incluso si la base de datos es de reciente creación.
+- **Refactorización Móvil:** Las tarjetas de tareas del Operario (`MisTareas.tsx`) y los bloques de métricas han sido compactados y adaptados para un renderizado impecable en smartphones.
+
+---
+
 ### 🗓️ ABRIL 2026 — Recta Final, Superadmin y Supabase
 
 #### 📍 Semana 31 | 25-27 Abril 2026 · Estado Final

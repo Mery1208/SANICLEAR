@@ -335,8 +335,8 @@ const Dashboard: React.FC = () => {
       </div>
 
       {showModal && (
-        <Modal title="NUEVA TAREA" onClose={() => setShowModal(false)}>
-          <div className="flex flex-col gap-6">
+        <Modal title="NUEVA TAREA" onClose={() => setShowModal(false)} maxWidth="max-w-2xl">
+          <div className="flex flex-col gap-4 sm:gap-5">
             {zonas.length === 0 || usuarios.length === 0 ? (
               <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-semibold">
                 ⚠️ No puedes crear tareas hasta que al menos exista:
@@ -350,51 +350,53 @@ const Dashboard: React.FC = () => {
               </div>
             ) : (
               <>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Título de la Tarea</label>
-              <input value={form.titulo} onChange={e => setForm({...form, titulo:e.target.value})}
-                placeholder="Ej: Limpieza profunda UCI Quirófano"
-                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
-                <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
-                  rows={2} placeholder="Instrucciones especiales..."
-                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
-                <select value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
-                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
-                  <option value="">Seleccionar...</option>
-                  {zonas.map(z => <option key={z.id} value={z.nombre}>{z.nombre}</option>)}
-                </select>
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Operario</label>
-                <select value={form.operario} onChange={e => setForm({...form, operario:e.target.value})}
-                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
-                  <option value="">Seleccionar...</option>
-                  {usuarios.map(u => <option key={u.id} value={u.id}>{u.nombre} {u.apellidos}</option>)}
-                </select>
-              </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                  {["alta","media","baja"].map(p => (
-                    <button key={p} onClick={() => setForm({...form, prioridad:p})}
-                      className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-2xl border transition-all ${form.prioridad===p ? "bg-[#1e3a5f] text-white border-[#1e3a5f] shadow-lg shadow-blue-900/10":"border-gray-100 bg-gray-50/50 text-gray-400 hover:bg-gray-100"}`}>
-                      {p}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Título de la Tarea</label>
+                    <input value={form.titulo} onChange={e => setForm({...form, titulo:e.target.value})}
+                      placeholder="Ej: Limpieza profunda UCI"
+                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
+                    <select value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
+                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                      <option value="">Seleccionar...</option>
+                      {zonas.map(z => <option key={z.id} value={z.nombre}>{z.nombre}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Operario</label>
+                    <select value={form.operario} onChange={e => setForm({...form, operario:e.target.value})}
+                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                      <option value="">Seleccionar...</option>
+                      {usuarios.map(u => <option key={u.id} value={u.id}>{u.nombre} {u.apellidos}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+                      <div className="flex flex-row gap-2 sm:gap-3">
+                        {["alta","media","baja"].map(p => (
+                          <button key={p} onClick={() => setForm({...form, prioridad:p})}
+                            className={`flex-1 py-2.5 sm:py-3 text-xs font-black uppercase tracking-widest rounded-2xl border transition-all ${form.prioridad===p ? "bg-[#1e3a5f] text-white border-[#1e3a5f] shadow-lg shadow-blue-900/10":"border-gray-100 bg-gray-50/50 text-gray-400 hover:bg-gray-100"}`}>
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                  </div>
                 </div>
-            </div>
-            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
-              <button onClick={() => setShowModal(false)} className="px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
+
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+                    <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
+                      rows={2} placeholder="Instrucciones especiales..."
+                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+                </div>
+
+                <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2 sm:mt-4">
+              <button onClick={() => setShowModal(false)} className="px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors shrink-0">Cancelar</button>
               <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
-                className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] ${!form.titulo || !form.zona || !form.operario ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 shadow-blue-100'}`}>
+                className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] ${!form.titulo || !form.zona || !form.operario ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 shadow-blue-100'}`}>
                 Asignar Tarea
               </button>
             </div>
