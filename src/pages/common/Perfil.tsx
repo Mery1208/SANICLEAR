@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/Button';
-import { Shield, LogOut, Camera, Save, X, Eye, EyeOff } from 'lucide-react';
+import { Shield, LogOut, Camera, Save, Eye, EyeOff } from 'lucide-react';
 
 const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-#])[A-Za-z\d@$!%*?&._\-#]{8,}$/;
 
@@ -238,9 +238,8 @@ const Perfil: React.FC = () => {
 
             <div className="flex justify-center gap-3 mt-8">
               <button onClick={() => setForm({ nombre: usuario.nombre || "", apellidos: usuario.apellidos || "", passwordActual: "", passwordNueva: "", passwordConfirmar: "" })}
-                className="px-8 py-3 rounded-xl text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors sm:px-6 sm:py-2.5 sm:text-sm"
               >
-                <X size={16} className="inline mr-2" />
                 Restablecer
               </button>
               <Button
@@ -249,7 +248,7 @@ const Perfil: React.FC = () => {
                 variant="primary"
                 icon={Save}
                 disabled={loading}
-                className="px-8 py-3 text-sm font-bold"
+                className="px-4 py-2 text-xs font-bold sm:px-6 sm:py-2.5 sm:text-sm"
               />
             </div>
           </div>

@@ -17,7 +17,7 @@ interface Tarea {
 }
 
 const PRIORIDAD_BADGE: Record<string, string> = { alta:"bg-red-100 text-red-700", media:"bg-yellow-100 text-yellow-700", baja:"bg-green-100 text-green-700" };
-const PRIORIDAD_LABEL: Record<string, string> = { alta:"Prioridad Alta", media:"Prioridad Media", baja:"Prioridad Baja" };
+const PRIORIDAD_LABEL: Record<string, string> = { alta:"Alta", media:"Media", baja:"Baja" };
 
 const MisTareas: React.FC = () => {
   const { usuario } = useAuth();
@@ -193,15 +193,15 @@ const MisTareas: React.FC = () => {
       </div>
 
       {/* Counters */}
-      <div className="flex justify-center gap-5 mb-6">
+      <div className="flex justify-center gap-1 sm:gap-4 mb-3 sm:mb-6 flex-wrap">
         {[
-          ["Alta Prioridad", alta, "bg-red-50 text-red-700 border-red-200"],
+          ["Prioridad Alta", alta, "bg-red-50 text-red-700 border-red-200"],
           ["Completadas", completadas, "bg-green-50 text-green-700 border-green-200"],
           ["Pendientes", pendientes, "bg-yellow-50 text-yellow-700 border-yellow-200"]
         ].map(([l, v, cls]) => (
-          <div key={l as string} className={`border rounded-2xl px-8 py-5 flex flex-col items-center gap-1 min-w-[160px] ${cls}`}>
-            <span className="font-black text-3xl">{v as number}</span>
-            <span className="text-xs font-bold uppercase tracking-wide">{l as string}</span>
+          <div key={l as string} className={`border rounded-lg px-2 sm:px-6 py-1.5 sm:py-4 flex flex-col items-center gap-0.5 sm:gap-1 min-w-[80px] sm:min-w-[120px] ${cls}`}>
+            <span className="font-black text-xl sm:text-3xl">{v as number}</span>
+            <span className="text-[8px] sm:text-xs font-bold uppercase tracking-wide text-center leading-tight">{l as string}</span>
           </div>
         ))}
       </div>
@@ -218,10 +218,10 @@ const MisTareas: React.FC = () => {
         }).map(t => {
           const isCompleted = t.estado === "completada" || t.estado === "hecha";
           return (
-            <div key={t.id} className={`bg-white rounded-xl border p-4 flex justify-between items-center shadow-sm ${isCompleted ? "opacity-60" : ""}`}>
-              <div>
-                <p className={`font-semibold ${isCompleted ? "line-through decoration-green-500 decoration-2 text-green-700" : "text-gray-800"}`}>{t.zona}</p>
-                <p className={`text-sm mb-1 ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
+            <div key={t.id} className={`bg-white rounded-xl border p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 shadow-sm ${isCompleted ? "opacity-60" : ""}`}>
+              <div className="flex-1 min-w-0">
+                <p className={`font-semibold text-sm sm:text-base break-words ${isCompleted ? "line-through decoration-green-500 decoration-2 text-green-700" : "text-gray-800"}`}>{t.zona}</p>
+                <p className={`text-xs sm:text-sm mb-1 break-words ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
               {!isCompleted ? (
@@ -230,10 +230,10 @@ const MisTareas: React.FC = () => {
                       onClick={() => completar(t.id)}
                       variant="success"
                       icon={CheckCircle}
-                      className="px-4 py-2 ml-3 shrink-0 shadow-sm"
+                      className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm shrink-0 shadow-sm w-full sm:w-auto"
                     />
               ) : (
-                <span className="text-green-600 font-semibold text-sm ml-3 shrink-0 flex items-center gap-2">
+                <span className="text-green-600 font-semibold text-xs sm:text-sm shrink-0 flex items-center gap-1 sm:gap-2 mt-2 sm:mt-0">
                   <CheckCircle size={16} />
                   <span>Completada</span>
                 </span>
@@ -244,9 +244,12 @@ const MisTareas: React.FC = () => {
       </div>
 
       {/* Progress */}
-      <div className="mt-6 flex justify-center">
-        <div className="bg-white rounded-2xl px-10 py-4 border border-green-200 text-center text-green-700 font-bold shadow-sm inline-block">
-          {completadas} / {total} Completadas
+      <div className="mt-3 sm:mt-4 flex justify-center">
+        <div className="bg-white rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 border border-green-200 text-center text-green-700 font-bold shadow-sm inline-block text-xs sm:text-sm">
+          <span className="text-base sm:text-lg">{completadas}</span>
+          <span className="text-sm sm:text-base mx-1">/</span>
+          <span className="text-sm sm:text-base">{total}</span>
+          <span className="text-[9px] sm:text-xs ml-0.5 sm:ml-1">Comp.</span>
         </div>
       </div>
     </div>

@@ -6,8 +6,8 @@ const AppFooter: React.FC = () => {
   return (
     <footer className="bg-slate-800 text-white py-4 px-6 mt-auto">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <img src={logoImg} alt="Saniclear" className="h-8 brightness-0 invert" />
+        <div className="flex items-center gap-8">
+          <img src={logoImg} alt="Saniclears" className="h-16 brightness-0 invert" />
           <span className="text-xs text-white/70">© 2026 Saniclear - Gestión Hospitalaria</span>
         </div>
         

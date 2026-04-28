@@ -144,20 +144,20 @@ const ReportarIncidencia: React.FC = () => {
                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-6 py-4 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all resize-none" />
             </div>
 
-            <div className="flex flex-col gap-2">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
-               <div className="grid grid-cols-4 gap-3">
-                  {PRIORIDADES.map(p => (
-                    <button key={p.value} type="button"
-                      onClick={() => !form.urgente && setForm({...form, prioridad: p.value})}
-                      disabled={form.urgente}
-                      className={`px-4 py-3 rounded-2xl border text-xs font-bold uppercase tracking-wider transition-all ${form.urgente && p.value === 'critica' ? `${p.bg} ${p.color} ring-2 ring-red-200` : form.prioridad === p.value ? `${p.bg} ${p.color} ring-2 ring-blue-100` : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${form.urgente && p.value !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
-                      {p.label}
-                    </button>
-                  ))}
-               </div>
-               {form.urgente && <p className="text-[10px] text-red-500 font-bold ml-1 mt-1">Prioridad fijada a Crítica por marcado como urgente</p>}
-            </div>
+             <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2">
+                   {PRIORIDADES.map(p => (
+                     <button key={p.value} type="button"
+                       onClick={() => !form.urgente && setForm({...form, prioridad: p.value})}
+                       disabled={form.urgente}
+                       className={`px-3 py-2 text-xs sm:px-3 sm:py-2 sm:text-xs rounded-lg sm:rounded-xl border font-bold uppercase tracking-wider transition-all ${form.urgente && p.value === 'critica' ? `${p.bg} ${p.color} ring-2 ring-red-200` : form.prioridad === p.value ? `${p.bg} ${p.color} ring-2 ring-blue-100` : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${form.urgente && p.value !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                       {p.label}
+                     </button>
+                   ))}
+                </div>
+                {form.urgente && <p className="text-[10px] text-red-500 font-bold ml-1 mt-1">Prioridad fijada a Crítica por marcado como urgente</p>}
+             </div>
 
             <div className="flex flex-col gap-3">
                <div className="flex items-center gap-3 bg-red-50/30 p-4 rounded-2xl cursor-pointer hover:bg-red-50/50 transition-colors" onClick={() => setForm({...form, urgente: !form.urgente, prioridad: !form.urgente ? 'critica' : form.prioridad})}>

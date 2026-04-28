@@ -41,7 +41,7 @@ OPERARIOS:
 
   Luis Ramirez 
   Email: luizramirez@gmail.com
-  Pass:  LuisR14!
+  Pass:  Operario123!
 
   Carmen Diaz 
   Email: carmendiaz@gmail.com
