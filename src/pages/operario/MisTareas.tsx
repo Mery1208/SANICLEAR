@@ -224,20 +224,20 @@ const MisTareas: React.FC = () => {
                 <p className={`text-xs sm:text-sm mb-1 break-words ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
-              {!isCompleted ? (
-                    <Button
-                      text="Hecho"
-                      onClick={() => completar(t.id)}
-                      variant="success"
-                      icon={CheckCircle}
-                      className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm shrink-0 shadow-sm w-full sm:w-auto"
-                    />
-              ) : (
-                <span className="text-green-600 font-semibold text-xs sm:text-sm shrink-0 flex items-center gap-1 sm:gap-2 mt-2 sm:mt-0">
-                  <CheckCircle size={16} />
-                  <span>Completada</span>
-                </span>
-              )}
+               {!isCompleted ? (
+                     <Button
+                       text="Hecho"
+                       onClick={() => completar(t.id)}
+                       variant="success"
+                       icon={CheckCircle}
+                       className="px-2 py-1 text-[10px] sm:px-3 sm:py-1 sm:text-[11px] shrink-0 shadow-sm w-auto sm:w-auto min-w-[55px]"
+                     />
+               ) : (
+                 <span className="text-green-600 font-semibold text-[10px] sm:text-[11px] shrink-0 flex items-center gap-1 sm:gap-2 mt-2 sm:mt-0">
+                   <CheckCircle size={14} />
+                   <span>Completada</span>
+                 </span>
+               )}
             </div>
           );
         })}

@@ -94,7 +94,7 @@ const ReportarIncidencia: React.FC = () => {
   const tipos = ["Equipo","Material","Acceso","Zona","Otros"];
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-6 font-sans">
+    <div className="max-w-6xl mx-auto flex flex-col gap-6 font-sans">
           <div className="flex justify-between items-center mb-2">
              <div>
                 <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
@@ -119,7 +119,7 @@ const ReportarIncidencia: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm p-10">
+      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm p-10 max-w-4xl mx-auto">
         <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
@@ -140,7 +140,7 @@ const ReportarIncidencia: React.FC = () => {
             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
                <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
-                 rows={5} placeholder="Describe el problema..."
+                 rows={6} placeholder="Describe el problema..."
                  className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-6 py-4 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all resize-none" />
             </div>
 

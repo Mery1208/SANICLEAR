@@ -173,9 +173,7 @@ const GestionIncidencias: React.FC = () => {
                  {ic as React.ReactNode}
                </div>
              </div>
-           </div>
-         ))}
-       </div>
+              </div>
 
       {/* Filter Categories */}
       <div className="flex gap-2 py-2 overflow-x-auto no-scrollbar">
@@ -245,154 +243,156 @@ const GestionIncidencias: React.FC = () => {
          </div>
       </div>
 
-      {/* Modal Crear Incidencia */}
-      {showCreateModal && (
-        <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)}>
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
-              <select value={createForm.tipo} onChange={e => setCreateForm({...createForm, tipo:e.target.value})}
-                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
-                <option value="">Seleccionar...</option>
-                {["Equipo","Material","Acceso","Zona","Otro"].map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
+       {/* Modal Crear Incidencia */}
+       {showCreateModal && (
+         <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)}>
+           <div className="flex flex-col gap-5 max-w-3xl w-full">
+             <div className="flex flex-col gap-1.5">
+               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
+               <select value={createForm.tipo} onChange={e => setCreateForm({...createForm, tipo:e.target.value})}
+                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                 <option value="">Seleccionar...</option>
+                 {["Equipo","Material","Acceso","Zona","Otro"].map(t => <option key={t} value={t}>{t}</option>)}
+               </select>
+             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
-              <input value={createForm.zona} onChange={e => setCreateForm({...createForm, zona:e.target.value})}
-                placeholder="Ej: UCI - Planta 2"
-                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
-            </div>
+             <div className="flex flex-col gap-1.5">
+               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
+               <input value={createForm.zona} onChange={e => setCreateForm({...createForm, zona:e.target.value})}
+                 placeholder="Ej: UCI - Planta 2"
+                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
-              <textarea value={createForm.descripcion} onChange={e => setCreateForm({...createForm, descripcion:e.target.value})}
-                rows={4} placeholder="Describe el problema..."
-                className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
-            </div>
+             <div className="flex flex-col gap-1.5">
+               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+               <textarea value={createForm.descripcion} onChange={e => setCreateForm({...createForm, descripcion:e.target.value})}
+                 rows={5} placeholder="Describe el problema..."
+                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
-               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                 {["baja","media","alta","critica"].map(p => (
-                   <button key={p} type="button"
-                     onClick={() => !createForm.urgente && setCreateForm({...createForm, prioridad: p})}
-                     disabled={createForm.urgente}
-                     className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${createForm.urgente && p === 'critica' ? 'bg-red-100 text-red-800 border-red-300 ring-2 ring-red-200' : createForm.prioridad === p ? 'bg-blue-100 text-blue-800 border-blue-300 ring-2 ring-blue-100' : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
-                     {p.charAt(0).toUpperCase() + p.slice(1)}
-                   </button>
-                 ))}
-               </div>
-              {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 bg-red-50/30 p-3 rounded-2xl cursor-pointer hover:bg-red-50/50 transition-colors"
-                onClick={() => setCreateForm({...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad})}>
-                <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-red-200"}`}>
-                  {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
+             <div className="flex flex-col gap-1.5">
+               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                  {["baja","media","alta","critica"].map(p => (
+                    <button key={p} type="button"
+                      onClick={() => !createForm.urgente && setCreateForm({...createForm, prioridad: p})}
+                      disabled={createForm.urgente}
+                      className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${createForm.urgente && p === 'critica' ? 'bg-red-100 text-red-800 border-red-300 ring-2 ring-red-200' : createForm.prioridad === p ? 'bg-blue-100 text-blue-800 border-blue-300 ring-2 ring-blue-100' : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                      {p.charAt(0).toUpperCase() + p.slice(1)}
+                    </button>
+                  ))}
                 </div>
-                <label className="text-xs text-red-700 font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
-              </div>
-            </div>
+               {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
+             </div>
 
-            <div className="flex gap-2 sm:gap-4 mt-2">
-              <button onClick={() => setShowCreateModal(false)} className="px-3 py-2 text-[10px] sm:px-6 sm:py-3 sm:text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
-              <button onClick={handleCreateIncidencia} disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion}
-                className="flex-1 bg-blue-500 text-white py-2 text-[10px] sm:py-3 sm:text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-lg shadow-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                {loading ? "Creando..." : "Crear Incidencia"}
-              </button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
-      {/* Modal Detail View matched to Screenshot 2 */}
-      {selected && (
-        <Modal title={selected.titulo} onClose={() => setSelected(null)}>
-          <div className="p-2">
-            <div className="flex justify-between items-start mb-6">
-               <div>
-                  <p className="text-[10px] font-black text-gray-300 mb-1 uppercase tracking-widest">#{selected.id}</p>
-                  <h3 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">{selected.titulo}</h3>
-                  <div className="flex gap-3 mt-1">
-                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.zona}</span>
-                     <span className="text-[10px] text-gray-400 font-bold">•</span>
-                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.operario}</span>
-                     <span className="text-[10px] text-gray-400 font-bold">•</span>
-                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')}</span>
-                  </div>
-               </div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-4 mb-8">
-               {[
-                 ["Operario", selected.operario],
-                 ["Zona", selected.zona],
-                 ["Fecha", new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')],
-                 ["Prioridad", selected.prioridad]
-               ].map(([l, v]) => (
-                 <div key={l as string} className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
-                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">{l as string}</p>
-                    <p className={`text-[11px] font-bold text-[#1e3a5f] uppercase truncate ${l==="Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
+             <div className="flex flex-col gap-3">
+               <div className="flex items-center gap-3 bg-red-50/30 p-3 rounded-2xl cursor-pointer hover:bg-red-50/50 transition-colors"
+                 onClick={() => setCreateForm({...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad})}>
+                 <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-red-200"}`}>
+                   {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
                  </div>
-               ))}
-            </div>
+                 <label className="text-xs text-red-700 font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
+               </div>
+             </div>
 
-            <div className="mb-8">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Descripción</p>
-                <div className="bg-blue-50/20 border border-blue-50 rounded-2xl p-4 text-sm font-semibold text-slate-600 leading-relaxed italic">
-                  {selected.descripcion || selected.desc}
+             <div className="flex gap-2 sm:gap-4 mt-2">
+               <button onClick={() => setShowCreateModal(false)} className="px-3 py-2 text-[10px] sm:px-6 sm:py-3 sm:text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
+               <button onClick={handleCreateIncidencia} disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion}
+                 className="flex-1 bg-blue-500 text-white py-2 text-[10px] sm:py-3 sm:text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-lg shadow-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                 {loading ? "Creando..." : "Crear Incidencia"}
+               </button>
+             </div>
+           </div>
+         </Modal>
+       )}
+
+       {/* Modal Detail View matched to Screenshot 2 */}
+       {selected && (
+         <Modal title={selected.titulo} onClose={() => setSelected(null)}>
+           <div className="p-2 max-w-3xl w-full">
+             <div className="flex justify-between items-start mb-6">
+                <div>
+                   <p className="text-[10px] font-black text-gray-300 mb-1 uppercase tracking-widest">#{selected.id}</p>
+                   <h3 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">{selected.titulo}</h3>
+                   <div className="flex gap-3 mt-1">
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.zona}</span>
+                      <span className="text-[10px] text-gray-400 font-bold">•</span>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.operario}</span>
+                      <span className="text-[10px] text-gray-400 font-bold">•</span>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')}</span>
+                   </div>
                 </div>
-            </div>
+             </div>
 
-            {selected.foto_url && (
-              <div className="mb-8">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Foto Adjunta</p>
-                <img src={selected.foto_url} alt="Incidencia" className="rounded-2xl max-h-64 object-cover border border-gray-100 shadow-sm" />
-              </div>
-            )}
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                {[
+                  ["Operario", selected.operario],
+                  ["Zona", selected.zona],
+                  ["Fecha", new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')],
+                  ["Prioridad", selected.prioridad]
+                ].map(([l, v]) => (
+                  <div key={l as string} className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
+                     <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">{l as string}</p>
+                     <p className={`text-[11px] font-bold text-[#1e3a5f] truncate ${l==="Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
+                  </div>
+                ))}
+             </div>
+                ))}
+             </div>
 
-            <div className="mb-8">
-               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-3">Cambiar estado:</p>
-                <div className="flex gap-2 sm:gap-4">
-                   {[
-                     ["resuelta", "Resuelta", "success"],
-                     ["abierta", "Abierta", "danger"],
-                     ["en_revision", "En Rev.", "primary"]
-                   ].map(([v, l, varType]) => (
-                     <Button 
-                       key={v} 
-                       text={l as string}
-                       onClick={() => updateEstado(selected.id, v as string, notaTexto)}
-                       variant={varType as any}
-                       className="flex-1 py-2 text-xs sm:py-3 sm:text-sm shadow-xl"
-                     />
-                   ))}
-                </div>
-            </div>
+             <div className="mb-8">
+                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Descripción</p>
+                 <div className="bg-blue-50/20 border border-blue-50 rounded-2xl p-5 text-sm font-semibold text-slate-600 leading-relaxed italic break-words">
+                   {selected.descripcion || selected.desc}
+                 </div>
+             </div>
 
-            <div className="flex flex-col gap-2 mb-6">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Añadir comentario de resolución:</label>
-                <textarea 
-                  value={notaTexto} 
-                  onChange={e => setNotaTexto(e.target.value)} 
-                  rows={4}
-                  placeholder="Escribe cómo se resolvió la incidencia..."
-                  className="w-full border border-gray-100 rounded-2xl p-5 text-sm font-semibold text-slate-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" 
-                />
-            </div>
+             {selected.foto_url && (
+               <div className="mb-8">
+                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Foto Adjunta</p>
+                 <img src={selected.foto_url} alt="Incidencia" className="rounded-2xl max-h-64 object-cover border border-gray-100 shadow-sm" />
+               </div>
+             )}
 
-            <Button 
-              text="Guardar comentario"
-              onClick={() => updateEstado(selected.id, selected.estado, notaTexto)}
-              variant="primary"
-              className="w-full py-2 text-xs sm:py-4 sm:text-sm shadow-xl shadow-blue-100"
-            />
-          </div>
-        </Modal>
-      )}
+             <div className="mb-8">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-3">Cambiar estado:</p>
+                 <div className="flex gap-2 sm:gap-4">
+                    {[
+                      ["resuelta", "Resuelta", "success"],
+                      ["abierta", "Abierta", "danger"],
+                      ["en_revision", "En Rev.", "primary"]
+                    ].map(([v, l, varType]) => (
+                      <Button 
+                        key={v} 
+                        text={l as string}
+                        onClick={() => updateEstado(selected.id, v as string, notaTexto)}
+                        variant={varType as any}
+                        className="flex-1 py-2 text-xs sm:py-3 sm:text-sm shadow-xl"
+                      />
+                    ))}
+                 </div>
+             </div>
+
+             <div className="flex flex-col gap-2 mb-6">
+                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Añadir comentario de resolución:</label>
+                 <textarea 
+                   value={notaTexto} 
+                   onChange={e => setNotaTexto(e.target.value)} 
+                   rows={4}
+                   placeholder="Escribe cómo se resolvió la incidencia..."
+                   className="w-full border border-gray-100 rounded-2xl p-5 text-sm font-semibold text-slate-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" 
+                 />
+             </div>
+
+             <Button 
+               text="Guardar comentario"
+               onClick={() => updateEstado(selected.id, selected.estado, notaTexto)}
+               variant="primary"
+               className="w-full py-2 text-xs sm:py-4 sm:text-sm shadow-xl shadow-blue-100"
+             />
+           </div>
+         </Modal>
+       )}
     </div>
   );
 };
