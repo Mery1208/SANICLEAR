@@ -10,7 +10,8 @@ import {
   ShieldCheck,
   Edit2,
   Trash2,
-  Save
+  Save,
+  AlertTriangle
 } from 'lucide-react';
 import { supabase } from '../../supabase/client';
 import Button from '../../components/Button';
@@ -38,6 +39,7 @@ const PanelControlEntidades: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState<Entidad | null>(null);
   const [form, setForm] = useState<Partial<Entidad>>({});
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string, nombre: string } | null>(null);
 
   const fetchEntidades = async () => {
     setLoading(true);
@@ -78,12 +80,19 @@ const PanelControlEntidades: React.FC = () => {
     setShowModal(false);
   };
 
-  const handleEliminar = async (id: string, nombre: string) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar permanentemente la entidad "${nombre}" y todos sus datos asociados?`)) {
-      const { error } = await supabase.from('entidades').delete().eq('id', id);
-      if (!error) setEntidades(prev => prev.filter(e => e.id !== id));
-      else alert('Error al eliminar: ' + error.message);
+  const handleEliminar = (id: string, nombre: string) => {
+    setDeleteTarget({ id, nombre });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const { error } = await supabase.from('entidades').delete().eq('id', deleteTarget.id);
+    if (!error) {
+      setEntidades(prev => prev.filter(e => e.id !== deleteTarget.id));
+    } else {
+      alert('Error al eliminar: ' + error.message);
     }
+    setDeleteTarget(null);
   };
 
   const abrirModal = (ent?: Entidad) => {
@@ -266,6 +275,25 @@ return (
             </div>
           </div>
           <Button text={editando ? "Guardar Cambios" : "Crear Entidad"} onClick={handleGuardar} variant="primary" icon={Save} className="w-full py-3" />
+        </Modal>
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {deleteTarget && (
+        <Modal title="⚠️ CONFIRMAR ELIMINACIÓN" onClose={() => setDeleteTarget(null)}>
+          <div className="flex flex-col items-center justify-center text-center gap-4 py-2">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-2">
+              <AlertTriangle size={32} />
+            </div>
+            <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight">¿Estás completamente seguro?</h3>
+            <p className="text-sm text-gray-500 font-medium">
+              Estás a punto de eliminar permanentemente la entidad <strong className="text-gray-800">"{deleteTarget.nombre}"</strong> y todos sus datos asociados.<br/><br/>Esta acción <strong className="text-red-500">NO</strong> se puede deshacer.
+            </p>
+            <div className="flex gap-3 w-full mt-6">
+              <Button text="No, cancelar" onClick={() => setDeleteTarget(null)} variant="secondary" className="flex-1 py-3" />
+              <Button text="Sí, eliminar entidad" onClick={confirmDelete} variant="danger" className="flex-1 py-3 shadow-lg shadow-red-100" />
+            </div>
+          </div>
         </Modal>
       )}
     </div>

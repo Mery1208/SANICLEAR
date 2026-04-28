@@ -38,6 +38,8 @@ const ControlEntidad: React.FC = () => {
   const [showNotifModal, setShowNotifModal] = useState(false);
   const [editNotif, setEditNotif] = useState<any>(null);
   const [notifForm, setNotifForm] = useState({ titulo: '', mensaje: '', tipo: 'informativa', dest: 'todos' });
+  
+  const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'usuario' | 'tarea' | 'incidencia' | 'notificacion', id: any, nombre: string } | null>(null);
 
   useEffect(() => {
     const fetchDetalles = async () => {
@@ -116,17 +118,45 @@ const ControlEntidad: React.FC = () => {
     setTimeout(() => setActionMessage(""), 3000);
   };
 
-  const handleDeleteUser = async (idU: string, nombre: string) => {
-    if (!window.confirm(`¿Seguro que deseas eliminar permanentemente al usuario ${nombre}?`)) return;
-    const { error } = await supabase.from('usuarios').delete().eq('id', idU);
-    if (!error) {
-      setPersonal(prev => prev.filter(x => x.id !== idU));
-      setCounts(prev => ({...prev, usuarios: Math.max(0, prev.usuarios - 1)}));
-      setActionMessage("Usuario eliminado correctamente.");
-      setTimeout(() => setActionMessage(""), 3000);
-    } else {
-      alert('Error al eliminar usuario: ' + error.message);
+  const handleDeleteUser = (idU: string, nombre: string) => {
+    setDeleteTarget({ tipo: 'usuario', id: idU, nombre });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const { tipo, id } = deleteTarget;
+    
+    if (tipo === 'usuario') {
+      const { error } = await supabase.from('usuarios').delete().eq('id', id);
+      if (!error) {
+        setPersonal(prev => prev.filter(x => x.id !== id));
+        setCounts(prev => ({...prev, usuarios: Math.max(0, prev.usuarios - 1)}));
+        setActionMessage("Usuario eliminado correctamente.");
+      }
+    } else if (tipo === 'tarea') {
+      const { error } = await supabase.from('tareas').delete().eq('id', id);
+      if (!error) {
+        setTareasActivas(prev => prev.filter(x => x.id !== id));
+        setCounts(prev => ({...prev, tareas: Math.max(0, prev.tareas - 1)}));
+        setActionMessage("Tarea eliminada correctamente.");
+      }
+    } else if (tipo === 'incidencia') {
+      const { error } = await supabase.from('incidencias').delete().eq('id', id);
+      if (!error) {
+        setIncidenciasActivas(prev => prev.filter(x => x.id !== id));
+        setCounts(prev => ({...prev, incidencias: Math.max(0, prev.incidencias - 1)}));
+        setActionMessage("Incidencia eliminada correctamente.");
+      }
+    } else if (tipo === 'notificacion') {
+      const { error } = await supabase.from('notificaciones').delete().eq('id', id);
+      if (!error) {
+        setNotificacionesEntidad(prev => prev.filter(x => x.id !== id));
+        setActionMessage("Notificación eliminada correctamente.");
+      }
     }
+    
+    setDeleteTarget(null);
+    setTimeout(() => setActionMessage(""), 3000);
   };
 
   // Súper-acciones operativas
@@ -175,13 +205,8 @@ const ControlEntidad: React.FC = () => {
     setShowTareaModal(false);
     setTimeout(() => setActionMessage(""), 3000);
   };
-  const deleteTarea = async (idT: string) => {
-    if (!window.confirm('¿Eliminar tarea permanentemente?')) return;
-    const { error } = await supabase.from('tareas').delete().eq('id', idT);
-    if (!error) {
-      setTareasActivas(prev => prev.filter(x => x.id !== idT));
-      setCounts(prev => ({...prev, tareas: Math.max(0, prev.tareas - 1)}));
-    }
+  const deleteTarea = (idT: string, nombre: string) => {
+    setDeleteTarget({ tipo: 'tarea', id: idT, nombre });
   };
 
   // --- CRUD INCIDENCIAS ---
@@ -209,13 +234,8 @@ const ControlEntidad: React.FC = () => {
     setShowIncidModal(false);
     setTimeout(() => setActionMessage(""), 3000);
   };
-  const deleteIncid = async (idI: string) => {
-    if (!window.confirm('¿Eliminar incidencia permanentemente?')) return;
-    const { error } = await supabase.from('incidencias').delete().eq('id', idI);
-    if (!error) {
-      setIncidenciasActivas(prev => prev.filter(x => x.id !== idI));
-      setCounts(prev => ({...prev, incidencias: Math.max(0, prev.incidencias - 1)}));
-    }
+  const deleteIncid = (idI: string, nombre: string) => {
+    setDeleteTarget({ tipo: 'incidencia', id: idI, nombre });
   };
 
   // --- CRUD NOTIFICACIONES ---
@@ -235,10 +255,8 @@ const ControlEntidad: React.FC = () => {
     }
     setShowNotifModal(false);
   };
-  const deleteNotif = async (idN: string) => {
-    if (!window.confirm('¿Eliminar notificación permanentemente?')) return;
-    const { error } = await supabase.from('notificaciones').delete().eq('id', idN);
-    if (!error) setNotificacionesEntidad(prev => prev.filter(x => x.id !== idN));
+  const deleteNotif = (idN: string, nombre: string) => {
+    setDeleteTarget({ tipo: 'notificacion', id: idN, nombre });
   };
 
   if (loading) return <div className="p-10 text-gray-400 font-bold animate-pulse text-center">Cargando panel de control...</div>;
@@ -303,7 +321,7 @@ const ControlEntidad: React.FC = () => {
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                       <button onClick={() => handleCompletarTarea(t.id)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Completar"><CheckCircle size={16} /></button>
                       <button onClick={() => openTarea(t)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                      <button onClick={() => deleteTarea(t.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                      <button onClick={() => deleteTarea(t.id, t.tarea || t.descripcion || 'Tarea')} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
                     </td>
                   </tr>
                 ))}
@@ -335,7 +353,7 @@ const ControlEntidad: React.FC = () => {
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                       <button onClick={() => handleResolverIncidencia(i.id)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Resolver"><CheckCircle size={16} /></button>
                       <button onClick={() => openIncid(i)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                      <button onClick={() => deleteIncid(i.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                      <button onClick={() => deleteIncid(i.id, i.titulo)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
                     </td>
                   </tr>
                 ))}
@@ -411,7 +429,7 @@ const ControlEntidad: React.FC = () => {
                     {n.entidad_id ? (
                        <>
                          <button onClick={() => openNotif(n)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                         <button onClick={() => deleteNotif(n.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                         <button onClick={() => deleteNotif(n.id, n.titulo)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
                        </>
                     ) : (
                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Global</span>
@@ -606,6 +624,25 @@ const ControlEntidad: React.FC = () => {
             <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-6">
             <Button text="Cancelar" variant="secondary" onClick={() => setShowNotifModal(false)} className="flex-1 py-3" />
             <Button text="Guardar Notificación" variant="primary" onClick={saveNotif} className="flex-1 py-3 shadow-lg shadow-blue-100" />
+          </div>
+        </Modal>
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {deleteTarget && (
+        <Modal title="⚠️ CONFIRMAR ELIMINACIÓN" onClose={() => setDeleteTarget(null)}>
+          <div className="flex flex-col items-center justify-center text-center gap-4 py-2">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-2">
+              <AlertTriangle size={32} />
+            </div>
+            <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight">¿Estás completamente seguro?</h3>
+            <p className="text-sm text-gray-500 font-medium">
+              Estás a punto de eliminar {deleteTarget.tipo === 'usuario' ? 'el usuario' : deleteTarget.tipo === 'tarea' ? 'la tarea' : deleteTarget.tipo === 'incidencia' ? 'la incidencia' : 'la notificación'} <strong className="text-gray-800">"{deleteTarget.nombre}"</strong>.<br/>Esta acción <strong className="text-red-500">NO</strong> se puede deshacer.
+            </p>
+            <div className="flex gap-3 w-full mt-6">
+              <Button text="No, cancelar" onClick={() => setDeleteTarget(null)} variant="secondary" className="flex-1 py-3" />
+              <Button text="Sí, eliminar" onClick={confirmDelete} variant="danger" className="flex-1 py-3 shadow-lg shadow-red-100" />
+            </div>
           </div>
         </Modal>
       )}

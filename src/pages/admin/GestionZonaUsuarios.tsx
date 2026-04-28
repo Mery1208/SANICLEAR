@@ -3,7 +3,7 @@ import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
-import { Plus, Search, X } from 'lucide-react';
+import { Plus, Search, X, AlertTriangle } from 'lucide-react';
 import { useBusquedaStore } from '../../store/busquedaStore';
 
 const NIVEL_BADGE: Record<string, string> = { 
@@ -37,6 +37,8 @@ const Gestion: React.FC = () => {
   const [showUsuarioModal, setShowUsuarioModal] = useState(false);
   const [editUsuario, setEditUsuario] = useState<any>(null);
   const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana" });
+
+  const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'zona' | 'usuario', id: any, nombre: string } | null>(null);
 
   // Filtros por búsqueda global
   const zonasFiltradas = useMemo(() => {
@@ -127,10 +129,8 @@ const Gestion: React.FC = () => {
     setTimeout(() => setConfirm(""), 2500);
   };
 
-  const deleteZona = async (id: number) => {
-    if (!window.confirm('¿Seguro que deseas eliminar esta zona?')) return;
-    await supabase.from('zonas').delete().eq('id', id);
-    setZonas(prev => prev.filter(z => z.id !== id));
+  const requestDeleteZona = (z: any) => {
+    setDeleteTarget({ tipo: 'zona', id: z.id, nombre: z.nombre });
   };
 
   // Usuarios functions
@@ -173,10 +173,20 @@ const Gestion: React.FC = () => {
     setTimeout(() => setConfirm(""), 2500);
   };
 
-  const deleteUsuario = async (id: string) => {
-    if (!window.confirm('¿Seguro que deseas eliminar este usuario?')) return;
-    await supabase.from('usuarios').delete().eq('id', id);
-    setUsuarios(prev => prev.filter(u => u.id !== id));
+  const requestDeleteUsuario = (u: any) => {
+    setDeleteTarget({ tipo: 'usuario', id: u.id, nombre: `${u.nombre} ${u.apellidos || ''}`.trim() });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    if (deleteTarget.tipo === 'zona') {
+      await supabase.from('zonas').delete().eq('id', deleteTarget.id);
+      setZonas(prev => prev.filter(z => z.id !== deleteTarget.id));
+    } else {
+      await supabase.from('usuarios').delete().eq('id', deleteTarget.id);
+      setUsuarios(prev => prev.filter(u => u.id !== deleteTarget.id));
+    }
+    setDeleteTarget(null);
   };
 
   return (
@@ -256,7 +266,7 @@ const Gestion: React.FC = () => {
                 </div>
                 <div className="flex gap-2">
                   <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-3 py-1.5" />
-                  <Button text="Eliminar" onClick={() => deleteZona(z.id)} variant="danger" className="px-3 py-1.5" />
+                  <Button text="Eliminar" onClick={() => requestDeleteZona(z)} variant="danger" className="px-3 py-1.5" />
                 </div>
               </div>
             ))
@@ -284,7 +294,7 @@ const Gestion: React.FC = () => {
                 </div>
                 <div className="flex gap-2">
                   <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5" />
-                  <Button text="Eliminar" onClick={() => deleteUsuario(u.id)} variant="danger" className="px-3 py-1.5" />
+                  <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-3 py-1.5" />
                 </div>
               </div>
             ))
@@ -380,6 +390,25 @@ const Gestion: React.FC = () => {
           <div className="flex gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="secondary" className="flex-1 py-2.5" />
             <Button text="Guardar" onClick={saveUsuario} variant="primary" className="flex-1 py-2.5 shadow-sm" />
+          </div>
+        </Modal>
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {deleteTarget && (
+        <Modal title="⚠️ CONFIRMAR ELIMINACIÓN" onClose={() => setDeleteTarget(null)}>
+          <div className="flex flex-col items-center justify-center text-center gap-4 py-2">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-2">
+              <AlertTriangle size={32} />
+            </div>
+            <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight">¿Estás completamente seguro?</h3>
+            <p className="text-sm text-gray-500 font-medium">
+              Estás a punto de eliminar {deleteTarget.tipo === 'zona' ? 'la zona' : 'el usuario'} <strong className="text-gray-800">"{deleteTarget.nombre}"</strong>.<br/>Esta acción <strong className="text-red-500">NO</strong> se puede deshacer.
+            </p>
+            <div className="flex gap-3 w-full mt-6">
+              <Button text="No, cancelar" onClick={() => setDeleteTarget(null)} variant="secondary" className="flex-1 py-3" />
+              <Button text="Sí, eliminar" onClick={confirmDelete} variant="danger" className="flex-1 py-3 shadow-lg shadow-red-100" />
+            </div>
           </div>
         </Modal>
       )}
