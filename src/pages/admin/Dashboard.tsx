@@ -293,46 +293,61 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Tareas activas</p>
-          <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
-            <RefreshCw size={16} />
-          </button>
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Tareas activas</p>
+            <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
+              <RefreshCw size={16} />
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50/50">
+              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {(query ? tareasFiltradas : tareas).length === 0 && (
+                  <tr><td colSpan={6} className="p-10 text-center text-gray-400 font-bold italic">
+                    {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
+                  </td></tr>
+                )}
+                {(query ? tareasFiltradas : tareas).map(t => (
+                  <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] text-base">{t.zona}</td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-700 text-sm font-semibold min-w-[200px]">{t.tarea || t.descripcion}</td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] text-sm font-bold flex items-center gap-2 whitespace-nowrap">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-black">
+                        {t.asignado.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      {t.asignado}
+                    </td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5">
+                      <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100 text-gray-600"} label={t.estado === "en_curso" ? "En Curso" : t.estado.charAt(0).toUpperCase()+t.estado.slice(1)} />
+                  </td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5">
+                      <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-600"} label={t.prioridad.charAt(0).toUpperCase()+t.prioridad.slice(1)} />
+                  </td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-right">
+                      <button
+                        onClick={async () => {
+                          const { error } = await supabase.from('tareas').update({ estado: 'completada' }).eq('id', t.id);
+                          if (!error) {
+                            setTareas(prev => prev.map(ta => ta.id === t.id ? { ...ta, estado: 'completada' } : ta));
+                          } else {
+                            alert('Error al completar la tarea');
+                          }
+                        }}
+                        className="bg-green-500 hover:bg-green-600 text-white font-black uppercase tracking-wider px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-green-100 transition-all active:scale-95"
+                      >
+                        Hecho
+                      </button>
+                  </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50/50">
-            <tr>{["Zona","Tarea","Asignado","Estado","Prioridad"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {(query ? tareasFiltradas : tareas).length === 0 && (
-                <tr><td colSpan={5} className="p-10 text-center text-gray-400 font-bold italic">
-                  {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
-                </td></tr>
-              )}
-              {(query ? tareasFiltradas : tareas).map(t => (
-                <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
-                <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] text-sm">{t.zona}</td>
-                <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-500 text-sm font-medium min-w-[150px]">{t.tarea || t.descripcion}</td>
-                <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] text-sm font-bold flex items-center gap-2 whitespace-nowrap">
-                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-[10px]">
-                      {t.asignado.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    {t.asignado}
-                  </td>
-                <td className="px-5 sm:px-8 py-4 sm:py-5">
-                    <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100 text-gray-600"} label={t.estado === "en_curso" ? "En Curso" : t.estado.charAt(0).toUpperCase()+t.estado.slice(1)} />
-                  </td>
-                <td className="px-5 sm:px-8 py-4 sm:py-5">
-                    <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-600"} label={t.prioridad.charAt(0).toUpperCase()+t.prioridad.slice(1)} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       {showModal && (
         <Modal title="NUEVA TAREA" onClose={() => setShowModal(false)} maxWidth="max-w-2xl">

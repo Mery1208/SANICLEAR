@@ -218,26 +218,26 @@ const MisTareas: React.FC = () => {
         }).map(t => {
           const isCompleted = t.estado === "completada" || t.estado === "hecha";
           return (
-            <div key={t.id} className={`bg-white rounded-xl border p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 shadow-sm ${isCompleted ? "opacity-60" : ""}`}>
+            <div key={t.id} className={`bg-white rounded-2xl border p-4 sm:p-5 flex flex-row justify-between items-center gap-4 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50" : ""}`}>
               <div className="flex-1 min-w-0">
-                <p className={`font-semibold text-sm sm:text-base break-words ${isCompleted ? "line-through decoration-green-500 decoration-2 text-green-700" : "text-gray-800"}`}>{t.zona}</p>
-                <p className={`text-xs sm:text-sm mb-1 break-words ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
+                <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 ${isCompleted ? "line-through decoration-green-500 decoration-2 text-green-700" : "text-[#1e3a5f]"}`}>{t.zona}</p>
+                <p className={`text-sm sm:text-base font-medium mb-3 line-clamp-2 ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
-               {!isCompleted ? (
-                     <Button
-                       text="Hecho"
-                       onClick={() => completar(t.id)}
-                       variant="success"
-                       icon={CheckCircle}
-                       className="px-2 py-1 text-[10px] sm:px-3 sm:py-1 sm:text-[11px] shrink-0 shadow-sm w-auto sm:w-auto min-w-[55px]"
-                     />
-               ) : (
-                 <span className="text-green-600 font-semibold text-[10px] sm:text-[11px] shrink-0 flex items-center gap-1 sm:gap-2 mt-2 sm:mt-0">
-                   <CheckCircle size={14} />
-                   <span>Completada</span>
-                 </span>
-               )}
+              {!isCompleted ? (
+                    <Button
+                      text="Hecho"
+                      onClick={() => completar(t.id)}
+                      variant="success"
+                      icon={CheckCircle}
+                      className="px-5 py-3 sm:px-6 sm:py-4 text-sm sm:text-base font-black shrink-0 shadow-md shadow-green-100 w-auto"
+                    />
+              ) : (
+                <span className="text-green-600 font-bold text-sm sm:text-base shrink-0 flex items-center gap-1.5">
+                  <CheckCircle size={16} />
+                  <span>Completada</span>
+                </span>
+              )}
             </div>
           );
         })}
