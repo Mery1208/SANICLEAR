@@ -411,7 +411,7 @@ const Dashboard: React.FC = () => {
                 <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2 sm:mt-4">
               <button onClick={() => setShowModal(false)} className="px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors shrink-0">Cancelar</button>
               <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
-                className={`flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] ${!form.titulo || !form.zona || !form.operario ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 shadow-blue-100'}`}>
+                className="flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:not(:disabled):bg-blue-700 hover:not(:disabled):shadow-blue-200">
                 Asignar Tarea
               </button>
             </div>
