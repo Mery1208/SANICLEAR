@@ -145,37 +145,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error('Email y contraseña son obligatorios');
     }
 
-    // Intentar login con Supabase Auth primero
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: trimmedEmail,
         password: trimmedPassword,
       });
 
-      if (!error && data.user) {
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
         setSession(data.session);
         await fetchProfile(data.user.id, data.user.email!);
         return data.user;
       }
-
-      if (error) {
-        console.warn('Supabase Auth error, intentando fallback mock:', error.message);
+      // Este caso no debería ocurrir, pero es una salvaguarda
+      throw new Error('No se recibió usuario ni error desde Supabase.');
+    } catch (error: any) {
+      // EN MODO DESARROLLO, si Supabase falla, intentamos el fallback con datos mock.
+      if (import.meta.env.DEV) {
+        console.warn('Fallo en Supabase Auth, intentando fallback con mock (SOLO EN DESARROLLO):', error.message);
+        const mockUser = findMockUser(trimmedEmail, trimmedPassword);
+        if (mockUser) {
+          console.log('Login exitoso con credenciales mock:', mockUser.email);
+          setUsuario(mockUser);
+          return { id: mockUser.id, email: mockUser.email, user_metadata: { rol: mockUser.rol } };
+        }
       }
-    } catch (supabaseError: unknown) {
-      const msg = supabaseError instanceof Error ? supabaseError.message : String(supabaseError);
-      console.warn('Supabase Auth exception, intentando fallback mock:', msg);
+      // En producción, o si el fallback de mock falla, relanzamos el error para que la UI lo maneje.
+      throw error;
     }
-
-    // Fallback: autenticación mock para desarrollo
-    const mockUser = findMockUser(trimmedEmail, trimmedPassword);
-    if (mockUser) {
-      console.log('Login exitoso con credenciales mock:', mockUser.email);
-      setUsuario(mockUser);
-      return { id: mockUser.id, email: mockUser.email, user_metadata: { rol: mockUser.rol } };
-    }
-
-    // Si llegamos aquí, las credenciales son incorrectas
-    throw new Error('Credenciales incorrectas. Verifica tu email y contraseña.');
   };
 
   const resetPassword = async (email: string) => {

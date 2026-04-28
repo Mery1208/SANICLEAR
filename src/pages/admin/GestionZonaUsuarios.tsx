@@ -180,11 +180,11 @@ const Gestion: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-800">Gestión de Zonas y Usuarios</h2>
-          <p className="text-sm text-gray-500">
+    <div className="flex flex-col gap-6 font-sans">
+      <div className="flex justify-between items-start">
+        <div className="text-left">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Zonas y Usuarios</h2>
+          <p className="text-gray-400 text-sm font-medium italic">
             {tab === 'zonas'
               ? query
                 ? `Mostrando ${zonasFiltradas.length} de ${zonas.length} zonas`

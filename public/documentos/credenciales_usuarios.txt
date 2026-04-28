@@ -29,7 +29,7 @@ ADMINISTRADORES:
 
   Kike Ambrona
   Email: kikeambrona@gmail.com
-  Pass:  Admin1234!
+  Pass:  Kikea14!
 
 YO
 Email: admin@gmail.com
@@ -41,7 +41,7 @@ OPERARIOS:
 
   Luis Ramirez 
   Email: luizramirez@gmail.com
-  Pass:  Operario123!
+  Pass:  Luisr123!
 
   Carmen Diaz 
   Email: carmendiaz@gmail.com

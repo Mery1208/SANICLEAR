@@ -155,20 +155,24 @@ const GestionIncidencias: React.FC = () => {
 
       {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 text-sm font-bold animate-bounce">✓ {ok}</div>}
 
-       {/* Stats row — 2 en móvil, 4 en pantallas grandes */}
-       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-8">
+       {/* Stats row */}
+       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
          {[
-           ["Abierta", stats.abiertas, <AlertTriangle size={18} className="sm:w-6 sm:h-6" />, "text-red-600 bg-red-50"],
-           ["Resuelta", stats.resueltas, <CheckCircle size={18} className="sm:w-6 sm:h-6" />, "text-green-600 bg-green-50"],
-           ["En Rev.", stats.en_revision, <Clock size={18} className="sm:w-6 sm:h-6" />, "text-orange-600 bg-orange-50"],
-           ["Total", stats.total, <TrendingUp size={18} className="sm:w-6 sm:h-6" />, "text-blue-600 bg-blue-50"]
+           ["Abiertas",  stats.abiertas,    <AlertTriangle size={16} />, "text-red-600 bg-red-50"],
+           ["Resueltas", stats.resueltas,   <CheckCircle size={16} />,   "text-green-600 bg-green-50"],
+           ["En Rev.",   stats.en_revision, <Clock size={16} />,         "text-orange-600 bg-orange-50"],
+           ["Total",     stats.total,       <TrendingUp size={16} />,    "text-blue-600 bg-blue-50"]
          ].map(([l, v, ic, cls]) => (
-           <div key={l as string} className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 p-2 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 shadow-sm hover:shadow-md transition-shadow">
-             <div>
-               <p className="text-[8px] sm:text-[10px] uppercase font-black text-gray-400 tracking-widest mb-0.5 sm:mb-1">{l as string}</p>
-               <p className={`text-xl sm:text-3xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+           <div key={l as string} className="bg-white rounded-lg border border-gray-50 p-2 lg:p-3 shadow-sm hover:shadow-md transition-shadow">
+             <div className="flex justify-between items-start gap-3">
+               <div className="min-w-0 flex-1">
+                 <p className="text-xs font-black text-gray-400 uppercase tracking-wider">{l as string}</p>
+                 <p className={`text-lg font-bold ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+               </div>
+               <div className={`flex-shrink-0 p-2 rounded-lg ${(cls as string).split(' ')[1]}`}>
+                 {ic as React.ReactNode}
+               </div>
              </div>
-             <div className={`p-2 sm:p-3 rounded-lg sm:rounded-xl self-end sm:self-auto ${(cls as string).split(' ')[1]}`}>{ic as React.ReactNode}</div>
            </div>
          ))}
        </div>

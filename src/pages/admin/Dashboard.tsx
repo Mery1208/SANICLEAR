@@ -113,20 +113,30 @@ const Dashboard: React.FC = () => {
   const chartData = useMemo(() => {
     if (incidencias.length === 0) return [];
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    const counts: Record<string, { mes: string; Abiertas: number; Resueltas: number }> = {};
+    const now = new Date();
+    
+    // Pre-cargamos siempre los últimos 6 meses (para que la gráfica no se vea vacía)
+    const last6Months = Array.from({ length: 6 }).map((_, index) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
+      return { key: `${d.getFullYear()}-${d.getMonth()}`, mes: months[d.getMonth()], Abiertas: 0, Resueltas: 0 };
+    });
+
+    const bucketMap = new Map(last6Months.map(b => [b.key, b]));
     
     incidencias.forEach((i: any) => {
       if (!i.created_at) return;
       const d = new Date(i.created_at);
-      const mName = months[d.getMonth()];
-      if (!counts[mName]) {
-        counts[mName] = { mes: mName, Abiertas: 0, Resueltas: 0 };
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+      const bucket = bucketMap.get(key);
+
+      // Solo sumamos si la incidencia pertenece a uno de esos últimos 6 meses
+      if (bucket) {
+        if (i.estado === 'resuelta') bucket.Resueltas++;
+        else bucket.Abiertas++;
       }
-      if (i.estado === 'resuelta') counts[mName].Resueltas++;
-      else counts[mName].Abiertas++;
     });
     
-    return Object.values(counts);
+    return last6Months;
   }, [incidencias]);
 
   const pendientes = tareas.filter(t => t.estado === "pendiente").length;
@@ -194,12 +204,12 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="font-sans">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-        <div>
-          <h2 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de control</h2>
-          <p className="text-gray-400 text-sm mb-2 font-medium italic">Resumen general y estado del sistema en tiempo real</p>
-          {(zonas.length === 0 || usuarios.length === 0) && (
+    <div className="flex flex-col gap-6 font-sans">
+      <div className="flex justify-between items-start">
+        <div className="text-left">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de Control</h2>
+          <p className="text-gray-400 text-sm font-medium italic">Resumen general y estado del sistema en tiempo real</p>
+      {(zonas.length === 0 || usuarios.length === 0) && (
             <p className="text-amber-600 text-sm font-semibold bg-amber-50 px-3 py-2 rounded-lg inline-block mt-2">
               ⚠️ Datos mínimos no configurados. Ve a <strong>Gestión Zonas y Usuarios</strong> para añadir zonas y operarios.
             </p>
@@ -217,28 +227,28 @@ const Dashboard: React.FC = () => {
           className={`${zonas.length === 0 || usuarios.length === 0
             ? 'bg-gray-300 cursor-not-allowed text-gray-500'
             : 'bg-blue-500 hover:bg-blue-600 text-white'
-          } w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-100`}
+          } shrink-0 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-100`}
         >
-          + Crear Nueva Tarea
+          + Nueva Tarea
         </button>
       </div>
 
       {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
         {[
-          ["Pendientes", pendientes, <Clock size={20} />, "text-yellow-600 bg-yellow-50"],
-          ["Alertas",     alertas,    <AlertTriangle size={20} />, "text-red-600 bg-red-50"],
-          ["Hechas",      hoy,       <CheckCircle size={20} />,  "text-green-600 bg-green-50"],
-          ["En Curso",    en_curso,   <RefreshCw size={20} />, "text-blue-600 bg-blue-50"],
+          ["Pendientes", pendientes, <Clock size={16} />, "text-yellow-600 bg-yellow-50"],
+          ["Alertas",     alertas,    <AlertTriangle size={16} />, "text-red-600 bg-red-50"],
+          ["Hechas",      hoy,       <CheckCircle size={16} />,  "text-green-600 bg-green-50"],
+          ["En Curso",    en_curso,   <RefreshCw size={16} />, "text-blue-600 bg-blue-50"],
         ].map(([l, v, ic, cls]) => (
-          <div key={l as string} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-center gap-2">
+          <div key={l as string} className="bg-white rounded-lg border border-gray-50 p-2 lg:p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start gap-3">
               <div className="min-w-0 flex-1">
-                <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate">{l as string}</p>
-                <p className={`text-xl lg:text-2xl font-black ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+                <p className="text-xs font-black text-gray-400 uppercase tracking-wider">{l as string}</p>
+                <p className={`text-lg font-bold ${(cls as string).split(' ')[0]}`}>{v as number}</p>
               </div>
-              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${(cls as string).split(' ')[1]}`}>
+              <div className={`flex-shrink-0 p-2 rounded-lg ${(cls as string).split(' ')[1]}`}>
                 {ic as React.ReactNode}
               </div>
             </div>

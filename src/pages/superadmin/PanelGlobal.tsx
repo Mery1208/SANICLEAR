@@ -250,9 +250,9 @@ const PanelGlobal: React.FC = () => {
   }
 
   return (
-    <div className="font-sans">
-      <div className="flex justify-between items-center mb-8">
-        <div>
+    <div className="flex flex-col gap-6 font-sans">
+      <div className="flex justify-between items-start">
+        <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
             Panel global del superadmin
           </h2>
@@ -263,10 +263,10 @@ const PanelGlobal: React.FC = () => {
 
         <button
           onClick={fetchGlobalData}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-bold text-[#1e3a5f] hover:bg-gray-50 transition-colors"
+          className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-[10px] sm:text-sm font-bold text-[#1e3a5f] hover:bg-gray-50 transition-colors"
         >
           <RefreshCw size={16} />
-          Actualizar panel
+          <span className="hidden sm:inline">Actualizar panel</span>
         </button>
       </div>
 
