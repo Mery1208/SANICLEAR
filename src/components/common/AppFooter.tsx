@@ -8,7 +8,7 @@ const AppFooter: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-8">
           <img src={logoImg} alt="Saniclears" className="h-16 brightness-0 invert" />
-          <span className="text-xs text-white/70">© 2026 Saniclear - Gestión Hospitalaria</span>
+          <span className="text-xs text-white/70">© 2026 Saniclears - Gestión Hospitalaria</span>
         </div>
         
         <div className="flex flex-wrap gap-4 justify-center">

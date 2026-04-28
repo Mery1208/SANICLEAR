@@ -96,9 +96,9 @@ const GestionIncidencias: React.FC = () => {
   }, [incidencias, filterStatus, filterCategory]);
 
   const updateEstado = async (id: number, estado: string, notas: string) => {
-    const { error } = await supabase.from('incidencias').update({ estado }).eq('id', id);
+    const { error } = await supabase.from('incidencias').update({ estado, notas }).eq('id', id);
     if (!error) {
-      setIncidencias(prev => prev.map(i => i.id === id ? {...i, estado} : i));
+      setIncidencias(prev => prev.map(i => i.id === id ? {...i, estado, notas} : i));
       setSelected(null);
       setOk("¡Estado actualizado!");
       setTimeout(() => setOk(""), 3000);
@@ -173,7 +173,9 @@ const GestionIncidencias: React.FC = () => {
                  {ic as React.ReactNode}
                </div>
              </div>
-              </div>
+           </div>
+         ))}
+       </div>
 
       {/* Filter Categories */}
       <div className="flex gap-2 py-2 overflow-x-auto no-scrollbar">
@@ -334,9 +336,7 @@ const GestionIncidencias: React.FC = () => {
                   <div key={l as string} className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
                      <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">{l as string}</p>
                      <p className={`text-[11px] font-bold text-[#1e3a5f] truncate ${l==="Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
-                  </div>
-                ))}
-             </div>
+              </div>
                 ))}
              </div>
 

@@ -1,50 +1,50 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logoImg from '../assets/img/logo.png';
+import { Github, Linkedin, Twitter } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-600 text-white pt-8 pb-6 px-4 sm:px-8 rounded-t-2xl font-inherit">
-      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
-        <div className="md:col-span-1.5 flex flex-col items-center md:items-start">
-          <div className="bg-white p-3 sm:p-4 rounded-xl shadow-lg">
-            <img src={logoImg} alt="Saniclear" className="h-[80px] sm:h-[120px] w-[150px] sm:w-[200px] object-contain" />
+    <footer className="bg-white border-t border-gray-100 mt-24 font-sans">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          
+          <div className="col-span-2 md:col-span-1">
+            <h2 className="text-2xl font-black text-[#1e3a5f]">SANICLEARS</h2>
+            <p className="text-gray-500 text-sm mt-2">
+              Gestión Inteligente de Higiene Hospitalaria.
+            </p>
           </div>
-          <p className="text-xs sm:text-sm text-white/60 mt-3 leading-relaxed max-w-[250px] text-center md:text-left">
-            Sistema de gestión de higiene hospitalaria de última generación.
-          </p>
-        </div>
 
-        <div className="flex flex-col">
-          <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-white">Producto</h4>
-          <ul className="list-none p-0 m-0 space-y-1.5 sm:space-y-2">
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Características</a></li>
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Precios</a></li>
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Casos de Éxito</a></li>
-          </ul>
-        </div>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Producto</h3>
+            <ul className="mt-4 space-y-2">
+              <li><a href="/#sobre-nosotros" className="text-base text-gray-500 hover:text-gray-900">Sobre Nosotros</a></li>
+              <li><a href="/#features-section" className="text-base text-gray-500 hover:text-gray-900">Características</a></li>
+              <li><Link to="/login" className="text-base text-gray-500 hover:text-gray-900">Portal</Link></li>
+            </ul>
+          </div>
 
-        <div className="flex flex-col">
-          <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-white">Empresa</h4>
-          <ul className="list-none p-0 m-0 space-y-1.5 sm:space-y-2">
-            <li><a href="#sobre-nosotros" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Sobre Nosotros</a></li>
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Blog</a></li>
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Contacto</a></li>
-          </ul>
-        </div>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
+            <ul className="mt-4 space-y-2">
+              <li><Link to="/politica-privacidad" className="text-base text-gray-500 hover:text-gray-900">Privacidad</Link></li>
+              <li><Link to="/cookies" className="text-base text-gray-500 hover:text-gray-900">Cookies</Link></li>
+            </ul>
+          </div>
 
-        <div className="flex flex-col">
-          <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-white">Legal</h4>
-          <ul className="list-none p-0 m-0 space-y-1.5 sm:space-y-2">
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Privacidad</a></li>
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Términos</a></li>
-            <li><a href="#" className="text-white/60 no-underline text-xs sm:text-sm transition-all duration-200 hover:text-white hover:pl-1">Seguridad</a></li>
-          </ul>
-        </div>
-      </div>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Social</h3>
+            <div className="flex space-x-6 mt-4">
+                <a href="#" className="text-gray-400 hover:text-gray-500"><span className="sr-only">Twitter</span><Twitter size={24} /></a>
+                <a href="#" className="text-gray-400 hover:text-gray-500"><span className="sr-only">GitHub</span><Github size={24} /></a>
+                <a href="#" className="text-gray-400 hover:text-gray-500"><span className="sr-only">LinkedIn</span><Linkedin size={24} /></a>
+            </div>
+          </div>
 
-      <div className="border-t border-white/15 pt-4 sm:pt-6 text-center text-xs text-white/50">
-        <p className="m-0">© 2026 SANICLEAR - Sistema de Gestión de Limpieza Hospitalaria. Todos los derechos reservados.</p>
+        </div>
+        <div className="mt-12 border-t border-gray-200 pt-8">
+          <p className="text-base text-gray-400 text-center">&copy; {new Date().getFullYear()} SANICLEARS. Todos los derechos reservados.</p>
+        </div>
       </div>
     </footer>
   );
