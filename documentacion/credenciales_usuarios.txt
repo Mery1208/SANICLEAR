@@ -1,0 +1,56 @@
+LISTADO DE CREDENCIALES - SISTEMA SANICLEAR
+=============================================
+
+REQUISITOS DE CONTRASEÑA:
+- Mínimo 8 caracteres
+- Al menos 1 letra mayúscula
+- Al menos 1 letra minúscula
+- Al menos 1 número
+- Al menos 1 carácter especial (@$!%*?&._-#)
+
+------------------------------------------------------
+
+Administrador (Superadmin/Admin):
+
+Correo: superadmin@saniclear.com
+Contraseña: SuperAdmin1234!
+
+------------------------------------------------------
+
+ADMINISTRADORES:
+
+  Elena Ruiz (Mañana)
+  Email: elenaruiz@gmail.com
+  Pass:  Admin1234!
+
+  Alberto Vera
+  Email: albertovera@gmail.com
+  Pass:  Admin1234!
+
+  Kike Ambrona
+  Email: kikeambrona@gmail.com
+  Pass:  Kikea14!
+
+YO
+Email: admin@gmail.com
+Pass:  Admin1234!
+
+------------------------------------------------------
+
+OPERARIOS:
+
+  Luis Ramirez 
+  Email: luizramirez@gmail.com
+  Pass:  Luisr123!
+
+  Carmen Diaz 
+  Email: carmendiaz@gmail.com
+  Pass:  Operario123!
+
+  Laura Gómez
+  Email: lauragomez@gmail.com
+  Pass:  Operario123!
+
+  Ana 
+  Email: ana@gmail.com
+  Pass:  Operario123!

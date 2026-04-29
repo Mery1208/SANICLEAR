@@ -157,17 +157,19 @@ limpieza-hospitalaria/
 │
 ├── 📂 src/                     # Código fuente TypeScript/React
 │   ├── 📂 assets/              # Imágenes importadas + CSS global
+│   │   └── 📂 img/             # hospital.avif, medico.avif, pasillo.avif
 │   ├── 📂 components/          # Componentes reutilizables
-│   │   ├── 📂 common/          # Badge, Button, Modal, StatCard, etc.
+│   │   ├── 📂 common/          # Badge, Button, Modal, MenuLateral, StatCard, etc.
 │   │   └── 📂 operario/        # TarjetaTarea, ContadorTareas, NotificacionItem
 │   ├── 📂 context/             # AuthContext (proveedor autenticación)
 │   ├── 📂 css/                 # Estilos específicos por rol
 │   ├── 📂 layouts/             # AdminLayout, OperarioLayout, SuperadminLayout
+│   ├── 📂 mock/                # Datos estáticos de prueba (incidencias.json, etc.)
 │   ├── 📂 pages/               # Vistas de la aplicación
 │   │   ├── 📂 admin/           # Dashboard, GestionZonaUsuarios, GestionIncidencias
 │   │   ├── 📂 common/          # Notificaciones, Perfil
 │   │   ├── 📂 operario/        # MisTareas, ReportarIncidencia, Tareas
-│   │   ├── 📂 public/          # Landing, Login
+│   │   ├── 📂 public/          # Landing, Login, Terminos
 │   │   └── 📂 superadmin/      # PanelGlobal, EstadisticasSuperadmin, MetricasEntidad
 │   ├── 📂 routes/              # AppRouter (definición de rutas), RutaProtegida
 │   ├── 📂 store/               # Zustand stores (authStore, dataStore, busquedaStore)
@@ -208,7 +210,7 @@ npm install
 
 # 3. Configurar variables de entorno
 # Crear archivo .env.local con:
-VITE_SUPABASE_URL=https://[TU-PROYECTO].supabase.co
+VITE_SUPABASE_URL=https://zwmfzqdamdibjermgnyo.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 # 4. Ejecutar en modo desarrollo
@@ -249,6 +251,15 @@ Accede a: http://localhost:5173
 ---
 
 ### 🗓️ MAYO 2026 — Pulido Final y UI/UX
+
+#### 📍 Semana 33 | Selectores Globales, Filtros Temporales y Preparación IA
+
+✨ **Nuevas Funcionalidades y Optimizaciones:**
+- **Panel Global Dinámico:** Añadido un selector de entidades en el Panel del Superadmin para filtrar métricas globales o específicas por hospital en tiempo real.
+- **Exploración Histórica:** Incorporación de un selector de mes/año en las gráficas de carga operativa para visualizar la evolución histórica de tareas e incidencias.
+- **Responsive Design:** Refactorización de todos los modales del sistema (Admin, Superadmin) aplicando el patrón `flex-col-reverse` en dispositivos móviles para un apilamiento más ergonómico de los botones de acción.
+- **Validación UI:** Añadidos contadores de caracteres interactivos visuales en los campos de texto (ej. creación de Notificaciones).
+- **Proyección de Futuro:** Integración de un apartado "Próximamente" (con estado bloqueado) en el menú lateral informando sobre la futura Fase 2 del proyecto: **Mapas interactivos 2D y Predicciones Avanzadas con IA**.
 
 #### 📍 Semana 32 | Corrección de Bugs y Consistencia Visual
 
@@ -300,17 +311,15 @@ Accede a: http://localhost:5173
 
 #### 📍 Semana 27 | Martes 27/03/2026
 
-🎯 **Hito:** Finalización y entrega de todos los manuales del proyecto.
+#### 📍 Semana 28 | Panel de Control y Perfil · Jueves 09/04/2026
 
-📂 Documentos entregados:
-- ✅ **Manual Técnico:** Arquitectura, base de datos, Triggers y RLS.
-- ✅ **Manual de Usuario:** Guía paso a paso para Supervisor y Operario con capturas de pantalla.
-- ✅ **Manual de Despliegue:** Guía de instalación local y despliegue en Vercel.
-- ✅ **Manual de Evaluación:** Autoevaluación del progreso del proyecto.
-- ✅ **Manual de Seguimiento:** Trazabilidad del desarrollo semanal entregado al tutor.
+️ **Últimas implementaciones:**
+- **Panel de Control (Admin):** Modificación para mostrar datos dinámicos en tiempo real. Gráfico de incidencias por mes. Tabla de tareas con badges.
+- **Página de Perfil:** Nueva vista completa (`Perfil.tsx`) para editar nombre, apellidos y contraseña con validación en Supabase Auth.
+
 ---
 
-### 🗓️ FEBRERO 2026 — Cierre de Manuales y Vistas Principales
+### 🗓️ MARZO 2026 — Documentación Técnica
 
 #### 📍 Semana 27 | Martes 27/03/2026
 
@@ -322,6 +331,10 @@ Accede a: http://localhost:5173
 - ✅ **Manual de Despliegue:** Guía de instalación local y despliegue en Vercel.
 - ✅ **Manual de Evaluación:** Autoevaluación del progreso del proyecto.
 - ✅ **Manual de Seguimiento:** Trazabilidad del desarrollo semanal entregado al tutor.
+
+---
+
+### 🗓️ FEBRERO 2026 — Cierre de Manuales y Vistas Principales
 
 ---
 
@@ -444,7 +457,7 @@ Accede a: http://localhost:5173
 #### 📍 Semana 4 | "Hola Mundo" · Martes 28/10/2025
 
 🎯 **Hito:** Inicialización del proyecto Vite + Supabase. Primer commit funcional.
-- `npm create vite@latest saniclear` — proyecto arrancado.
+- `npm create vite@latest saniclears` — proyecto arrancado.
 - Instalación y configuración de Tailwind CSS.
 - Configuración del cliente Supabase y primeras pruebas de conexión.
 - Creación de las primeras tablas en Supabase Dashboard.
@@ -467,14 +480,6 @@ Accede a: http://localhost:5173
 - Configuración de ramas: `main` (producción) y `develop` (desarrollo activo).
 - Definición de convención de commits.
 - Primera entrada del README.
-
----
-
-#### 📍 Semana 28 | Panel de Control y Perfil · Jueves 09/04/2026
-
-🛠️ **Últimas implementaciones:**
-- **Panel de Control (Admin):** Modificación para mostrar datos dinámicos en tiempo real. Gráfico de incidencias por mes (custom sin librería externa). Tabla de tareas con badges de estado y prioridad.
-- **Página de Perfil:** Nueva vista completa (`Perfil.tsx`) para que usuarios puedan editar su nombre, apellidos y cambiar su contraseña. Validación de contraseña actual contra Supabase Auth. Integración con Zustand para actualizar estado global.
 
 ---
 

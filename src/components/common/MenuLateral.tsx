@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Map, Users, AlertCircle, Bell, User, HardHat, X } from 'lucide-react';
+import { LayoutDashboard, Map, Users, AlertCircle, Bell, User, HardHat, X, Lock, BrainCircuit } from 'lucide-react';
+import Modal from './Modal';
+import Button from '../Button';
 
 interface MenuItem {
     id: string;
@@ -21,6 +23,8 @@ const MenuLateral: React.FC<MenuLateralProps> = ({ items, isOpen = false, onClos
     const handleCloseClick = () => {
         if (onClose) onClose();
     };
+    
+    const [showProximamente, setShowProximamente] = useState(false);
     
     return (
         <>
@@ -107,8 +111,49 @@ const MenuLateral: React.FC<MenuLateralProps> = ({ items, isOpen = false, onClos
                             </NavLink>
                         );
                     })}
+
+                    <button
+                        onClick={() => setShowProximamente(true)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all bg-yellow-50 text-yellow-600 border border-yellow-200 hover:bg-yellow-100 w-full mt-2 shadow-sm text-sm"
+                    >
+                        <Lock size={20} />
+                        <span>Próximamente</span>
+                    </button>
                 </nav>
             </aside>
+
+            {showProximamente && (
+                <Modal title="EN CONSTRUCCIÓN" onClose={() => setShowProximamente(false)}>
+                    <div className="flex flex-col items-center text-center gap-4 py-2 max-w-sm mx-auto">
+                        <div className="flex gap-4 mb-2">
+                            <div className="w-14 h-14 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center border border-blue-100 shadow-sm">
+                                <Map size={28} />
+                            </div>
+                            <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center border border-purple-100 shadow-sm">
+                                <BrainCircuit size={28} />
+                            </div>
+                        </div>
+                        
+                        <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight">
+                            Futuros Proyectos
+                        </h3>
+                        
+                        <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                            Esta sección se encuentra actualmente en desarrollo. <br/><br/>
+                            En el futuro, integraremos aquí un <strong className="text-gray-800">Mapa Interactivo</strong> en tiempo real de las instalaciones y el nuevo módulo de <strong className="text-purple-600">Predicciones Avanzadas con IA</strong>.
+                        </p>
+                        
+                        <div className="w-full mt-6">
+                            <Button 
+                                text="Entendido, volver al menú" 
+                                onClick={() => setShowProximamente(false)} 
+                                variant="primary" 
+                                className="w-full py-3 shadow-lg shadow-blue-100" 
+                            />
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </>
     );
 };

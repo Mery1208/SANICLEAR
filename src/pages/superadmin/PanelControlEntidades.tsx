@@ -260,7 +260,7 @@ return (
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Plan</label>
                 <select value={form.plan_tipo || 'basic'} onChange={e => setForm({...form, plan_tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none bg-white">
-                  <option value="free">Free</option>
+                  <option value="freemium">Freemium</option>
                   <option value="basic">Basic</option>
                   <option value="premium">Premium</option>
                 </select>

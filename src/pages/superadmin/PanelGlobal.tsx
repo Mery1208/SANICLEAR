@@ -72,12 +72,48 @@ const PanelGlobal: React.FC = () => {
   const [actividad, setActividad] = useState<ActividadItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [entidades, setEntidades] = useState<any[]>([]);
+  const [filtroEntidad, setFiltroEntidad] = useState<string>('todas');
+  const [filtroMes, setFiltroMes] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
 
   const fetchGlobalData = async () => {
     setLoading(true);
     setError(null);
 
+    const [year, month] = filtroMes.split('-');
+    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1).toISOString();
+    const endDate = new Date(parseInt(year), parseInt(month), 1).toISOString();
+
     try {
+      let qUsuarios = supabase.from('usuarios').select('*', { count: 'exact', head: true });
+      let qZonas = supabase.from('zonas').select('*', { count: 'exact', head: true });
+      let qTareasPendientes = supabase.from('tareas').select('id, zona', { count: 'exact' }).eq('estado', 'pendiente');
+      let qTareasCurso = supabase.from('tareas').select('id, zona', { count: 'exact' }).eq('estado', 'en_curso');
+      let qIncidenciasAbiertas = supabase.from('incidencias').select('id, zona, prioridad', { count: 'exact' }).eq('estado', 'abierta');
+      let qIncidenciasCriticas = supabase.from('incidencias').select('id, zona, prioridad', { count: 'exact' }).eq('prioridad', 'critica');
+      let qNotificaciones = supabase.from('notificaciones').select('*', { count: 'exact', head: true }).eq('leida', false);
+      let qAdmins = supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('rol', 'admin');
+      let qOperarios = supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('rol', 'operario');
+      let qTareasZonas = supabase.from('tareas').select('id, zona, estado').gte('created_at', startDate).lt('created_at', endDate);
+      let qIncidenciasZonas = supabase.from('incidencias').select('id, zona, prioridad, estado').gte('created_at', startDate).lt('created_at', endDate);
+
+      if (filtroEntidad !== 'todas') {
+        qUsuarios = qUsuarios.eq('entidad_id', filtroEntidad);
+        qZonas = qZonas.eq('entidad_id', filtroEntidad);
+        qTareasPendientes = qTareasPendientes.eq('entidad_id', filtroEntidad);
+        qTareasCurso = qTareasCurso.eq('entidad_id', filtroEntidad);
+        qIncidenciasAbiertas = qIncidenciasAbiertas.eq('entidad_id', filtroEntidad);
+        qIncidenciasCriticas = qIncidenciasCriticas.eq('entidad_id', filtroEntidad);
+        qNotificaciones = qNotificaciones.eq('entidad_id', filtroEntidad);
+        qAdmins = qAdmins.eq('entidad_id', filtroEntidad);
+        qOperarios = qOperarios.eq('entidad_id', filtroEntidad);
+        qTareasZonas = qTareasZonas.eq('entidad_id', filtroEntidad);
+        qIncidenciasZonas = qIncidenciasZonas.eq('entidad_id', filtroEntidad);
+      }
+
       const [
         usuariosRes,
         zonasRes,
@@ -91,17 +127,17 @@ const PanelGlobal: React.FC = () => {
         tareasZonasRes,
         incidenciasZonasRes,
       ] = await Promise.all([
-        supabase.from('usuarios').select('*', { count: 'exact', head: true }),
-        supabase.from('zonas').select('*', { count: 'exact', head: true }),
-        supabase.from('tareas').select('id, zona', { count: 'exact' }).eq('estado', 'pendiente'),
-        supabase.from('tareas').select('id, zona', { count: 'exact' }).eq('estado', 'en_curso'),
-        supabase.from('incidencias').select('id, zona, prioridad', { count: 'exact' }).eq('estado', 'abierta'),
-        supabase.from('incidencias').select('id, zona, prioridad', { count: 'exact' }).eq('prioridad', 'critica'),
-        supabase.from('notificaciones').select('*', { count: 'exact', head: true }).eq('leida', false),
-        supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('rol', 'admin'),
-        supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('rol', 'operario'),
-        supabase.from('tareas').select('id, zona, estado'),
-        supabase.from('incidencias').select('id, zona, prioridad, estado'),
+        qUsuarios,
+        qZonas,
+        qTareasPendientes,
+        qTareasCurso,
+        qIncidenciasAbiertas,
+        qIncidenciasCriticas,
+        qNotificaciones,
+        qAdmins,
+        qOperarios,
+        qTareasZonas,
+        qIncidenciasZonas,
       ]);
 
       const responses = [
@@ -209,6 +245,12 @@ const PanelGlobal: React.FC = () => {
 
   useEffect(() => {
     fetchGlobalData();
+  }, [filtroEntidad, filtroMes]);
+
+  useEffect(() => {
+    supabase.from('entidades').select('id, nombre_hospital').then(({ data }) => {
+      if (data) setEntidades(data);
+    });
   }, []);
 
   const metricCards = useMemo(
@@ -261,13 +303,23 @@ const PanelGlobal: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={fetchGlobalData}
-          className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-[10px] sm:text-sm font-bold text-[#1e3a5f] hover:bg-gray-50 transition-colors"
-        >
-          <RefreshCw size={16} />
-          <span className="hidden sm:inline">Actualizar panel</span>
-        </button>
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+          <select 
+            value={filtroEntidad} 
+            onChange={(e) => setFiltroEntidad(e.target.value)}
+            className="px-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+          >
+            <option value="todas">Global (Todas)</option>
+            {entidades.map(e => <option key={e.id} value={e.id}>{e.nombre_hospital}</option>)}
+          </select>
+          <button
+            onClick={fetchGlobalData}
+            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-[10px] sm:text-sm font-bold text-[#1e3a5f] hover:bg-gray-50 transition-colors"
+          >
+            <RefreshCw size={16} />
+            <span className="hidden sm:inline">Actualizar panel</span>
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -297,16 +349,24 @@ const PanelGlobal: React.FC = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
         <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex flex-col">
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">
-              Carga Operativa por Zona
-            </p>
-            <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
-              Tareas vs Incidencias
-            </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+            <div>
+              <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">
+                Carga Operativa por Zona
+              </p>
+              <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+                Tareas vs Incidencias
+              </span>
+            </div>
+            <input
+              type="month"
+              value={filtroMes}
+              onChange={(e) => setFiltroMes(e.target.value)}
+              className="px-3 py-1.5 border border-gray-200 rounded-xl text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+            />
           </div>
 
-          <div className="h-[280px] w-full mb-8">
+          <div className="h-[280px] w-full mb-2">
             <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 10, height: 280 }}>
               <BarChart data={zonasCarga} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -319,6 +379,10 @@ const PanelGlobal: React.FC = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
+
+          <p className="text-center text-[10px] sm:text-xs text-gray-400 font-medium mb-8">
+            * Datos de carga correspondientes a {new Date(parseInt(filtroMes.split('-')[0]), parseInt(filtroMes.split('-')[1]) - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}.
+          </p>
 
           <div className="flex items-center justify-between mb-5 pt-6 border-t border-gray-50">
             <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">

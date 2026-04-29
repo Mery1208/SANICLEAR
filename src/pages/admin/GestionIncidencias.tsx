@@ -297,10 +297,10 @@ const GestionIncidencias: React.FC = () => {
                </div>
              </div>
 
-             <div className="flex gap-2 sm:gap-4 mt-2">
-               <button onClick={() => setShowCreateModal(false)} className="px-3 py-2 text-[10px] sm:px-6 sm:py-3 sm:text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors">Cancelar</button>
+           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2">
+             <button onClick={() => setShowCreateModal(false)} className="px-3 py-3 text-xs sm:px-6 sm:py-3 font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors shrink-0">Cancelar</button>
                <button onClick={handleCreateIncidencia} disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion}
-                 className="flex-1 bg-blue-500 text-white py-2 text-[10px] sm:py-3 sm:text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-lg shadow-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+               className="flex-1 bg-blue-500 text-white py-3 text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-lg shadow-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                  {loading ? "Creando..." : "Crear Incidencia"}
                </button>
              </div>
@@ -356,7 +356,7 @@ const GestionIncidencias: React.FC = () => {
 
              <div className="mb-8">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-3">Cambiar estado:</p>
-                 <div className="flex gap-2 sm:gap-4">
+                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                     {[
                       ["resuelta", "Resuelta", "success"],
                       ["abierta", "Abierta", "danger"],

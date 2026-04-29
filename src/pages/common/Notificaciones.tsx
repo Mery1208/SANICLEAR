@@ -287,12 +287,17 @@ const Notificaciones: React.FC = () => {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
           </div>
           <div className="mb-4">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Mensaje</label>
-            <textarea value={newNotif.mensaje} onChange={e => setNewNotif({...newNotif, mensaje:e.target.value})}
+            <div className="flex justify-between items-end mb-1">
+              <label className="block text-xs font-semibold text-gray-600">Mensaje</label>
+              <span className={`text-[10px] font-bold ${newNotif.mensaje.length >= 250 ? 'text-red-500' : 'text-gray-400'}`}>
+                {newNotif.mensaje.length} / 250
+              </span>
+            </div>
+            <textarea value={newNotif.mensaje} onChange={e => setNewNotif({...newNotif, mensaje:e.target.value.slice(0, 250)})}
               rows={3} placeholder="Escribe el mensaje..."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400" />
           </div>
-          <div className="flex gap-4 mt-2">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowForm(false)} variant="secondary" className="flex-1 py-3" />
             <Button text="Enviar Notificación" onClick={sendNotif} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>

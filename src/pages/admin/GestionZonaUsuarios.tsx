@@ -339,7 +339,7 @@ const Gestion: React.FC = () => {
               </select>
             </div>
           </div>
-          <div className="flex gap-4 mt-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowZonaModal(false)} variant="secondary" className="flex-1 py-2.5" />
             <Button text="Guardar" onClick={saveZona} variant="primary" className="flex-1 py-2.5 shadow-sm" />
           </div>
@@ -387,7 +387,7 @@ const Gestion: React.FC = () => {
               </select>
             </div>
           </div>
-          <div className="flex gap-4 mt-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="secondary" className="flex-1 py-2.5" />
             <Button text="Guardar" onClick={saveUsuario} variant="primary" className="flex-1 py-2.5 shadow-sm" />
           </div>
