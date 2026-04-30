@@ -123,17 +123,17 @@ const MisTareas: React.FC = () => {
   if (error) {
     return (
       <div className="p-6 font-sans">
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6 mb-6">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-2xl p-6 mb-6 transition-colors">
           <h3 className="font-bold mb-2 text-lg">Error al cargar tareas</h3>
           <p className="text-sm mb-4">{error}</p>
           <div className="flex gap-3">
-            <button onClick={handleRetry} className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+              <button onClick={handleRetry} className="px-4 py-2 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
               <RefreshCw size={16} />
               Reintentar
             </button>
             {error.includes('Tabla') && (
               <a href="SUPABASE_SETUP.md" target="_blank" rel="noopener noreferrer"
-                 className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm font-semibold transition-colors">
+                   className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-lg text-sm font-semibold transition-colors">
                 Ver guía de configuración
               </a>
             )}
@@ -146,8 +146,8 @@ const MisTareas: React.FC = () => {
   if (tareasFiltradas.length === 0) {
     return (
       <div className="p-6 font-sans">
-        <div className={`rounded-2xl p-8 text-center ${query ? 'bg-blue-50 border border-blue-200 text-blue-800' : 'bg-gray-50 border border-gray-200 text-gray-700'}`}>
-          {query ? <Search size={48} className="mx-auto mb-4 text-blue-400" /> : <CheckCircle size={48} className="mx-auto mb-4 text-gray-400" />}
+            <div className={`rounded-2xl p-8 text-center transition-colors ${query ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-800 dark:text-blue-300' : 'bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300'}`}>
+              {query ? <Search size={48} className="mx-auto mb-4 text-blue-400 dark:text-blue-500" /> : <CheckCircle size={48} className="mx-auto mb-4 text-gray-400 dark:text-slate-500" />}
           <h3 className="font-bold mb-2 text-xl">
             {query ? `No se encontraron tareas para "${query}"` : "No tienes tareas asignadas"}
           </h3>
@@ -158,13 +158,13 @@ const MisTareas: React.FC = () => {
           </p>
           <div className="flex gap-3 justify-center">
             {query && (
-              <button onClick={clearQuery} className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-sm font-semibold flex items-center gap-2">
+                  <button onClick={clearQuery} className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
                 <Search size={16} />
                 Limpiar búsqueda
               </button>
             )}
             {!query && (
-              <button onClick={handleRetry} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold flex items-center gap-2">
+                  <button onClick={handleRetry} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 dark:text-slate-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
                 <RefreshCw size={16} />
                 Actualizar
               </button>
@@ -179,13 +179,13 @@ const MisTareas: React.FC = () => {
     <div>
       <div className="flex justify-between items-center mb-1">
         <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Mis Tareas</h2>
-          <p className="text-gray-400 text-sm font-medium italic mb-4">
+              <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors">Mis Tareas</h2>
+              <p className="text-gray-400 dark:text-slate-400 text-sm font-medium italic mb-4 transition-colors">
             {query ? `Filtrando por: "${query}"` : "Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas."}
           </p>
         </div>
         {query && (
-          <button onClick={clearQuery} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+              <button onClick={clearQuery} className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 dark:text-slate-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
             <Search size={16} />
             Limpiar filtro
           </button>
@@ -195,11 +195,11 @@ const MisTareas: React.FC = () => {
       {/* Counters */}
       <div className="flex justify-center gap-1 sm:gap-4 mb-3 sm:mb-6 flex-wrap">
         {[
-          ["Prioridad Alta", alta, "bg-red-50 text-red-700 border-red-200"],
-          ["Completadas", completadas, "bg-green-50 text-green-700 border-green-200"],
-          ["Pendientes", pendientes, "bg-yellow-50 text-yellow-700 border-yellow-200"]
+              ["Prioridad Alta", alta, "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800/50"],
+              ["Completadas", completadas, "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800/50"],
+              ["Pendientes", pendientes, "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800/50"]
         ].map(([l, v, cls]) => (
-          <div key={l as string} className={`border rounded-lg px-2 sm:px-6 py-1.5 sm:py-4 flex flex-col items-center gap-0.5 sm:gap-1 min-w-[80px] sm:min-w-[120px] ${cls}`}>
+              <div key={l as string} className={`border rounded-lg px-2 sm:px-6 py-1.5 sm:py-4 flex flex-col items-center gap-0.5 sm:gap-1 min-w-[80px] sm:min-w-[120px] transition-colors ${cls}`}>
             <span className="font-black text-xl sm:text-3xl">{v as number}</span>
             <span className="text-[8px] sm:text-xs font-bold uppercase tracking-wide text-center leading-tight">{l as string}</span>
           </div>
@@ -218,10 +218,10 @@ const MisTareas: React.FC = () => {
         }).map(t => {
           const isCompleted = t.estado === "completada" || t.estado === "hecha";
           return (
-            <div key={t.id} className={`bg-white rounded-2xl border p-4 sm:p-5 flex flex-row justify-between items-center gap-4 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50" : ""}`}>
+                <div key={t.id} className={`bg-white dark:bg-slate-800 rounded-2xl border dark:border-slate-700 p-4 sm:p-5 flex flex-row justify-between items-center gap-4 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50 dark:bg-slate-800/50" : ""}`}>
               <div className="flex-1 min-w-0">
-                <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 ${isCompleted ? "line-through decoration-green-500 decoration-2 text-green-700" : "text-[#1e3a5f]"}`}>{t.zona}</p>
-                <p className={`text-sm sm:text-base font-medium mb-3 line-clamp-2 ${isCompleted ? "line-through decoration-green-400 text-green-600" : "text-gray-500"}`}>{t.desc || t.tarea}</p>
+                    <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 transition-colors ${isCompleted ? "line-through decoration-green-500 dark:decoration-green-600 decoration-2 text-green-700 dark:text-green-500" : "text-[#1e3a5f] dark:text-blue-300"}`}>{t.zona}</p>
+                    <p className={`text-sm sm:text-base font-medium mb-3 line-clamp-2 transition-colors ${isCompleted ? "line-through decoration-green-400 dark:decoration-green-700 text-green-600 dark:text-green-500" : "text-gray-500 dark:text-slate-400"}`}>{t.desc || t.tarea}</p>
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
               {!isCompleted ? (
@@ -230,10 +230,10 @@ const MisTareas: React.FC = () => {
                       onClick={() => completar(t.id)}
                       variant="success"
                       icon={CheckCircle}
-                      className="px-5 py-3 sm:px-6 sm:py-4 text-sm sm:text-base font-black shrink-0 shadow-md shadow-green-100 w-auto"
+                          className="px-5 py-3 sm:px-6 sm:py-4 text-sm sm:text-base font-black shrink-0 shadow-md shadow-green-100 dark:shadow-none w-auto"
                     />
               ) : (
-                <span className="text-green-600 font-bold text-sm sm:text-base shrink-0 flex items-center gap-1.5">
+                    <span className="text-green-600 dark:text-green-500 font-bold text-sm sm:text-base shrink-0 flex items-center gap-1.5 transition-colors">
                   <CheckCircle size={16} />
                   <span>Completada</span>
                 </span>
@@ -245,7 +245,7 @@ const MisTareas: React.FC = () => {
 
       {/* Progress */}
       <div className="mt-3 sm:mt-4 flex justify-center">
-        <div className="bg-white rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 border border-green-200 text-center text-green-700 font-bold shadow-sm inline-block text-xs sm:text-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 border border-green-200 dark:border-green-800/50 text-center text-green-700 dark:text-green-400 font-bold shadow-sm inline-block text-xs sm:text-sm transition-colors">
           <span className="text-base sm:text-lg">{completadas}</span>
           <span className="text-sm sm:text-base mx-1">/</span>
           <span className="text-sm sm:text-base">{total}</span>

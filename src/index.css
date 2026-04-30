@@ -1,6 +1,9 @@
 /* Tailwind CSS v4 */
 @import './css/tailwind.css';
 
+/* Habilitar modo oscuro manual por clase para Tailwind */
+@custom-variant dark (&:is(.dark, .dark *));
+
 /* Variables y tokens de diseño */
 @import './css/colores.css';
 @import './css/espacios.css';

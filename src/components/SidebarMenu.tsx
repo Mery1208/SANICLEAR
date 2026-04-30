@@ -14,12 +14,12 @@ interface SidebarMenuProps {
 
 const SidebarMenu: React.FC<SidebarMenuProps> = ({ items, activeItem, onItemClick }) => {
     return (
-        <aside className="sidebar-menu">
+        <aside className="sidebar-menu dark:bg-slate-900 transition-colors">
             <nav className="sidebar-menu-nav">
                 {items.map(item => (
                     <button
                         key={item.id}
-                        className={`sidebar-menu-btn ${activeItem === item.id ? 'active' : ''}`}
+                        className={`sidebar-menu-btn dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white transition-colors ${activeItem === item.id ? 'active dark:bg-slate-800 dark:text-white dark:border-blue-500' : ''}`}
                         onClick={() => onItemClick(item.id)}
                     >
                         {item.label}

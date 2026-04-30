@@ -1,7 +1,7 @@
 /* layout operario */
 .op-layout {
     min-height: 100vh;
-    background: #f0f4f8;
+    background: var(--color-background-page);
     display: flex;
     flex-direction: column;
 }
@@ -12,8 +12,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 1.5rem;
-    background: var(--color-dark-bg-alt);
-    border-bottom: 1px solid var(--color-dark-border);
+    background: var(--color-background-white);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .op-navbar-brand {
@@ -24,6 +24,10 @@
 
 .op-navbar-brand img {
     height: 32px;
+}
+
+.dark .op-navbar-brand img {
+    filter: brightness(0) invert(1);
 }
 
 .op-navbar-brand span {
@@ -83,10 +87,10 @@
     gap: 0.75rem;
     margin-top: 1.5rem;
     padding: 1rem 1.25rem;
-    background: white;
+    background: var(--color-background-white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    color: var(--color-primary);
+    color: var(--color-text-primary);
     font-weight: var(--font-semibold);
     font-size: var(--text-sm);
 }
@@ -94,7 +98,7 @@
 .op-progress-bar {
     flex: 1;
     height: 8px;
-    background: #e2e8f0;
+    background: var(--color-background-page);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -118,10 +122,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: white;
+    background: var(--color-background-white);
     padding: 1.25rem 1.5rem;
     border-radius: var(--radius-lg);
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-border-medium);
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -132,15 +136,14 @@
 }
 
 .op-task-card.completed {
-    background: #f0fdf4;
-    border-color: #bbf7d0;
-    opacity: 0.8;
+    background: var(--color-success-light);
+    border-color: var(--color-success);
 }
 
 .op-task-info h3 {
     font-size: var(--text-base);
     font-weight: var(--font-semibold);
-    color: var(--color-text-primary);
+    color: var(--color-title);
     margin-bottom: 0.25rem;
 }
 
@@ -183,7 +186,7 @@
 .op-check {
     width: 36px;
     height: 36px;
-    border: 2px solid #d1d5db;
+    border: 2px solid var(--color-border-medium);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -194,7 +197,7 @@
 
 .op-check.checked {
     border-color: var(--color-success);
-    background: #dcfce7;
+    background: var(--color-success-light);
     color: var(--color-success);
 }
 

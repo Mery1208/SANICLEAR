@@ -72,6 +72,13 @@
   --color-border-medium: #D1D5DB;
   --color-border-dark: #9CA3AF;
 
+  /* sidebar (modo claro) */
+  --color-sidebar-bg: linear-gradient(180deg, #1e3a5f 0%, #0f2744 100%);
+  --color-sidebar-text: #ffffff;
+  --color-sidebar-text-muted: rgba(255, 255, 255, 0.7);
+  --color-sidebar-hover: rgba(255, 255, 255, 0.1);
+  --color-sidebar-border: rgba(255, 255, 255, 0.1);
+
   /* sombras */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -85,4 +92,45 @@
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
   --radius-full: 50px;
+}
+
+/* MODO OSCURO (DARK MODE) - Sobrescribe las variables cuando <html> tiene la clase .dark */
+.dark {
+  /* colores de titulo y texto */
+  --color-title: #93C5FD; /* blue-300 */
+  --color-text-primary: #F3F4F6; /* gray-100 */
+  --color-text-secondary: #9CA3AF; /* gray-400 */
+  --color-text-muted: #6B7280;
+  --color-text-disabled: #4B5563;
+
+  /* colores de fondo general */
+  --color-background-page: #0f172a; /* slate-900 */
+  --color-background-white: #1e293b; /* slate-800 */
+  --color-background-light: #334155; /* slate-700 */
+
+  /* fondos de la landing page */
+  --color-dark-bg: #0f172a;
+  --color-dark-bg-alt: #1e293b;
+  --color-dark-bg-deep: #1e3a8a;
+  --color-dark-card: #1e293b;
+  --color-dark-card-hover: #334155;
+  --color-dark-border: rgba(147, 197, 253, 0.15);
+
+  /* texto de la landing page */
+  --color-dark-text: #f8fafc;
+  --color-dark-text-secondary: #cbd5e1;
+  --color-dark-text-muted: #94a3b8;
+  --color-dark-text-dim: #64748b;
+
+  /* bordes */
+  --color-border-light: #334155;
+  --color-border-medium: #475569;
+  --color-border-dark: #64748b;
+
+  /* sidebar (modo oscuro) */
+  --color-sidebar-bg: #1e293b; /* slate-800 */
+  --color-sidebar-text: #f8fafc; /* slate-50 */
+  --color-sidebar-text-muted: #94a3b8; /* slate-400 */
+  --color-sidebar-hover: #334155; /* slate-700 */
+  --color-sidebar-border: #334155; /* slate-700 */
 }

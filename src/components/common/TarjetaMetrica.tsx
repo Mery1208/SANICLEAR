@@ -15,8 +15,8 @@ const TarjetaMetrica: React.FC<TarjetaMetricaProps> = ({ label, valor, color }) 
     };
 
     return (
-        <div className={`py-3 px-5 rounded-[2rem] bg-white border border-slate-300 shadow-sm flex items-center justify-between transition-transform hover:-translate-y-1 ${colorStyles[color].split(' ')[0]} ${colorStyles[color].split(' ')[1]}`}>
-            <span className="text-[15px] font-medium text-slate-700 ml-2">{label}</span>
+        <div className={`py-3 px-5 rounded-[2rem] bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 shadow-sm flex items-center justify-between transition-transform hover:-translate-y-1 ${colorStyles[color].split(' ')[0]} ${colorStyles[color].split(' ')[1]}`}>
+            <span className="text-[15px] font-medium text-slate-700 dark:text-slate-200 ml-2 transition-colors">{label}</span>
             <span className={`text-[22px] font-semibold mr-2 ${colorStyles[color].split(' ')[2]}`}>{valor}</span>
         </div>
     );

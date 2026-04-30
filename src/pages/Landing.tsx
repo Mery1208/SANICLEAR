@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Activity, ShieldCheck, Users, BarChart3, Smartphone, Globe, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { gsap } from 'gsap';
@@ -46,9 +46,9 @@ export default function Landing(): React.JSX.Element {
     };
   }, []);
 
-  return (
-    <div className="landing-container">
-      <Navbar />
+   return (
+     <div className="landing-container transition-colors duration-300">
+       <Navbar />
 
       {/* Hero */}
       <header className="hero">
@@ -243,6 +243,7 @@ export default function Landing(): React.JSX.Element {
       </section>
 
       <Footer />
+      
     </div>
   );
 }
