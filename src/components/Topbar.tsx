@@ -19,9 +19,9 @@ const Topbar: React.FC = () => {
         <nav className="topbar">
             <div className="topbar-brand flex items-center gap-3">
                 <img src={logoImg} alt="Saniclear" className="dark:brightness-0 dark:invert transition-all" />
-                {usuario?.rol !== 'superadmin' && usuario?.entidad && (
+                {usuario?.rol !== 'superadmin' && usuario?.entidades?.nombre_hospital && (
                     <div className="flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-xs md:text-sm font-semibold border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-                        🏥 {usuario.entidad}
+                        🏥 {usuario.entidades.nombre_hospital}
                     </div>
                 )}
             </div>

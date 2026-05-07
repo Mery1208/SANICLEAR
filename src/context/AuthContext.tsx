@@ -26,13 +26,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MOCK_USERS: Usuario[] = [
-  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclears.com', rol: 'superadmin', entidad: 'Saniclears' },
-  { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclears', email: 'admin@saniclears.com', rol: 'admin', entidad: 'Hospital Central' },
-  { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclears.com', rol: 'operario', turno: 'Mañana', entidad: 'Hospital Central' },
-  { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclears.com', rol: 'operario', turno: 'Tarde', entidad: 'Hospital Norte' },
-  { id: 'oper-3', nombre: 'Evelia', apellidos: 'Gil Paredes', email: 'evelia.gil@saniclears.com', rol: 'operario', turno: 'Noche', entidad: 'Hospital Central' },
-  { id: 'oper-4', nombre: 'Carlos', apellidos: 'Fernández', email: 'carlos.f@saniclears.com', rol: 'operario', turno: 'Mañana', entidad: 'Hospital Sur' },
-  { id: 'oper-5', nombre: 'Ana', apellidos: 'Martínez', email: 'ana.martinez@saniclears.com', rol: 'operario', turno: 'Tarde', entidad: 'Hospital Central' },
+  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclears.com', rol: 'superadmin' },
+  { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclears', email: 'admin@saniclears.com', rol: 'admin' },
+  { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclears.com', rol: 'operario', turno: 'Mañana' },
+  { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclears.com', rol: 'operario', turno: 'Tarde' },
+  { id: 'oper-3', nombre: 'Evelia', apellidos: 'Gil Paredes', email: 'evelia.gil@saniclears.com', rol: 'operario', turno: 'Noche' },
+  { id: 'oper-4', nombre: 'Carlos', apellidos: 'Fernández', email: 'carlos.f@saniclears.com', rol: 'operario', turno: 'Mañana' },
+  { id: 'oper-5', nombre: 'Ana', apellidos: 'Martínez', email: 'ana.martinez@saniclears.com', rol: 'operario', turno: 'Tarde' },
 ];
 
 const MOCK_PASSWORDS: Record<string, string> = {

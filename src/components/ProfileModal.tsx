@@ -29,7 +29,7 @@ export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileMod
     rol: usuario?.rol || userRole,
     telefono: '',
     foto: null,
-    entidad: usuario?.entidad || ''
+    entidad: usuario?.entidades?.nombre_hospital || ''
   });
 
   const handleSave = (e: React.FormEvent<HTMLFormElement>): void => {

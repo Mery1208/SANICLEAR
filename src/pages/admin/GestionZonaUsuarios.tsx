@@ -196,13 +196,12 @@ const Gestion: React.FC = () => {
   const saveUsuario = async () => {
     if (!usuarioForm.nombre || !usuarioForm.email) return;
 
-     const userData = {
-       nombre: usuarioForm.nombre,
-       apellidos: usuarioForm.apellidos,
-       email: usuarioForm.email,
-       rol: usuarioForm.rol,
+      const userData = {
+        nombre: usuarioForm.nombre,
+        apellidos: usuarioForm.apellidos,
+        email: usuarioForm.email,
+        rol: usuarioForm.rol,
         turno: usuarioForm.turno,
-        entidad: usuarioForm.entidad,
         entidad_id: usuarioForm.entidad_id || null
       };
 

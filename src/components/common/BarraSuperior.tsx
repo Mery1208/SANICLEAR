@@ -56,9 +56,9 @@ const BarraSuperior: React.FC = () => {
                       <div className="flex flex-col text-left">
                           <p className="text-[10px] sm:text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 leading-none truncate max-w-[60px] sm:max-w-[80px] md:max-w-[120px] transition-colors">{nombreMostrar} {apellidosMostrar}</p>
                           <p className="text-[7px] sm:text-[8px] md:text-[10px] font-black text-blue-500 uppercase tracking-wider mt-0.5">{rol}</p>
-                          {(usuario?.entidades?.nombre_hospital || usuario?.entidad) && (
+                          {usuario?.entidades?.nombre_hospital && (
                             <p className="text-[7px] sm:text-[8px] md:text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
-                              {usuario?.entidades?.nombre_hospital || usuario?.entidad}
+                              {usuario.entidades.nombre_hospital}
                             </p>
                           )}
                       </div>
