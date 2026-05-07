@@ -194,7 +194,7 @@ const GestionIncidencias: React.FC = () => {
         {[
           ["Abiertas", stats.abiertas, <AlertTriangle size={16} />, "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30"],
           ["Resueltas", stats.resueltas, <CheckCircle size={16} />, "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30"],
-          ["En Rev.", stats.en_revision, <Clock size={16} />, "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30"],
+          ["En Revisión", stats.en_revision, <Clock size={16} />, "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30"],
           ["Total", stats.total, <TrendingUp size={16} />, "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30"]
         ].map(([l, v, ic, cls]) => (
           <div key={l as string} className="bg-white dark:bg-[#1e3a5f]/40 rounded-xl border border-gray-50 dark:border-gray-800 p-2 lg:p-3 shadow-sm hover:shadow-md transition-shadow">

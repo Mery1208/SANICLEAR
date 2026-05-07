@@ -293,9 +293,9 @@ const PanelGlobal: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mb-2">
         <div className="text-left">
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">
             Panel global del superadmin
           </h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -303,21 +303,27 @@ const PanelGlobal: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
-          <select 
-            value={filtroEntidad} 
-            onChange={(e) => setFiltroEntidad(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
-          >
-            <option value="todas">Global (Todas)</option>
-            {entidades.map(e => <option key={e.id} value={e.id}>{e.nombre_hospital}</option>)}
-          </select>
+        <div className="flex items-center gap-2 mt-2">
+          <div className="relative">
+            <select 
+              value={filtroEntidad} 
+              onChange={(e) => setFiltroEntidad(e.target.value)}
+              className="appearance-none pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-[#1e3a5f] text-[#1e3a5f] dark:text-white cursor-pointer hover:border-blue-300 transition-colors shadow-sm"
+            >
+              <option value="todas">Global (Todas)</option>
+              {entidades.map(e => <option key={e.id} value={e.id}>{e.nombre_hospital}</option>)}
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+          </div>
+          
           <button
             onClick={fetchGlobalData}
-            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-[10px] sm:text-sm font-bold text-[#1e3a5f] dark:text-white hover:bg-gray-50 transition-colors"
+            title="Actualizar panel"
+            className="flex items-center justify-center p-2.5 rounded-xl bg-white dark:bg-[#1e3a5f] border border-gray-200 dark:border-gray-700 text-[#1e3a5f] dark:text-white hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm"
           >
-            <RefreshCw size={16} />
-            <span className="hidden sm:inline">Actualizar panel</span>
+            <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
       </div>

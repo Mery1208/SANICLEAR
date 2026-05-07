@@ -9,7 +9,7 @@ interface Usuario {
   rol: 'superadmin' | 'admin' | 'operario';
   turno?: string;
   entidad?: string; // Legacy field
-  entidad_id?: string;
+  entidad_id?: string | null;
   entidades?: { nombre_hospital: string } | null;
   avatar_url?: string;
 }

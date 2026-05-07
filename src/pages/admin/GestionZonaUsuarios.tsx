@@ -33,7 +33,7 @@ const Gestion: React.FC = () => {
   const [zonas, setZonas] = useState<any[]>([]);
   const [showZonaModal, setShowZonaModal] = useState(false);
   const [editZona, setEditZona] = useState<any>(null);
-  const [zonaForm, setZonaForm] = useState({ nombre: "", tipo: "Habitación", planta: 1, metros: "", nivel: "bajo", estado: "Activo" });
+  const [zonaForm, setZonaForm] = useState({ nombre: "", tipo: "Habitación", planta: 1, metros: "", nivel: "bajo", estado: "Activo", entidad_id: "" });
 
   // Usuarios state
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -68,13 +68,13 @@ const Gestion: React.FC = () => {
   const fetchZonas = async () => {
     setLoading(true);
     try {
-      let query = supabase.from('zonas').select('*').order('nombre', { ascending: true });
-
-      if (currentUserRole === 'admin' && currentUser?.entidad_id) {
-        query = query.eq('entidad_id', currentUser.entidad_id);
-      }
-
-      const result = await query;
+      let supabaseQuery = supabase.from('zonas').select('*').order('nombre', { ascending: true });
+ 
+       if (currentUserRole === 'admin' && currentUser?.entidad_id) {
+         supabaseQuery = supabaseQuery.eq('entidad_id', currentUser.entidad_id);
+       }
+ 
+       const result = await supabaseQuery;
 
       if (result?.error) throw result.error;
       setZonas(result.data || []);
@@ -90,14 +90,14 @@ const Gestion: React.FC = () => {
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
-      let query = supabase.from('usuarios').select('*').order('nombre', { ascending: true });
-
-      // Si es admin, filtrar solo por su entidad
-      if (currentUserRole === 'admin' && currentUser?.entidad_id) {
-        query = query.eq('entidad_id', currentUser.entidad_id);
-      }
-
-      const result = await query;
+      let supabaseQuery = supabase.from('usuarios').select('*').order('nombre', { ascending: true });
+ 
+       // Si es admin, filtrar solo por su entidad
+       if (currentUserRole === 'admin' && currentUser?.entidad_id) {
+         supabaseQuery = supabaseQuery.eq('entidad_id', currentUser.entidad_id);
+       }
+ 
+       const result = await supabaseQuery;
 
       if (result?.error) throw result.error;
       setUsuarios(result.data || []);
@@ -132,7 +132,7 @@ const Gestion: React.FC = () => {
 
   const openNewZona = () => {
     setEditZona(null);
-    setZonaForm({ nombre: "", tipo: "Habitación", planta: 1, metros: "", nivel: "bajo", estado: "Activo" });
+    setZonaForm({ nombre: "", tipo: "Habitación", planta: 1, metros: "", nivel: "bajo", estado: "Activo", entidad_id: currentUserRole === 'admin' ? (currentUser?.entidad_id || "") : "" });
     setShowZonaModal(true);
   };
 

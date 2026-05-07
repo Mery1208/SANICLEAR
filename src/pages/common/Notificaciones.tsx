@@ -59,10 +59,16 @@ const Notificaciones: React.FC = () => {
     let query = supabase.from('notificaciones').select('*').order('fecha', { ascending: false });
     
     if (isSuperadmin && filtroEntidad !== 'todas') {
+      // Superadmin filtrando por entidad concreta
       query = query.eq('entidad_id', filtroEntidad);
-    } else if (!isAdmin) {
+    } else if (rol === 'admin' && usuario?.entidad_id) {
+      // Admin: solo ve las de su entidad + las globales del superadmin (entidad_id null)
+      query = query.or(`entidad_id.eq.${usuario.entidad_id},entidad_id.is.null`);
+    } else if (rol === 'operario') {
+      // Operario: solo las dirigidas a todos o a él
       query = query.or(`dest.eq.todos,dest.eq.${usuario?.nombre} ${usuario?.apellidos}`);
     }
+    // Superadmin sin filtro activo: ve todo
 
     const { data, error } = await query;
     if (error) {
@@ -114,7 +120,10 @@ const Notificaciones: React.FC = () => {
       dest: newNotif.dest,
       leida: false,
       fecha: new Date().toISOString(),
-      entidad_id: isSuperadmin && newNotif.entidad_id !== 'todas' ? newNotif.entidad_id : null,
+      // Superadmin elige entidad (o null = global); admin siempre guarda la suya
+      entidad_id: isSuperadmin
+        ? (newNotif.entidad_id !== 'todas' ? newNotif.entidad_id : null)
+        : (rol === 'admin' ? usuario?.entidad_id ?? null : null),
       usuario_id: usuario?.id
     };
 

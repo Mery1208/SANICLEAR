@@ -238,9 +238,9 @@ const EstadisticasSuperadmin: React.FC = () => {
 
   return (
     <div className="font-sans">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
+      <div className="flex justify-between items-start mb-8">
+        <div className="text-left">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">
             Estadísticas del superadmin
           </h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -250,9 +250,9 @@ const EstadisticasSuperadmin: React.FC = () => {
 
         <button
           onClick={fetchStats}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-bold text-[#1e3a5f] hover:bg-gray-50 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1e3a5f] text-sm font-bold text-[#1e3a5f] dark:text-white hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm mt-2"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
           Actualizar estadísticas
         </button>
       </div>

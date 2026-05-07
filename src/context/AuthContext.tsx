@@ -9,8 +9,8 @@ export interface Usuario {
   email: string;
   rol: 'superadmin' | 'admin' | 'operario';
   turno?: string;
-  entidad_id?: string;
-  entidades?: { nombre_hospital: string };
+  entidad_id?: string | null;
+  entidades?: { nombre_hospital: string } | null;
   avatar_url?: string;
 }
 
@@ -103,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
          .from('usuarios')
          .select(`
            *,
-            entidades:entidad_id ( nombre_hospital )
+            entidades!entidad_id ( nombre_hospital )
          `)
          .eq('id', uid)
          .maybeSingle();

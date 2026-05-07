@@ -41,7 +41,9 @@ const PRIORIDAD_BADGE: Record<string, string> = {
 const Dashboard: React.FC = () => {
   const { query } = useBusquedaStore();
   const { usuario: currentUser } = useAuth();
-  const currentUserRole = currentUser?.rol;
+  const isAdmin = currentUser?.rol === 'admin';
+  const entidadId = currentUser?.entidad_id;
+
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [incidencias, setIncidencias] = useState<Incidencia[]>([]);
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -63,25 +65,20 @@ const Dashboard: React.FC = () => {
     );
 
     try {
-      let tQuery = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false });
-      let iQuery = supabase.from('incidencias').select('id, prioridad, estado, created_at');
-      let uQuery = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
-      let zQuery = supabase.from('zonas').select('id, nombre');
+      // Construir queries filtrando por entidad si es admin
+      let tareasQ = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false });
+      let incidenciasQ = supabase.from('incidencias').select('id, prioridad, estado, created_at');
+      let usuariosQ = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
+      let zonasQ = supabase.from('zonas').select('id, nombre');
 
-      // Filtrado por entidad para Administradores
-      if (currentUserRole === 'admin' && currentUser?.entidad_id) {
-        tQuery = tQuery.eq('entidad_id', currentUser.entidad_id);
-        iQuery = iQuery.eq('entidad_id', currentUser.entidad_id);
-        uQuery = uQuery.eq('entidad_id', currentUser.entidad_id);
-        zQuery = zQuery.eq('entidad_id', currentUser.entidad_id);
+      if (isAdmin && entidadId) {
+        tareasQ = tareasQ.eq('entidad_id', entidadId);
+        incidenciasQ = incidenciasQ.eq('entidad_id', entidadId);
+        usuariosQ = usuariosQ.eq('entidad_id', entidadId);
+        zonasQ = zonasQ.eq('entidad_id', entidadId);
       }
 
-      const dataPromise = Promise.all([
-        tQuery,
-        iQuery,
-        uQuery,
-        zQuery
-      ]);
+      const dataPromise = Promise.all([tareasQ, incidenciasQ, usuariosQ, zonasQ]);
 
       const [tRes, iRes, uRes, zRes] = await Promise.race([dataPromise, timeoutPromise]) as any;
 
@@ -174,7 +171,7 @@ const Dashboard: React.FC = () => {
       asignado_id: form.operario,
       estado: "pendiente",
       prioridad: form.prioridad,
-      entidad_id: currentUserRole === 'admin' ? (currentUser?.entidad_id || null) : null
+      ...(isAdmin && entidadId ? { entidad_id: entidadId } : {}),
     };
 
     const { data, error } = await supabase.from('tareas').insert([insertData]).select();
@@ -228,7 +225,7 @@ const Dashboard: React.FC = () => {
           <p className="text-gray-400 text-sm font-medium italic">Resumen general y estado del sistema en tiempo real</p>
           {(zonas.length === 0 || usuarios.length === 0) && (
             <p className="text-amber-600 dark:text-amber-400 text-sm font-semibold bg-amber-50 dark:bg-amber-900/30 px-3 py-2 rounded-lg inline-block mt-2">
-               Datos mínimos no configurados. Ve a <strong>Gestión Zonas y Usuarios</strong> para añadir zonas y operarios.
+              ⚠️ Datos mínimos no configurados. Ve a <strong>Gestión Zonas y Usuarios</strong> para añadir zonas y operarios.
             </p>
           )}
         </div>
@@ -310,8 +307,8 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-slate-700 flex justify-between items-center bg-gray-50/30 dark:bg-slate-800/50">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas activas</p>
             <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
               <RefreshCw size={16} />
@@ -319,17 +316,17 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50/50 dark:bg-slate-900/50 border-b dark:border-slate-700">
-              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">{h}</th>)}</tr>
+              <thead className="bg-gray-50/50">
+              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
+              <tbody className="divide-y divide-gray-50">
                 {(query ? tareasFiltradas : tareas).length === 0 && (
                   <tr><td colSpan={6} className="p-10 text-center text-gray-400 font-bold italic">
                     {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
                   </td></tr>
                 )}
                 {(query ? tareasFiltradas : tareas).map(t => (
-                  <tr key={t.id} className="hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-colors group">
+                  <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
                   <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] dark:text-white text-base">{t.zona}</td>
                   <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-700 dark:text-white text-sm font-semibold min-w-[200px]">{t.tarea || t.descripcion}</td>
                   <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] dark:text-white text-sm font-bold flex items-center gap-2 whitespace-nowrap">
@@ -426,11 +423,11 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2 sm:mt-4">
-                  <button onClick={() => setShowModal(false)} className="px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0">Cancelar</button>
-                  <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
-                    className="flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:not(:disabled):bg-blue-700 hover:not(:disabled):shadow-blue-200">
-                    Asignar Tarea
-                  </button>
+              <button onClick={() => setShowModal(false)} className="px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0">Cancelar</button>
+              <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
+                className="flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:not(:disabled):bg-blue-700 hover:not(:disabled):shadow-blue-200">
+                Asignar Tarea
+              </button>
                 </div>
               </>
             )}

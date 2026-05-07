@@ -68,6 +68,8 @@ const ReportarIncidencia: React.FC = () => {
       zona: form.zona,
       operario: `${usuario.nombre} ${usuario.apellidos}`,
       usuario_id: usuario.id,
+      // Guardar la entidad del operario para que el admin la vea filtrada
+      entidad_id: usuario.entidad_id ?? null,
       prioridad: form.urgente ? "critica" : form.prioridad,
       estado: "abierta",
       descripcion: form.descripcion,
