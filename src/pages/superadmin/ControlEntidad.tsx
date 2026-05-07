@@ -46,7 +46,8 @@ const ControlEntidad: React.FC = () => {
       if (!id) return;
       setLoading(true);
       
-      const { data: ent } = await supabase.from('entidades').select('*').eq('id', id).single();
+      const { data: ent, error: entError } = await supabase.from('entidades').select('*').eq('id', id).single();
+      if (entError) console.error('[ControlEntidad] Error cargando entidad:', entError.message);
       setEntidad(ent);
 
       // Obtenemos todos los datos y listas operativas de la entidad en un solo bloque
@@ -61,6 +62,20 @@ const ControlEntidad: React.FC = () => {
         supabase.from('notificaciones').select('*').or(`entidad_id.eq.${id},entidad_id.is.null`).order('fecha', { ascending: false }),
         supabase.from('zonas').select('id, nombre').eq('entidad_id', id)
       ]);
+
+      
+      if (u.error)           console.error('[ControlEntidad] usuarios count:', u.error.message);
+      if (z.error)           console.error('[ControlEntidad] zonas count:', z.error.message);
+      if (t.error)           console.error('[ControlEntidad] tareas count:', t.error.message);
+      if (i.error)           console.error('[ControlEntidad] incidencias count:', i.error.message);
+      if (personalData.error) console.error('[ControlEntidad] personal:', personalData.error.message);
+      if (tareasData.error)   console.error('[ControlEntidad] tareas activas:', tareasData.error.message);
+      if (incidData.error)    console.error('[ControlEntidad] incidencias activas:', incidData.error.message);
+      if (notifData.error)    console.error('[ControlEntidad] notificaciones:', notifData.error.message);
+      if (zonasData.error)    console.error('[ControlEntidad] zonas lista:', zonasData.error.message);
+
+      console.log(`[ControlEntidad] entidad_id=${id} → usuarios: ${u.count}, zonas: ${z.count}, tareas: ${t.count}, incidencias: ${i.count}`);
+      console.log(`[ControlEntidad] personal rows: ${personalData.data?.length ?? 'error'}`);
 
       setCounts({
         usuarios: u.count || 0,

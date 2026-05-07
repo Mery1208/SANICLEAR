@@ -21,6 +21,8 @@ const MetricasEntidad: React.FC = () => {
   const [datosGrafica, setDatosGrafica] = useState<any[]>([]);
   const [forecastCards, setForecastCards] = useState<any[]>([]);
   const [zonasMasExigidas, setZonasMasExigidas] = useState<Array<{ zona: string; total: number }>>([]);
+  const [ultimaCarga, setUltimaCarga] = useState<Date | null>(null);
+  const [tasaResolucion, setTasaResolucion] = useState<number>(0);
 
   const MONTH_LABELS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
@@ -98,6 +100,12 @@ const MetricasEntidad: React.FC = () => {
           .sort((a, b) => b.total - a.total)
           .slice(0, 4)
       );
+
+      // Calcular tasa de resolución real
+      const totalTareas = tareas.length;
+      const completadasCount = tareas.filter((t: any) => t.estado === 'hecha' || t.estado === 'completada').length;
+      setTasaResolucion(totalTareas > 0 ? Math.round((completadasCount / totalTareas) * 100) : 0);
+      setUltimaCarga(new Date());
 
       // Motor IA Predictivo
       const incidenciasSerie = finalData.map((item) => item.incidencias);
@@ -179,11 +187,17 @@ const MetricasEntidad: React.FC = () => {
            </div>
            <h3 className="text-lg font-black text-[#1e3a5f] uppercase tracking-tight mb-2">Salud de la Entidad</h3>
            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6">
-             Los datos reflejan un volumen normal de incidencias. La tasa de resolución de tareas se mantiene por encima del 85% en las áreas críticas.
+             {tasaResolucion >= 80
+               ? `Rendimiento óptimo. Tasa de resolución de tareas: ${tasaResolucion}%.`
+               : tasaResolucion >= 50
+               ? `Rendimiento moderado. Tasa de resolución: ${tasaResolucion}%. Revisar carga operativa.`
+               : `Atención requerida. Tasa de resolución: ${tasaResolucion}%. Se recomienda reforzar el equipo.`}
            </p>
            <div className="mt-auto p-4 bg-gray-50 rounded-2xl border border-gray-100">
               <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Última Auditoría</p>
-              <p className="text-sm font-bold text-gray-700">Hoy, a las 08:30 AM</p>
+              <p className="text-sm font-bold text-gray-700">
+                {ultimaCarga ? ultimaCarga.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
+              </p>
            </div>
         </div>
       </div>
