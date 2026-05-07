@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
+import { useAuth } from '../../context/AuthContext';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
-import { AlertTriangle, CheckCircle, Clock, TrendingUp, Plus, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, TrendingUp, Plus, CheckCircle2, Building2 } from 'lucide-react';
 
 const ESTADO_BADGE: Record<string, string> = { 
   abierta: "bg-red-50 text-red-500 border border-red-100", 
@@ -18,11 +19,21 @@ const PRIORIDAD_BADGE: Record<string, string> = {
   critica: "text-red-800 font-black uppercase"
 };
 
+const PRIORIDAD_COLORS: Record<string, { active: string, inactive: string }> = {
+  baja: { active: 'bg-green-500 text-white border-green-600 ring-2 ring-green-200', inactive: 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' },
+  media: { active: 'bg-orange-500 text-white border-orange-600 ring-2 ring-orange-200', inactive: 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100' },
+  alta: { active: 'bg-red-500 text-white border-red-600 ring-2 ring-red-200', inactive: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
+  critica: { active: 'bg-red-700 text-white border-red-800 ring-2 ring-red-300', inactive: 'bg-red-100 text-red-800 border-red-300 hover:bg-red-200' }
+};
+
 const GestionIncidencias: React.FC = () => {
+  const { usuario } = useAuth();
   const [incidencias, setIncidencias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<'Todas' | 'Abiertas' | 'En Revisión' | 'Resueltas'>('Todas');
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [entidades, setEntidades] = useState<any[]>([]);
+  const [filterEntidad, setFilterEntidad] = useState<string | null>(null);
 
   const [selected, setSelected] = useState<any>(null);
   const [notaTexto, setNotaTexto] = useState("");
@@ -45,15 +56,17 @@ const GestionIncidencias: React.FC = () => {
         descripcion,
         created_at,
         usuario_id,
-        usuarios (nombre, apellidos)
+        usuarios (nombre, apellidos),
+        entidades:entidad_id ( nombre_hospital )
       `)
       .order('created_at', { ascending: false });
 
-    // Ahora entra si no hay error y data existe, ¡incluso si data.length es 0 (BD vacía)!
+    // Ahora entra si no hay error y data existe
     if (!error && data) {
       const mapped = (data as any[]).map(i => ({
         ...i,
-        operario: i.usuarios ? `${i.usuarios.nombre} ${i.usuarios.apellidos}` : 'Sin asignar'
+        operario: i.usuarios ? `${i.usuarios.nombre} ${i.usuarios.apellidos}` : 'Sin asignar',
+        hospital: i.entidades ? i.entidades.nombre_hospital : 'General'
       }));
       setIncidencias(mapped);
     } else if (error) {
@@ -65,7 +78,13 @@ const GestionIncidencias: React.FC = () => {
   useEffect(() => {
     fetchIncidencias();
     fetchOperarios();
+    fetchEntidades();
   }, []);
+
+  const fetchEntidades = async () => {
+    const { data } = await supabase.from('entidades').select('id, nombre_hospital');
+    if (data) setEntidades(data);
+  };
 
   const fetchOperarios = async () => {
     const { data } = await supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
@@ -91,9 +110,10 @@ const GestionIncidencias: React.FC = () => {
           i.estado === 'resuelta';
 
       const matchCat = filterCategory ? i.tipo === filterCategory : true;
-      return matchStatus && matchCat;
+      const matchEntidad = filterEntidad ? i.hospital === filterEntidad : true;
+      return matchStatus && matchCat && matchEntidad;
     });
-  }, [incidencias, filterStatus, filterCategory]);
+  }, [incidencias, filterStatus, filterCategory, filterEntidad]);
 
   const updateEstado = async (id: number, estado: string, notas: string) => {
     const { error } = await supabase.from('incidencias').update({ estado, notas }).eq('id', id);
@@ -116,7 +136,8 @@ const GestionIncidencias: React.FC = () => {
       prioridad: createForm.urgente ? "critica" : createForm.prioridad,
       estado: "abierta",
       descripcion: createForm.descripcion,
-      usuario_id: null,
+      usuario_id: usuario?.id || null,
+      entidad_id: usuario?.entidad_id || null,
       operario: "Sin asignar"
     };
 
@@ -141,7 +162,7 @@ const GestionIncidencias: React.FC = () => {
     <div className="flex flex-col gap-6 font-sans">
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">Gestión de Incidencias</h2>
           <p className="text-gray-400 text-sm font-medium italic">Revisa, asigna y resuelve reportes técnicos</p>
         </div>
         <Button
@@ -190,33 +211,51 @@ const GestionIncidencias: React.FC = () => {
         ))}
       </div>
 
-       {/* Status Tabs */}
-       <div className="flex gap-1.5 bg-gray-100/50 p-1 rounded-2xl w-fit">
-         {['Todas', 'Abiertas', 'En Revisión', 'Resueltas'].map((s: any) => (
-            <button 
-             key={s} 
-             onClick={() => setFilterStatus(s)}
-             className={`px-3 py-1.5 text-[8px] sm:px-4 sm:py-2 sm:text-[9px] md:px-6 md:py-2 md:text-[10px] rounded-xl font-black uppercase tracking-widest transition-all whitespace-nowrap ${filterStatus === s ? "bg-white text-[#1e3a5f] shadow-sm":"text-gray-400 hover:text-gray-600"}`}
-            >
-             {s}
-            </button>
-         ))}
+       {/* Status & Entity Filter Tabs */}
+       <div className="flex flex-wrap items-center gap-4">
+         <div className="flex gap-1.5 bg-gray-100/50 p-1 rounded-2xl w-fit">
+           {['Todas', 'Abiertas', 'En Revisión', 'Resueltas'].map((s: any) => (
+              <button 
+               key={s} 
+               onClick={() => setFilterStatus(s)}
+               className={`px-3 py-1.5 text-[8px] sm:px-4 sm:py-2 sm:text-[9px] md:px-6 md:py-2 md:text-[10px] rounded-xl font-black uppercase tracking-widest transition-all whitespace-nowrap ${filterStatus === s ? "bg-white text-[#1e3a5f] shadow-sm":"text-gray-400 hover:text-gray-600"}`}
+              >
+               {s}
+              </button>
+           ))}
+         </div>
+
+         {/* Entity Selector (Visible for superadmins or as simple display for admins) */}
+         <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-2xl px-3 py-1.5">
+           <Building2 size={14} className="text-gray-400" />
+           <select 
+             value={filterEntidad || ""} 
+             onChange={(e) => setFilterEntidad(e.target.value || null)}
+             className="text-[10px] font-bold text-[#1e3a5f] bg-transparent border-none focus:outline-none focus:ring-0 uppercase tracking-wider"
+           >
+             <option value="">Todas las entidades</option>
+             {entidades.map(e => <option key={e.id} value={e.nombre_hospital}>{e.nombre_hospital}</option>)}
+           </select>
+         </div>
        </div>
 
       {/* Table */}
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
          <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50/50">
-              <tr>{["#","Título","Tipo","Zona","Operario","Prioridad","Estado","Fecha",""].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">{h}</th>)}</tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
+            <table className="w-full">
+              <thead className="bg-gray-50/50 dark:bg-slate-900/50">
+                <tr>{["#","Hospital","Título","Tipo","Zona","Operario","Prioridad","Estado","Fecha",""].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">{h}</th>)}</tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
                {filteredIncidencias.length === 0 && (
                  <tr><td colSpan={9} className="p-10 text-center text-gray-400 font-bold italic">No se han encontrado reportes con estos filtros.</td></tr>
                )}
                {filteredIncidencias.map(i => (
-                <tr key={i.id} className="hover:bg-blue-50/10 transition-colors">
+                <tr key={i.id} className="hover:bg-blue-50/10 dark:hover:bg-blue-900/10 transition-colors">
                   <td className="px-6 py-4 text-[11px] font-bold text-gray-300">#{i.id}</td>
+                  <td className="px-6 py-4">
+                    <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">{i.hospital}</span>
+                  </td>
                   <td className="px-6 py-4 font-bold text-[#1e3a5f] text-[13px]">{i.titulo}</td>
                   <td className="px-6 py-4 text-gray-400 text-[11px] font-black uppercase">{i.tipo || "Otro"}</td>
                   <td className="px-6 py-4 text-gray-500 text-[12px] font-semibold">{i.zona}</td>
@@ -249,60 +288,73 @@ const GestionIncidencias: React.FC = () => {
        {showCreateModal && (
          <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)}>
            <div className="flex flex-col gap-5 max-w-3xl w-full">
+             {/* Info de Entidad */}
+             <div className="flex flex-col gap-1.5">
+               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Entidad / Hospital</label>
+               <div className="flex items-center gap-2 w-full border border-gray-100 rounded-2xl bg-gray-50 px-5 py-3.5 shadow-inner">
+                 <Building2 size={16} className="text-blue-500" />
+                 <span className="text-sm font-bold text-gray-600 uppercase tracking-tight">
+                   {usuario?.entidades?.nombre_hospital || (usuario?.rol === 'superadmin' ? "Gestión Global" : "Sin asignar")}
+                 </span>
+               </div>
+               <p className="text-[9px] text-gray-400 italic ml-1 mt-1">
+                 {usuario?.rol === 'superadmin' ? 'Como superadmin, registras en el sistema global.' : `Registrando incidencia para su entidad asignada.`}
+               </p>
+             </div>
              <div className="flex flex-col gap-1.5">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
-               <select value={createForm.tipo} onChange={e => setCreateForm({...createForm, tipo:e.target.value})}
-                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
-                 <option value="">Seleccionar...</option>
-                 {["Equipo","Material","Acceso","Zona","Otro"].map(t => <option key={t} value={t}>{t}</option>)}
-               </select>
+                <select value={createForm.tipo} onChange={e => setCreateForm({...createForm, tipo:e.target.value})}
+                  className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
+                  <option value="" className="bg-white text-gray-400">Seleccionar...</option>
+                  {["Equipo","Material","Acceso","Zona","Otro"].map(t => <option key={t} value={t} className="bg-white text-[#1e3a5f]">{t}</option>)}
+                </select>
              </div>
 
              <div className="flex flex-col gap-1.5">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
-               <input value={createForm.zona} onChange={e => setCreateForm({...createForm, zona:e.target.value})}
-                 placeholder="Ej: UCI - Planta 2"
-                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+                <input value={createForm.zona} onChange={e => setCreateForm({...createForm, zona:e.target.value})}
+                  placeholder="Ej: UCI - Planta 2"
+                  className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
              </div>
 
              <div className="flex flex-col gap-1.5">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
-               <textarea value={createForm.descripcion} onChange={e => setCreateForm({...createForm, descripcion:e.target.value})}
-                 rows={5} placeholder="Describe el problema..."
-                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-5 py-3.5 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+                <textarea value={createForm.descripcion} onChange={e => setCreateForm({...createForm, descripcion:e.target.value})}
+                  rows={4} placeholder="Describe el problema detalladamente..."
+                  className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
              </div>
 
              <div className="flex flex-col gap-1.5">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                  {["baja","media","alta","critica"].map(p => (
-                    <button key={p} type="button"
-                      onClick={() => !createForm.urgente && setCreateForm({...createForm, prioridad: p})}
-                      disabled={createForm.urgente}
-                      className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${createForm.urgente && p === 'critica' ? 'bg-red-100 text-red-800 border-red-300 ring-2 ring-red-200' : createForm.prioridad === p ? 'bg-blue-100 text-blue-800 border-blue-300 ring-2 ring-blue-100' : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
-                      {p.charAt(0).toUpperCase() + p.slice(1)}
-                    </button>
-                  ))}
+                  {["baja","media","alta","critica"].map(p => {
+                    const isActive = (createForm.urgente && p === 'critica') || (!createForm.urgente && createForm.prioridad === p);
+                    return (
+                      <button key={p} type="button"
+                        onClick={() => !createForm.urgente && setCreateForm({...createForm, prioridad: p})}
+                        disabled={createForm.urgente}
+                        className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${isActive ? PRIORIDAD_COLORS[p].active : PRIORIDAD_COLORS[p].inactive} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                        {p.charAt(0).toUpperCase() + p.slice(1)}
+                      </button>
+                    );
+                  })}
                 </div>
                {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
              </div>
 
              <div className="flex flex-col gap-3">
-               <div className="flex items-center gap-3 bg-red-50/30 p-3 rounded-2xl cursor-pointer hover:bg-red-50/50 transition-colors"
+               <div className="flex items-center gap-3 bg-gray-100 p-3 rounded-xl cursor-pointer hover:bg-gray-200 transition-colors shadow-sm border border-gray-100"
                  onClick={() => setCreateForm({...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad})}>
-                 <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-red-200"}`}>
+                 <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-gray-300"}`}>
                    {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
                  </div>
-                 <label className="text-xs text-red-700 font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
+                 <label className="text-xs text-[#1e3a5f] font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
                </div>
              </div>
 
-           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2">
-             <button onClick={() => setShowCreateModal(false)} className="px-3 py-3 text-xs sm:px-6 sm:py-3 font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors shrink-0">Cancelar</button>
-               <button onClick={handleCreateIncidencia} disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion}
-               className="flex-1 bg-blue-500 text-white py-3 text-xs font-black uppercase tracking-widest hover:bg-blue-600 shadow-lg shadow-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                 {loading ? "Creando..." : "Crear Incidencia"}
-               </button>
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2">
+              <Button text="Cancelar" onClick={() => setShowCreateModal(false)} variant="secondary" className="flex-1 py-3" />
+              <Button text={loading ? "Creando..." : "Crear Incidencia"} onClick={handleCreateIncidencia} variant="primary" disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion} className="flex-1 py-3 shadow-sm" />
              </div>
            </div>
          </Modal>

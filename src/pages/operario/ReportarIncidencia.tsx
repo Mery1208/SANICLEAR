@@ -97,8 +97,8 @@ const ReportarIncidencia: React.FC = () => {
     <div className="flex flex-col gap-6 font-sans w-full">
           <div className="flex justify-between items-start mb-2">
              <div className="text-left">
-                <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Incidencias</h2>
-                <p className="text-gray-400 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
+                 <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Gestión de Incidencias</h2>
+                <p className="text-gray-400 dark:text-gray-500 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
              </div>
              <button onClick={() => navigate('/operario')} className="text-gray-300 hover:text-gray-500 transition-colors">
                 <X size={28} strokeWidth={1.5} />
@@ -124,9 +124,9 @@ const ReportarIncidencia: React.FC = () => {
             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
                <select value={form.tipo} onChange={e => setForm({...form, tipo:e.target.value})}
-                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-6 py-4 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all appearance-none cursor-pointer">
-                 <option value="">Seleccionar...</option>
-                 {tipos.map(t => <option key={t} value={t}>{t}</option>)}
+                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
+                 <option value="" className="bg-white text-gray-400">Seleccionar...</option>
+                 {tipos.map(t => <option key={t} value={t} className="bg-white text-[#1e3a5f]">{t}</option>)}
                </select>
             </div>
 
@@ -134,14 +134,14 @@ const ReportarIncidencia: React.FC = () => {
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
                <input value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
                  placeholder="Ej: UCI - Planta 2"
-                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-6 py-4 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all" />
+                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
             </div>
 
             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
                <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
                  rows={6} placeholder="Describe el problema..."
-                 className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-6 py-4 text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all resize-none" />
+                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
             </div>
 
              <div className="flex flex-col gap-2">
@@ -151,7 +151,7 @@ const ReportarIncidencia: React.FC = () => {
                      <button key={p.value} type="button"
                        onClick={() => !form.urgente && setForm({...form, prioridad: p.value})}
                        disabled={form.urgente}
-                       className={`px-3 py-2 text-xs sm:px-3 sm:py-2 sm:text-xs rounded-lg sm:rounded-xl border font-bold uppercase tracking-wider transition-all ${form.urgente && p.value === 'critica' ? `${p.bg} ${p.color} ring-2 ring-red-200` : form.prioridad === p.value ? `${p.bg} ${p.color} ring-2 ring-blue-100` : 'bg-gray-50/50 border-gray-100 text-gray-400 hover:bg-gray-100'} ${form.urgente && p.value !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                       className={`px-3 py-2 text-xs sm:px-3 sm:py-2 sm:text-xs rounded-lg sm:rounded-xl border font-bold uppercase tracking-wider transition-all ${form.urgente && p.value === 'critica' ? `${p.bg} ${p.color} ring-2 ring-red-200` : form.prioridad === p.value ? `${p.bg} ${p.color} ring-2 ring-blue-100` : 'bg-white dark:bg-white border-gray-100 text-gray-400 hover:bg-gray-50'} ${form.urgente && p.value !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
                        {p.label}
                      </button>
                    ))}

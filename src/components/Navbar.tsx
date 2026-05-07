@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
     <nav className="flex justify-between items-center py-2 px-3 sm:py-3 sm:px-4 md:py-4 md:px-8 bg-white dark:bg-slate-900 shadow-sm sticky top-0 z-50 font-inherit transition-colors">
       <div className="flex items-center">
         <Link to="/">
-          <img src={logoImg} alt="Saniclear Logo" className="w-auto max-w-[100px] sm:max-w-[130px] md:max-w-[160px] max-h-[60px] sm:max-h-[80px] md:max-h-[100px] object-contain" />
+          <img src={logoImg} alt="Saniclear Logo" className="w-auto max-w-[100px] sm:max-w-[130px] md:max-w-[160px] max-h-[60px] sm:max-h-[80px] md:max-h-[100px] object-contain dark:brightness-0 dark:invert transition-all" />
         </Link>
       </div>
 

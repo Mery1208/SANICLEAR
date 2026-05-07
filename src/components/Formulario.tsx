@@ -77,7 +77,7 @@ export default function Formulario({ onClose }: FormularioProps): React.JSX.Elem
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-          <h3>Nuevo Trabajador</h3>
+          <h3 className="mb-4">Nuevo Trabajador</h3>
           <button onClick={onClose} className="btn-close"><X size={20} /></button>
         </div>
 

@@ -179,7 +179,7 @@ const MisTareas: React.FC = () => {
     <div>
       <div className="flex justify-between items-center mb-1">
         <div>
-              <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors">Mis Tareas</h2>
+              <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors mb-4">Mis Tareas</h2>
               <p className="text-gray-400 dark:text-slate-400 text-sm font-medium italic mb-4 transition-colors">
             {query ? `Filtrando por: "${query}"` : "Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas."}
           </p>

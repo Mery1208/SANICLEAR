@@ -5,6 +5,7 @@ import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
 import { Plus, Search, X, AlertTriangle } from 'lucide-react';
 import { useBusquedaStore } from '../../store/busquedaStore';
+import { useAuth } from '../../context/AuthContext';
 
 const NIVEL_BADGE: Record<string, string> = { 
   alto: "bg-red-100 text-red-700", 
@@ -22,6 +23,7 @@ type TabType = 'zonas' | 'usuarios';
 
 const Gestion: React.FC = () => {
   const { query } = useBusquedaStore();
+  const { rol: currentUserRole } = useAuth();
   const [tab, setTab] = useState<TabType>('zonas');
   const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState("");
@@ -36,7 +38,7 @@ const Gestion: React.FC = () => {
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [showUsuarioModal, setShowUsuarioModal] = useState(false);
   const [editUsuario, setEditUsuario] = useState<any>(null);
-  const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana" });
+  const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana", entidad: "" });
 
   const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'zona' | 'usuario', id: any, nombre: string } | null>(null);
 
@@ -134,28 +136,29 @@ const Gestion: React.FC = () => {
   };
 
   // Usuarios functions
-  const openEditUsuario = (u: any) => {
-    setEditUsuario(u);
-    setUsuarioForm({ nombre: u.nombre, apellidos: u.apellidos || "", email: u.email, rol: u.rol, turno: u.turno || "Mañana" });
-    setShowUsuarioModal(true);
-  };
+   const openEditUsuario = (u: any) => {
+     setEditUsuario(u);
+     setUsuarioForm({ nombre: u.nombre, apellidos: u.apellidos || "", email: u.email, rol: u.rol, turno: u.turno || "Mañana", entidad: u.entidad || "" });
+     setShowUsuarioModal(true);
+   };
 
-  const openNewUsuario = () => {
-    setEditUsuario(null);
-    setUsuarioForm({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana" });
-    setShowUsuarioModal(true);
-  };
+   const openNewUsuario = () => {
+     setEditUsuario(null);
+     setUsuarioForm({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana", entidad: "Hospital Central" });
+     setShowUsuarioModal(true);
+   };
 
   const saveUsuario = async () => {
     if (!usuarioForm.nombre || !usuarioForm.email) return;
 
-    const userData = {
-      nombre: usuarioForm.nombre,
-      apellidos: usuarioForm.apellidos,
-      email: usuarioForm.email,
-      rol: usuarioForm.rol,
-      turno: usuarioForm.turno
-    };
+     const userData = {
+       nombre: usuarioForm.nombre,
+       apellidos: usuarioForm.apellidos,
+       email: usuarioForm.email,
+       rol: usuarioForm.rol,
+       turno: usuarioForm.turno,
+       entidad: usuarioForm.entidad
+     };
 
     if (editUsuario) {
       const { error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id);
@@ -193,7 +196,7 @@ const Gestion: React.FC = () => {
     <div className="flex flex-col gap-6 font-sans">
       <div className="flex justify-between items-start">
         <div className="text-left">
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Gestión de Zonas y Usuarios</h2>
+          <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Gestión de Zonas y Usuarios</h2>
           <p className="text-gray-400 text-sm font-medium italic">
             {tab === 'zonas'
               ? query
@@ -255,9 +258,9 @@ const Gestion: React.FC = () => {
             <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay zonas.</div>
           ) : (
             zonasFiltradas.map(z => (
-              <div key={z.id} className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
+              <div key={z.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
                 <div>
-                  <p className="font-bold text-gray-800 text-lg">{z.nombre}</p>
+                  <p className="font-bold text-gray-800 dark:text-white text-lg">{z.nombre}</p>
                   <p className="text-sm text-gray-500">Planta {z.planta} · {z.metros} m² · {z.tipo}</p>
                   <div className="flex gap-2 mt-2">
                     <Badge cls={NIVEL_BADGE[z.nivel] || "bg-gray-100 text-gray-700"} label={`Prioridad ${z.nivel}`} />
@@ -283,18 +286,23 @@ const Gestion: React.FC = () => {
             <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay usuarios.</div>
           ) : (
             usuariosFiltrados.map(u => (
-              <div key={u.id} className="bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
+              <div key={u.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
                 <div>
-                  <p className="font-bold text-gray-800 text-lg">{u.nombre} {u.apellidos}</p>
+                  <p className="font-bold text-gray-800 dark:text-white text-lg">{u.nombre} {u.apellidos}</p>
                   <p className="text-sm text-gray-500">{u.email}</p>
                   <div className="flex gap-2 mt-2">
-                    <Badge cls={ROL_BADGE[u.rol] || "bg-gray-100 text-gray-700"} label={u.rol === 'superadmin' ? 'Super Admin' : u.rol === 'admin' ? 'Administrador' : 'Operario'} />
-                    {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
+                     <Badge cls={ROL_BADGE[u.rol] || "bg-gray-100 text-gray-700"} label={u.rol === 'superadmin' ? 'Super Admin' : u.rol === 'admin' ? 'Administrador' : 'Operario'} />
+                     {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
+                     {u.entidad && <Badge cls="bg-blue-100 text-blue-700" label={u.entidad} />}
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5" />
-                  <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-3 py-1.5" />
+                  {!(currentUserRole !== 'superadmin' && u.rol === 'superadmin') && (
+                    <>
+                      <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5" />
+                      <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-3 py-1.5" />
+                    </>
+                  )}
                 </div>
               </div>
             ))
@@ -315,8 +323,8 @@ const Gestion: React.FC = () => {
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Tipo de zona</label>
               <select value={zonaForm.tipo} onChange={e => setZonaForm({ ...zonaForm, tipo: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                {["Quirófano", "Habitación", "UCI", "Pasillo", "Consulta", "Sala", "Baño"].map(t => <option key={t} value={t}>{t}</option>)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-white">
+                {["Quirófano", "Habitación", "UCI", "Pasillo", "Consulta", "Sala", "Baño"].map(t => <option key={t} value={t} className="text-black">{t}</option>)}
               </select>
             </div>
             <div>
@@ -334,8 +342,8 @@ const Gestion: React.FC = () => {
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Prioridad / Nivel</label>
               <select value={zonaForm.nivel} onChange={e => setZonaForm({ ...zonaForm, nivel: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                {["alto", "medio", "bajo"].map(t => <option key={t} value={t}>{t}</option>)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-white">
+                {["alto", "medio", "bajo"].map(t => <option key={t} value={t} className="text-black">{t}</option>)}
               </select>
             </div>
           </div>
@@ -346,53 +354,53 @@ const Gestion: React.FC = () => {
         </Modal>
       )}
 
-      {/* Usuario Modal */}
-      {showUsuarioModal && (
-        <Modal title={editUsuario ? "EDITAR USUARIO" : "CREAR USUARIO"} onClose={() => setShowUsuarioModal(false)}>
-          <div className="mb-3">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Nombre</label>
-            <input value={usuarioForm.nombre} onChange={e => setUsuarioForm({ ...usuarioForm, nombre: e.target.value })}
-              placeholder="Ej: Juan"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div className="mb-3">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
-            <input value={usuarioForm.apellidos} onChange={e => setUsuarioForm({ ...usuarioForm, apellidos: e.target.value })}
-              placeholder="Ej: Pérez García"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div className="mb-3">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
-            <input value={usuarioForm.email} onChange={e => setUsuarioForm({ ...usuarioForm, email: e.target.value })}
-              placeholder="Ej: juan@gmail.com"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Rol</label>
-              <select value={usuarioForm.rol} onChange={e => setUsuarioForm({ ...usuarioForm, rol: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="operario">Operario</option>
-                <option value="admin">Administrador</option>
-                <option value="superadmin">Super Administrador</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Turno</label>
-              <select value={usuarioForm.turno} onChange={e => setUsuarioForm({ ...usuarioForm, turno: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="Mañana">Mañana</option>
-                <option value="Tarde">Tarde</option>
-                <option value="Noche">Noche</option>
-              </select>
-            </div>
+       {/* Usuario Modal */}
+       {showUsuarioModal && (
+         <Modal title={editUsuario ? "EDITAR USUARIO" : "CREAR USUARIO"} onClose={() => setShowUsuarioModal(false)}>
+           <div className="mb-3">
+             <label className="block text-xs font-semibold text-gray-600 mb-1">Nombre</label>
+             <input value={usuarioForm.nombre} onChange={e => setUsuarioForm({ ...usuarioForm, nombre: e.target.value })}
+               placeholder="Ej: Juan"
+               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+           </div>
+           <div className="mb-3">
+             <label className="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
+             <input value={usuarioForm.apellidos} onChange={e => setUsuarioForm({ ...usuarioForm, apellidos: e.target.value })}
+               placeholder="Ej: Pérez García"
+               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+           </div>
+           <div className="mb-3">
+             <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+             <input value={usuarioForm.email} onChange={e => setUsuarioForm({ ...usuarioForm, email: e.target.value })}
+               placeholder="Ej: juan@gmail.com"
+               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+           </div>
+           <div className="grid grid-cols-2 gap-3 mb-4">
+             <div>
+               <label className="block text-xs font-semibold text-gray-600 mb-1">Rol</label>
+               <select value={usuarioForm.rol} onChange={e => setUsuarioForm({ ...usuarioForm, rol: e.target.value })}
+                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-white">
+                 <option value="operario" className="text-black">Operario</option>
+                 <option value="admin" className="text-black">Administrador</option>
+                 {currentUserRole === 'superadmin' && <option value="superadmin" className="text-black">Super Administrador</option>}
+               </select>
+             </div>
+             <div>
+               <label className="block text-xs font-semibold text-gray-600 mb-1">Turno</label>
+               <select value={usuarioForm.turno} onChange={e => setUsuarioForm({ ...usuarioForm, turno: e.target.value })}
+                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-white">
+                 <option value="Mañana" className="text-black">Mañana</option>
+                 <option value="Tarde" className="text-black">Tarde</option>
+                 <option value="Noche" className="text-black">Noche</option>
+               </select>
+             </div>
           </div>
           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
-            <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="secondary" className="flex-1 py-2.5" />
-            <Button text="Guardar" onClick={saveUsuario} variant="primary" className="flex-1 py-2.5 shadow-sm" />
-          </div>
-        </Modal>
-      )}
+             <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="secondary" className="flex-1 py-2.5" />
+             <Button text="Guardar" onClick={saveUsuario} variant="primary" className="flex-1 py-2.5 shadow-sm" />
+           </div>
+         </Modal>
+       )}
 
       {/* Modal de Confirmación de Eliminación */}
       {deleteTarget && (

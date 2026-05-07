@@ -1,5 +1,6 @@
 import React from 'react';
 import { LayoutDashboard, Users, ClipboardList, LogOut, UserCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 
 interface SidebarProps {
@@ -7,11 +8,13 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onOpenProfile }: SidebarProps): React.JSX.Element {
+  const { usuario } = useAuth();
+
   return (
     <aside className="sidebar dark:bg-slate-900 transition-colors">
       <div className="sidebar-header dark:border-slate-800">
         <h2 className="dark:text-white transition-colors"> SANICLEAR</h2>
-        <span className="badge-admin">Admin</span>
+        <span className="badge-admin">{usuario?.rol === 'admin' ? 'Admin' : usuario?.rol === 'superadmin' ? 'Superadmin' : 'Operario'}</span>
       </div>
 
       <nav className="sidebar-nav">

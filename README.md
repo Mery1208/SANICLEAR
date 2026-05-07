@@ -252,6 +252,15 @@ Accede a: http://localhost:5173
 
 ### 🗓️ MAYO 2026 — Pulido Final y UI/UX
 
+#### 📍 Semana 34 | Estandarización de Entidades y Accesibilidad
+ 
+✨ **Integración y Refinamiento:**
+- **Sincronización de Entidades (Hospitales):** Migración completa del sistema de gestión de entidades de IDs numéricos a UUIDs, alineando el código con el esquema real de Supabase.
+- **Normalización de Campos:** Actualización de todas las consultas y visualizaciones para utilizar el campo `nombre_hospital` de forma consistente en el Perfil, Barra Superior y Gestión de Incidencias.
+- **Mejoras en Modo Oscuro:** Implementación de "recuadros blancos" obligatorios para inputs y selectores en la vista de reporte de incidencias (Operario y Admin) para garantizar contraste y legibilidad máxima en temas oscuros.
+- **Fiabilidad en Perfil:** Integración de un sistema de carga secundaria en el Perfil de Usuario para resolver el nombre del hospital directamente desde la tabla `entidades`, eliminando el fallback genérico "Gestión Global" para administradores.
+- **Gestión de Avatar:** Corrección de accesibilidad en el Perfil permitiendo la eliminación del avatar a todos los roles (incluido Superadmin) mediante la visualización forzada del botón de papelera.
+
 #### 📍 Semana 33 | Selectores Globales, Filtros Temporales y Preparación IA
 
 ✨ **Nuevas Funcionalidades y Optimizaciones:**
@@ -491,4 +500,4 @@ Accede a: http://localhost:5173
 
 ---
 
-*Documento vivo. Última actualización: 09/04/2026*
+*Documento vivo. Última actualización: 07/05/2026*

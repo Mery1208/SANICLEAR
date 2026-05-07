@@ -9,6 +9,9 @@ export interface Usuario {
   email: string;
   rol: 'superadmin' | 'admin' | 'operario';
   turno?: string;
+  entidad_id?: string;
+  entidades?: { nombre_hospital: string };
+  avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -23,13 +26,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MOCK_USERS: Usuario[] = [
-  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclears.com', rol: 'superadmin' },
-  { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclears', email: 'admin@saniclears.com', rol: 'admin' },
-  { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclears.com', rol: 'operario', turno: 'Mañana' },
-  { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclears.com', rol: 'operario', turno: 'Tarde' },
-  { id: 'oper-3', nombre: 'Evelia', apellidos: 'Gil Paredes', email: 'evelia.gil@saniclears.com', rol: 'operario', turno: 'Noche' },
-  { id: 'oper-4', nombre: 'Carlos', apellidos: 'Fernández', email: 'carlos.f@saniclears.com', rol: 'operario', turno: 'Mañana' },
-  { id: 'oper-5', nombre: 'Ana', apellidos: 'Martínez', email: 'ana.martinez@saniclears.com', rol: 'operario', turno: 'Tarde' },
+  { id: 'superadmin-1', nombre: 'Super', apellidos: 'Admin', email: 'superadmin@saniclears.com', rol: 'superadmin', entidad: 'Saniclears' },
+  { id: 'admin-1', nombre: 'Admin', apellidos: 'Saniclears', email: 'admin@saniclears.com', rol: 'admin', entidad: 'Hospital Central' },
+  { id: 'oper-1', nombre: 'Juan', apellidos: 'Pérez García', email: 'juan.perez@saniclears.com', rol: 'operario', turno: 'Mañana', entidad: 'Hospital Central' },
+  { id: 'oper-2', nombre: 'María', apellidos: 'Ceballos Mesías', email: 'maria.ceballos@saniclears.com', rol: 'operario', turno: 'Tarde', entidad: 'Hospital Norte' },
+  { id: 'oper-3', nombre: 'Evelia', apellidos: 'Gil Paredes', email: 'evelia.gil@saniclears.com', rol: 'operario', turno: 'Noche', entidad: 'Hospital Central' },
+  { id: 'oper-4', nombre: 'Carlos', apellidos: 'Fernández', email: 'carlos.f@saniclears.com', rol: 'operario', turno: 'Mañana', entidad: 'Hospital Sur' },
+  { id: 'oper-5', nombre: 'Ana', apellidos: 'Martínez', email: 'ana.martinez@saniclears.com', rol: 'operario', turno: 'Tarde', entidad: 'Hospital Central' },
 ];
 
 const MOCK_PASSWORDS: Record<string, string> = {
@@ -93,49 +96,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (uid: string, email: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('usuarios')
-        .select('*')
-        .eq('id', uid)
-        .maybeSingle();
+   const fetchProfile = async (uid: string, email: string) => {
+     try {
+       // Hacemos JOIN con 'entidades' para traer el nombre
+       const { data, error } = await supabase
+         .from('usuarios')
+         .select(`
+           *,
+            entidades:entidad_id ( nombre_hospital )
+         `)
+         .eq('id', uid)
+         .maybeSingle();
 
-      if (!error && data) {
-        setUsuario(data as Usuario);
-      } else {
-        // Fallback: crear perfil en tabla 'usuarios' si no existe
-        const rol = email.includes('superadmin') ? 'superadmin' : email.includes('admin') ? 'admin' : 'operario';
-        const nombre = rol === 'superadmin' ? 'Superadmin' : rol === 'admin' ? 'Admin' : 'Operario';
+       if (!error && data) {
+         // Si el usuario existe, usarlo (con el nombre de entidades)
+         setUsuario(data as Usuario);
+       } else {
+         // Fallback: crear perfil en tabla 'usuarios' si no existe
+         const rol = email.includes('superadmin') ? 'superadmin' : email.includes('admin') ? 'admin' : 'operario';
+         const nombre = rol === 'superadmin' ? 'Superadmin' : rol === 'admin' ? 'Admin' : 'Operario';
+         // entidad queda null - debe configurarse desde GestionZonaUsuarios
+         const { data: newUser, error: createError } = await supabase
+           .from('usuarios')
+           .upsert({ id: uid, email, nombre, rol, entidad_id: null }, { onConflict: 'id' })
+           .select()
+           .maybeSingle();
 
-        try {
-          const { data: newUser } = await supabase
-            .from('usuarios')
-            .upsert({ id: uid, email, nombre, rol }, { onConflict: 'id' })
-            .select()
-            .maybeSingle();
-
-          if (newUser) {
-            setUsuario(newUser as Usuario);
-          } else {
-            setUsuario({ id: uid, email, nombre, rol });
-          }
-        } catch {
-          setUsuario({ id: uid, email, nombre, rol });
-        }
-      }
-    } catch {
-      // Si la tabla 'usuarios' no existe, usar fallback mock
-      const mockUser = MOCK_USERS.find(u => u.email === email);
-      if (mockUser) {
-        setUsuario(mockUser);
-      } else {
-        const rol = email.includes('superadmin') ? 'superadmin' : email.includes('admin') ? 'admin' : 'operario';
-        setUsuario({ id: uid, email, nombre: rol === 'superadmin' ? 'Superadmin' : rol === 'admin' ? 'Admin' : 'Operario', rol });
-      }
-    }
-    setLoading(false);
-  };
+         if (newUser && !createError) {
+           setUsuario(newUser as Usuario);
+         } else {
+           setUsuario({ id: uid, email, nombre, rol, entidad_id: null } as Usuario);
+         }
+       }
+     } catch {
+       // Si la tabla 'usuarios' no existe, usar fallback mock
+       const mockUser = MOCK_USERS.find(u => u.email === email);
+       if (mockUser) {
+         setUsuario(mockUser);
+       } else {
+         const rol = email.includes('superadmin') ? 'superadmin' : email.includes('admin') ? 'admin' : 'operario';
+         // No forzar entidad por defecto
+         setUsuario({ id: uid, email, nombre: rol === 'superadmin' ? 'Superadmin' : rol === 'admin' ? 'Admin' : 'Operario', rol, entidad_id: null } as Usuario);
+       }
+     }
+     setLoading(false);
+   };
 
   const login = async (email: string, password: string) => {
     const trimmedEmail = email.trim();

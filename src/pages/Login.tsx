@@ -59,7 +59,7 @@ export default function Login(): React.JSX.Element {
       <div className="login-container">
         <div className="login-card">
           <div className="login-logo">
-            <img src={logoImg} alt="Saniclears" style={{ maxHeight: '50px', width: 'auto', margin: '0 auto', display: 'block' }} />
+            <img src={logoImg} alt="Saniclears" style={{ maxHeight: '50px', width: 'auto', margin: '0 auto', display: 'block' }} className="dark:brightness-0 dark:invert transition-all" />
           </div>
 
           <h2 className="login-title">{isRecovering ? 'Recuperar Contraseña' : 'Acceso al Portal'}</h2>

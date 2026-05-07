@@ -144,7 +144,7 @@ const Notificaciones: React.FC = () => {
     <div>
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Notificaciones</h2>
+           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">Notificaciones</h2>
           <p className="text-gray-400 text-sm font-medium italic">{noLeidas > 0 ? `Tienes ${noLeidas} notificaciones sin leer.` : "Todo al día."}</p>
         </div>
         <div className="flex gap-4 items-center">
@@ -194,16 +194,16 @@ const Notificaciones: React.FC = () => {
 
       {/* Admin table view */}
       {isAdmin ? (
-        <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-transparent rounded-xl border dark:border-gray-700 shadow-sm overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-gray-50 dark:bg-[#1e3a5f]/30 border-b dark:border-gray-700">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Título</th>
-                {isSuperadmin && <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Entidad</th>}
-                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Emisor</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Destinatario</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Fecha</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600 text-xs uppercase">Tipo</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Título</th>
+                {isSuperadmin && <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Entidad</th>}
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Emisor</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Destinatario</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Fecha</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Tipo</th>
               </tr>
             </thead>
             <tbody>
@@ -212,13 +212,13 @@ const Notificaciones: React.FC = () => {
               )}
               {filteredNotif.map(n => (
                 <tr key={n.id} className="border-b last:border-0 hover:bg-gray-50 cursor-pointer" onClick={() => marcarLeida(n.id)}>
-                  <td className={`px-4 py-3 font-medium text-gray-800 ${!n.leida ? "font-bold" : ""}`}>{n.titulo}</td>
+                  <td className={`px-4 py-3 font-medium text-gray-800 dark:text-white ${!n.leida ? "font-bold" : ""}`}>{n.titulo}</td>
                   {isSuperadmin && (
-                    <td className="px-4 py-3 text-gray-500 text-xs">{entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global'}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-white text-xs">{entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global'}</td>
                   )}
-                  <td className="px-4 py-3 text-gray-500 text-xs font-semibold">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
-                  <td className="px-4 py-3 text-gray-500">{n.dest}</td>
-                  <td className="px-4 py-3 text-gray-500">{new Date(n.fecha).toLocaleString('es-ES')}</td>
+                  <td className="px-4 py-3 text-gray-500 dark:text-white text-xs font-semibold">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
+                  <td className="px-4 py-3 text-gray-500 dark:text-white">{n.dest}</td>
+                  <td className="px-4 py-3 text-gray-500 dark:text-white">{new Date(n.fecha).toLocaleString('es-ES')}</td>
                   <td className="px-4 py-3">
                     <Badge cls={TIPO_BADGE[n.tipo]} label={n.tipo.charAt(0).toUpperCase()+n.tipo.slice(1)} />
                   </td>

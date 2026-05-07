@@ -240,7 +240,7 @@ const EstadisticasSuperadmin: React.FC = () => {
     <div className="font-sans">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
             Estadísticas del superadmin
           </h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -303,6 +303,7 @@ const EstadisticasSuperadmin: React.FC = () => {
               <XAxis dataKey="periodo" tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip
+                cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }}
                 contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
               />
               <Legend />
@@ -322,6 +323,7 @@ const EstadisticasSuperadmin: React.FC = () => {
               <XAxis dataKey="periodo" tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip
+                cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }}
                 contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
               />
               <Legend />

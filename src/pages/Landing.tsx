@@ -55,7 +55,7 @@ export default function Landing(): React.JSX.Element {
         <div className="hero-glow"></div>
         <div className="hero-content">
           <div className="hero-text">
-            <h1>
+            <h1 className="mb-4">
               Gestión <span className="text-gradient">Inteligente</span> de
               Higiene Hospitalaria
             </h1>
@@ -83,7 +83,7 @@ export default function Landing(): React.JSX.Element {
             <img src={medicoImg} alt="Equipo médico" />
           </div>
           <div className="about-text anim slide-right">
-            <h2>Una Solución Nacida de la Necesidad</h2>
+            <h2 className="mb-4">Una Solución Nacida de la Necesidad</h2>
             <p>
               SANICLEARS nació en 2024 cuando un grupo de profesionales sanitarios
               identificó un desafío crítico: <strong>la gestión manual de las tareas de limpieza
@@ -120,8 +120,8 @@ export default function Landing(): React.JSX.Element {
 
       {/* Funcionalidades */}
       <section className="features-section">
-        <div className="features-header anim fade-up">
-          <h2>Todo lo que Necesitas en una Plataforma</h2>
+          <div className="features-header anim fade-up">
+            <h2 className="mb-4">Todo lo que Necesitas en una Plataforma</h2>
           <p>Herramientas profesionales diseñadas para maximizar la eficiencia y seguridad</p>
         </div>
         <div className="features-grid">
@@ -129,42 +129,42 @@ export default function Landing(): React.JSX.Element {
             <div className="feature-icon">
               <Activity size={28} />
             </div>
-            <h3>Control en Tiempo Real</h3>
+             <h3 className="mb-2">Control en Tiempo Real</h3>
             <p>Monitoriza en tiempo real el estado de todas las tareas de limpieza en tu institución desde un único panel de control.</p>
           </div>
           <div className="feature-card anim fade-up delay-2">
             <div className="feature-icon">
               <ShieldCheck size={28} />
             </div>
-            <h3>Trazabilidad Completa</h3>
+             <h3 className="mb-2">Trazabilidad Completa</h3>
             <p>Registra y audita cada acción realizada con un historial completo, verificable y conforme a normativas sanitarias.</p>
           </div>
           <div className="feature-card anim fade-up delay-3">
             <div className="feature-icon">
               <Users size={28} />
             </div>
-            <h3>Gestión de Equipos</h3>
+             <h3 className="mb-2">Gestión de Equipos</h3>
             <p>Administra equipos con diferentes niveles de acceso: administradores, supervisores y personal operativo.</p>
           </div>
           <div className="feature-card anim fade-up delay-4">
             <div className="feature-icon">
               <BarChart3 size={28} />
             </div>
-            <h3>Análisis y Reportes</h3>
+             <h3 className="mb-2">Análisis y Reportes</h3>
             <p>Genera informes detallados sobre productividad, cumplimiento y áreas de mejora para tomar decisiones basadas en datos.</p>
           </div>
           <div className="feature-card anim fade-up delay-5">
             <div className="feature-icon">
               <Smartphone size={28} />
             </div>
-            <h3>App Móvil Operarios</h3>
+             <h3 className="mb-2">App Móvil Operarios</h3>
             <p>Aplicación móvil intuitiva para que el personal de limpieza registre tareas completadas con un simple toque.</p>
           </div>
           <div className="feature-card anim fade-up delay-6">
             <div className="feature-icon">
               <Globe size={28} />
             </div>
-            <h3>Acceso desde Cualquier Lugar</h3>
+             <h3 className="mb-2">Acceso desde Cualquier Lugar</h3>
             <p>Plataforma cloud que permite acceder a la información desde cualquier dispositivo, en cualquier momento.</p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function Landing(): React.JSX.Element {
       {/* Pasos */}
       <section className="steps-section">
         <div className="steps-header anim fade-up">
-          <h2>Cómo Funciona SANICLEARS</h2>
+          <h2 className="mb-4">Cómo Funciona SANICLEARS</h2>
           <p>Implementación simple en 3 pasos</p>
         </div>
         <div className="steps-wrapper">
@@ -181,17 +181,17 @@ export default function Landing(): React.JSX.Element {
           <div className="steps-grid">
             <div className="step-card anim fade-up delay-1">
               <div className="step-number">1</div>
-              <h3>Configura tus Zonas</h3>
+                <h3 className="mb-2">Configura tus Zonas</h3>
               <p>Define las áreas del hospital, asigna responsables y establece los protocolos de limpieza para cada zona.</p>
             </div>
             <div className="step-card anim fade-up delay-2">
               <div className="step-number">2</div>
-              <h3>Asigna Tareas</h3>
+                <h3 className="mb-2">Asigna Tareas</h3>
               <p>Programa y distribuye las tareas de limpieza al personal operativo desde el panel de administración.</p>
             </div>
             <div className="step-card anim fade-up delay-3">
               <div className="step-number">3</div>
-              <h3>Supervisa y Optimiza</h3>
+                <h3 className="mb-2">Supervisa y Optimiza</h3>
               <p>Monitoriza el progreso en tiempo real y genera reportes para mejorar continuamente la eficiencia operativa.</p>
             </div>
           </div>
@@ -204,8 +204,8 @@ export default function Landing(): React.JSX.Element {
           <div className="testimonial-image anim slide-left">
             <img src={pasilloImg} alt="Pasillo de hospital" />
           </div>
-          <div className="testimonial-text anim slide-right">
-            <h2>Resultados Reales, Impacto Medible</h2>
+           <div className="testimonial-text anim slide-right">
+             <h2 className="mb-4">Resultados Reales, Impacto Medible</h2>
             <blockquote>
               "Desde que implementamos SANICLEARS, hemos reducido el tiempo de gestión administrativa en un 60% y mejorado significativamente la trazabilidad de nuestros procesos de limpieza."
             </blockquote>
@@ -233,7 +233,7 @@ export default function Landing(): React.JSX.Element {
       {/* CTA */}
       <section className="cta-section">
         <div className="cta-content anim fade-up">
-          <h2>¿Listo para Transformar la Gestión de tu Hospital?</h2>
+          <h2 className="mb-4">¿Listo para Transformar la Gestión de tu Hospital?</h2>
           <p>
             Únete a los hospitales que ya confían en SANICLEARS para optimizar sus procesos
             de higiene y garantizar la máxima seguridad.

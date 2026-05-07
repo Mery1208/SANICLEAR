@@ -129,7 +129,7 @@ const MetricasEntidad: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Métricas - {entidad.nombre_hospital}</h2>
+           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">Métricas - {entidad.nombre_hospital}</h2>
           <p className="text-gray-400 text-sm font-medium italic">Rendimiento y análisis de datos de la entidad</p>
         </div>
       </div>
@@ -164,7 +164,7 @@ const MetricasEntidad: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="periodo" tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                <Tooltip cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                 <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold', paddingTop: '10px' }} />
                 <Line type="monotone" dataKey="tareas" name="Tareas Completadas" stroke="#3B82F6" strokeWidth={3} dot={{ r: 4 }} />
                 <Line type="monotone" dataKey="incidencias" name="Nuevas Incidencias" stroke="#EF4444" strokeWidth={3} dot={{ r: 4 }} />

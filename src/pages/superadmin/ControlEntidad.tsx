@@ -278,18 +278,18 @@ const ControlEntidad: React.FC = () => {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {[
-          { title: 'Usuarios', value: counts.usuarios, icon: <Users size={24} />, accent: 'text-blue-600 bg-blue-50' },
-          { title: 'Zonas', value: counts.zonas, icon: <MapPinned size={24} />, accent: 'text-violet-600 bg-violet-50' },
-          { title: 'Tareas Activas', value: counts.tareas, icon: <Clock size={24} />, accent: 'text-amber-600 bg-amber-50' },
-          { title: 'Incidencias', value: counts.incidencias, icon: <AlertTriangle size={24} />, accent: 'text-red-600 bg-red-50' },
+          { title: 'Usuarios', value: counts.usuarios, icon: <Users size={24} />, accent: 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400' },
+          { title: 'Zonas', value: counts.zonas, icon: <MapPinned size={24} />, accent: 'text-violet-600 bg-violet-50 dark:bg-violet-900/30 dark:text-violet-400' },
+          { title: 'Tareas Activas', value: counts.tareas, icon: <Clock size={24} />, accent: 'text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400' },
+          { title: 'Incidencias', value: counts.incidencias, icon: <AlertTriangle size={24} />, accent: 'text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400' },
         ].map((card) => (
-          <div key={card.title} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div key={card.title} className="bg-white dark:bg-transparent rounded-xl border border-gray-100 dark:border-gray-700 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>{card.title}</p>
                 <p className={`text-xl lg:text-2xl font-black ${card.accent.split(' ')[0]}`}>{card.value}</p>
               </div>
-              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.accent.split(' ')[1]}`}>
+              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.accent}`}>
                 {card.icon}
               </div>
             </div>
@@ -299,22 +299,22 @@ const ControlEntidad: React.FC = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Tareas de la entidad */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Tareas Activas del Centro</p>
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas Activas del Centro</p>
             <button onClick={() => openTarea()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Tarea"><Plus size={18} /></button>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
-                <tr>{["Zona","Asignado","Estado","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
+              <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
+                <tr>{["Zona","Asignado","Estado","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {tareasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay tareas pendientes.</td></tr>)}
                 {tareasActivas.map((t: any) => (
                   <tr key={t.id} className="hover:bg-blue-50/20">
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] text-xs whitespace-nowrap">{t.zona}</td>
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] text-xs font-bold whitespace-nowrap">{t.asignado}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs whitespace-nowrap">{t.zona}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] dark:text-white text-xs font-bold whitespace-nowrap">{t.asignado}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100"} label={t.estado} />
                     </td>
@@ -331,22 +331,22 @@ const ControlEntidad: React.FC = () => {
         </div>
         
         {/* Incidencias de la entidad */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Incidencias Abiertas</p>
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
             <button onClick={() => openIncid()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Incidencia"><Plus size={18} /></button>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
-                <tr>{["Título","Zona","Prioridad","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
+              <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
+                <tr>{["Título","Zona","Prioridad","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {incidenciasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay incidencias críticas ni abiertas.</td></tr>)}
                 {incidenciasActivas.map((i: any) => (
                   <tr key={i.id} className="hover:bg-red-50/20">
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] text-xs min-w-[150px]">{i.titulo}</td>
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs font-semibold whitespace-nowrap">{i.zona}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs min-w-[150px]">{i.titulo}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{i.zona}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <Badge cls={PRIORIDAD_BADGE[i.prioridad] || "bg-gray-100"} label={i.prioridad} />
                     </td>
@@ -365,9 +365,9 @@ const ControlEntidad: React.FC = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Administradores y Personal */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Personal del Centro</p>
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
             <div className="flex items-center gap-3">
               <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block">Control Total</span>
               <button onClick={() => handleOpenEditUser()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Personal"><Plus size={18} /></button>
@@ -375,16 +375,16 @@ const ControlEntidad: React.FC = () => {
           </div>
           <div className="overflow-x-auto flex-1">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
-                <tr>{["Nombre","Rol","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
+              <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
+                <tr>{["Nombre","Rol","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {personal.length === 0 && (<tr><td colSpan={3} className="p-8 text-center text-gray-400 font-bold italic">No hay personal asignado.</td></tr>)}
                 {personal.map((u: any) => (
                   <tr key={u.id} className="hover:bg-blue-50/20">
                     <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                      <p className="font-bold text-[#1e3a5f] text-sm truncate max-w-[150px]">{u.nombre} {u.apellidos}</p>
-                      <p className="text-xs text-gray-400 truncate max-w-[150px]">{u.email}</p>
+                      <p className="font-bold text-[#1e3a5f] dark:text-white text-sm truncate max-w-[150px]">{u.nombre} {u.apellidos}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-200 truncate max-w-[150px]">{u.email}</p>
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       {u.rol === 'admin' ? (
@@ -405,26 +405,26 @@ const ControlEntidad: React.FC = () => {
         </div>
 
         {/* Últimas Notificaciones */}
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-              <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Últimas Notificaciones</p>
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
+              <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
             <button onClick={() => openNotif()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Notificación"><Plus size={18} /></button>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
-                    <tr>{["Título","Tipo","Emisor","Destino","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
+              <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
+                    <tr>{["Título","Tipo","Emisor","Destino","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {notificacionesEntidad.length === 0 && (<tr><td colSpan={5} className="p-8 text-center text-gray-400 font-bold italic">No hay notificaciones recientes.</td></tr>)}
                 {notificacionesEntidad.map((n: any) => (
                   <tr key={n.id} className="hover:bg-blue-50/20">
-                        <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] text-xs min-w-[150px]">{n.titulo}</td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs min-w-[150px]">{n.titulo}</td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <Badge cls={n.tipo === 'urgente' ? 'bg-red-100 text-red-700' : n.tipo === 'importante' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} label={n.tipo} />
                     </td>
-                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs font-semibold whitespace-nowrap">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
-                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 text-xs font-semibold whitespace-nowrap">{n.dest}</td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{n.dest}</td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                     {n.entidad_id ? (
                        <>

@@ -8,6 +8,10 @@ interface Usuario {
   email: string;
   rol: 'superadmin' | 'admin' | 'operario';
   turno?: string;
+  entidad?: string; // Legacy field
+  entidad_id?: string;
+  entidades?: { nombre_hospital: string } | null;
+  avatar_url?: string;
 }
 
 interface AuthState {

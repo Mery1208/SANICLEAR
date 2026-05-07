@@ -295,7 +295,7 @@ const PanelGlobal: React.FC = () => {
     <div className="flex flex-col gap-6 font-sans">
       <div className="flex justify-between items-start">
         <div className="text-left">
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
             Panel global del superadmin
           </h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -314,7 +314,7 @@ const PanelGlobal: React.FC = () => {
           </select>
           <button
             onClick={fetchGlobalData}
-            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-[10px] sm:text-sm font-bold text-[#1e3a5f] hover:bg-gray-50 transition-colors"
+            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-white border border-gray-200 text-[10px] sm:text-sm font-bold text-[#1e3a5f] dark:text-white hover:bg-gray-50 transition-colors"
           >
             <RefreshCw size={16} />
             <span className="hidden sm:inline">Actualizar panel</span>
@@ -339,7 +339,7 @@ const PanelGlobal: React.FC = () => {
                 </p>
                 <p className={`text-xl lg:text-2xl font-black ${card.accent.split(' ')[0]}`}>{card.value}</p>
               </div>
-              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.accent.split(' ')[1]}`}>
+              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.accent}`}>
                 {card.icon}
               </div>
             </div>
@@ -348,10 +348,10 @@ const PanelGlobal: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex flex-col">
+        <div className="xl:col-span-2 bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm p-8 flex flex-col">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
             <div>
-              <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">
                 Carga Operativa por Zona
               </p>
               <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
@@ -362,7 +362,7 @@ const PanelGlobal: React.FC = () => {
               type="month"
               value={filtroMes}
               onChange={(e) => setFiltroMes(e.target.value)}
-              className="px-3 py-1.5 border border-gray-200 rounded-xl text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+              className="px-3 py-1.5 border border-gray-200 rounded-xl text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-100"
             />
           </div>
 
@@ -372,7 +372,7 @@ const PanelGlobal: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="zona" tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fontWeight: 600, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                <Tooltip cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
                 <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold', paddingTop: '10px' }} />
                 <Bar dataKey="tareas" name="Tareas" fill="#3B82F6" radius={[6, 6, 0, 0]} maxBarSize={45} />
                 <Bar dataKey="incidencias" name="Incidencias" fill="#EF4444" radius={[6, 6, 0, 0]} maxBarSize={45} />
@@ -385,26 +385,26 @@ const PanelGlobal: React.FC = () => {
           </p>
 
           <div className="flex items-center justify-between mb-5 pt-6 border-t border-gray-50">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">
               Desglose Detallado
             </p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
+              <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
                 <tr>
                   {['Zona', 'Tareas', 'Incidencias', 'Nivel'].map((header) => (
                     <th
                       key={header}
-                      className="text-left px-5 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest"
+                      className="text-left px-5 py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest"
                     >
                       {header}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {zonasCarga.length === 0 && (
                   <tr>
                     <td colSpan={4} className="px-5 py-8 text-center text-gray-400 font-semibold italic">
@@ -413,11 +413,11 @@ const PanelGlobal: React.FC = () => {
                   </tr>
                 )}
 
-                {zonasCarga.map((zona) => (
-                  <tr key={zona.zona} className="hover:bg-blue-50/20 transition-colors">
-                    <td className="px-5 py-4 font-bold text-[#1e3a5f]">{zona.zona}</td>
-                    <td className="px-5 py-4 text-gray-600 font-semibold">{zona.tareas}</td>
-                    <td className="px-5 py-4 text-gray-600 font-semibold">{zona.incidencias}</td>
+                {zonasCarga.map((zona, index) => (
+                  <tr key={index} className="hover:bg-blue-50/20 transition-colors">
+                    <td className="px-5 py-4 font-bold text-[#1e3a5f] dark:text-white">{zona.zona}</td>
+                    <td className="px-5 py-4 text-gray-600 dark:text-white font-semibold">{zona.tareas}</td>
+                    <td className="px-5 py-4 text-gray-600 dark:text-white font-semibold">{zona.incidencias}</td>
                     <td className="px-5 py-4">
                       <Badge
                         cls={ESTADO_BADGE[zona.estado]}
@@ -436,7 +436,7 @@ const PanelGlobal: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-5">
             Alertas y actividad
           </p>
 
@@ -488,7 +488,7 @@ const PanelGlobal: React.FC = () => {
           },
         ].map((item) => (
           <div key={item.title} className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
-            <p className="text-sm font-black text-[#1e3a5f] mb-3">{item.title}</p>
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white mb-3">{item.title}</p>
             <p className="text-sm text-gray-500 leading-relaxed font-medium">{item.text}</p>
           </div>
         ))}

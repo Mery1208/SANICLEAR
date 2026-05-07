@@ -134,7 +134,7 @@ const MenuLateral: React.FC<MenuLateralProps> = ({ items, isOpen = false, onClos
                             </div>
                         </div>
                         
-                        <h3 className="text-xl font-black text-gray-800 dark:text-white uppercase tracking-tight">
+                        <h3 className="text-xl font-black text-gray-800 dark:text-white uppercase tracking-tight mb-3">
                             Futuros Proyectos
                         </h3>
                         

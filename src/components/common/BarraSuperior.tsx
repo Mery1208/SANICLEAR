@@ -53,10 +53,15 @@ const BarraSuperior: React.FC = () => {
                      <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-sm shrink-0 text-[9px] sm:text-[10px] md:text-sm">
                          {nombreMostrar.charAt(0).toUpperCase()}{apellidosMostrar ? apellidosMostrar.charAt(0).toUpperCase() : ''}
                      </div>
-                     <div className="flex flex-col text-left">
-                         <p className="text-[10px] sm:text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 leading-none truncate max-w-[60px] sm:max-w-[80px] md:max-w-[120px] transition-colors">{nombreMostrar} {apellidosMostrar}</p>
-                         <p className="text-[7px] sm:text-[8px] md:text-[10px] font-black text-blue-500 uppercase tracking-wider mt-0.5">{rol}</p>
-                     </div>
+                      <div className="flex flex-col text-left">
+                          <p className="text-[10px] sm:text-xs md:text-sm font-bold text-slate-700 dark:text-slate-200 leading-none truncate max-w-[60px] sm:max-w-[80px] md:max-w-[120px] transition-colors">{nombreMostrar} {apellidosMostrar}</p>
+                          <p className="text-[7px] sm:text-[8px] md:text-[10px] font-black text-blue-500 uppercase tracking-wider mt-0.5">{rol}</p>
+                          {(usuario?.entidades?.nombre_hospital || usuario?.entidad) && (
+                            <p className="text-[7px] sm:text-[8px] md:text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
+                              {usuario?.entidades?.nombre_hospital || usuario?.entidad}
+                            </p>
+                          )}
+                      </div>
                  </div>
                  <ThemeToggle />
                  <button

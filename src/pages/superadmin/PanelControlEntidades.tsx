@@ -116,7 +116,7 @@ return (
     <div className="font-sans w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 w-full">
         <div className="text-left w-full md:w-auto">
-          <h2 className="text-xl sm:text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
             Control entidades
           </h2>
           <p className="text-gray-400 text-xs sm:text-sm font-medium italic">
@@ -137,7 +137,7 @@ return (
           </div>
           <button
             onClick={fetchEntidades}
-            className="flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            className="flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-700 dark:text-[#1e3a5f] hover:text-blue-600 hover:bg-gray-200 transition-colors"
             title="Actualizar"
           >
             <RefreshCw size={16} />
@@ -193,12 +193,12 @@ return (
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 mb-6 bg-gray-50/50 p-4 rounded-2xl">
+              <div className="flex flex-col gap-3 mb-6 bg-gray-50/50 dark:bg-[#1e3a5f]/30 p-4 rounded-2xl">
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <span className="flex items-center gap-2 text-xs font-bold text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                     <MapPin size={14} /> Ubicación
                   </span>
-                  <span className="text-sm font-semibold text-gray-700">{entidad.ciudad || 'No especificada'}</span>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-white">{entidad.ciudad || 'No especificada'}</span>
                 </div>
               </div>
 

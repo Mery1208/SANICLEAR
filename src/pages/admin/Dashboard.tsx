@@ -207,7 +207,7 @@ const Dashboard: React.FC = () => {
     <div className="flex flex-col gap-6 font-sans">
       <div className="flex justify-between items-start">
         <div className="text-left">
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de Control</h2>
+          <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Panel de Control</h2>
           <p className="text-gray-400 text-sm font-medium italic">Resumen general y estado del sistema en tiempo real</p>
       {(zonas.length === 0 || usuarios.length === 0) && (
             <p className="text-amber-600 text-sm font-semibold bg-amber-50 px-3 py-2 rounded-lg inline-block mt-2">
@@ -258,7 +258,7 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">Incidencias por mes</p>
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-6">Incidencias por mes</p>
           {chartData.length === 0 ? (
              <div className="h-[240px] flex items-center justify-center text-gray-400 font-semibold text-sm border-2 border-dashed border-gray-100 rounded-2xl">
                Aún no hay datos históricos de incidencias
@@ -269,7 +269,7 @@ const Dashboard: React.FC = () => {
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis dataKey="mes" tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
-              <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+              <Tooltip cursor={{fill: 'rgba(148, 163, 184, 0.1)'}} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
               <Bar dataKey="Abiertas"  fill="#3B82F6" radius={[6,6,0,0]} />
               <Bar dataKey="Resueltas" fill="#10B981" radius={[6,6,0,0]} />
             </BarChart>
@@ -278,7 +278,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">Actividad reciente</p>
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-6">Actividad reciente</p>
           <div className="flex flex-col gap-5">
             {actividadReciente.map((a, i) => (
               <div key={i} className="flex gap-4 group">
@@ -293,29 +293,29 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">Tareas activas</p>
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-slate-700 flex justify-between items-center bg-gray-50/30 dark:bg-slate-800/50">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas activas</p>
             <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
               <RefreshCw size={16} />
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
+              <thead className="bg-gray-50/50 dark:bg-slate-900/50">
               <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
                 {(query ? tareasFiltradas : tareas).length === 0 && (
                   <tr><td colSpan={6} className="p-10 text-center text-gray-400 font-bold italic">
                     {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
                   </td></tr>
                 )}
                 {(query ? tareasFiltradas : tareas).map(t => (
-                  <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
-                  <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] text-base">{t.zona}</td>
-                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-700 text-sm font-semibold min-w-[200px]">{t.tarea || t.descripcion}</td>
-                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] text-sm font-bold flex items-center gap-2 whitespace-nowrap">
+                  <tr key={t.id} className="hover:bg-blue-50/20 dark:hover:bg-blue-900/10 transition-colors group">
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] dark:text-white text-base">{t.zona}</td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-700 dark:text-white text-sm font-semibold min-w-[200px]">{t.tarea || t.descripcion}</td>
+                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] dark:text-white text-sm font-bold flex items-center gap-2 whitespace-nowrap">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-black">
                         {t.asignado.split(' ').map(n => n[0]).join('')}
                       </div>

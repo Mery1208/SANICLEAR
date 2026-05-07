@@ -33,7 +33,7 @@
 body {
   font-family: 'Kalam', cursive;
   background-color: var(--color-background-page);
-  color: var(--color-title);
+  color: var(--color-text-primary);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
@@ -62,3 +62,12 @@ p {
 button {
   font-family: var(--font-family);
 }
+
+/* Correcciones para Recharts en Modo Oscuro */
+.dark .recharts-default-tooltip {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+.dark .recharts-tooltip-item, .dark .recharts-tooltip-label {
+  color: #f8fafc !important;
+}

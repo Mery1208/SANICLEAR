@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Edit2, Camera, User } from 'lucide-react';
 import Button from './Button';
+import { useAuth } from '../context/AuthContext';
 
 
 interface UserData {
@@ -9,6 +10,7 @@ interface UserData {
   rol: string;
   telefono: string;
   foto: string | null;
+  entidad: string;
 }
 
 interface ProfileModalProps {
@@ -17,15 +19,17 @@ interface ProfileModalProps {
 }
 
 export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileModalProps): React.JSX.Element {
+  const { usuario } = useAuth();
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  // datos de prueba
+  // inicializar con datos del usuario logueado o datos por defecto
   const [userData, setUserData] = useState<UserData>({
-    nombre: 'Paco Mera',
-    email: 'paco.mera@hospital.com',
-    rol: userRole,
-    telefono: '600 123 456',
-    foto: null
+    nombre: usuario?.nombre || '',
+    email: usuario?.email || '',
+    rol: usuario?.rol || userRole,
+    telefono: '',
+    foto: null,
+    entidad: usuario?.entidad || ''
   });
 
   const handleSave = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -46,7 +50,7 @@ export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileMod
     <div className="modal-overlay">
       <div className="modal-content profile-modal">
         <div className="modal-header">
-          <h3>Mi Perfil</h3>
+          <h3 className="mb-4">Mi Perfil</h3>
           <button onClick={onClose} className="btn-close"><X size={20} /></button>
         </div>
 
@@ -69,8 +73,15 @@ export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileMod
             </div>
 
             <div className="profile-info-header">
-              <h2>{userData.nombre}</h2>
-              <span className={`badge-role ${userData.rol.toLowerCase()}`}>{userData.rol}</span>
+              <h2 className="mb-1">{userData.nombre}</h2>
+              <div className="flex items-center justify-center gap-2 mt-2">
+                <span className={`badge-role ${userData.rol.toLowerCase()}`}>{userData.rol}</span>
+                {userData.rol.toLowerCase() !== 'superadmin' && userData.entidad && (
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 sm:px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm">
+                    🏥 {userData.entidad}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -83,7 +94,7 @@ export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileMod
               type="text"
               value={userData.nombre}
               disabled={!isEditing}
-              className={`input-admin ${!isEditing ? 'readonly' : ''}`}
+              className={`input-admin transition-colors dark:bg-white dark:disabled:bg-white dark:text-slate-900 dark:disabled:text-slate-900 ${!isEditing ? 'readonly cursor-not-allowed opacity-90' : ''}`}
               onChange={e => setUserData({ ...userData, nombre: e.target.value })}
             />
           </div>
@@ -94,7 +105,7 @@ export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileMod
               type="email"
               value={userData.email}
               disabled={!isEditing}
-              className={`input-admin ${!isEditing ? 'readonly' : ''}`}
+              className={`input-admin transition-colors dark:bg-white dark:disabled:bg-white dark:text-slate-900 dark:disabled:text-slate-900 ${!isEditing ? 'readonly cursor-not-allowed opacity-90' : ''}`}
               onChange={e => setUserData({ ...userData, email: e.target.value })}
             />
           </div>
@@ -105,10 +116,24 @@ export default function ProfileModal({ onClose, userRole = "Admin" }: ProfileMod
               type="tel"
               value={userData.telefono}
               disabled={!isEditing}
-              className={`input-admin ${!isEditing ? 'readonly' : ''}`}
+              className={`input-admin transition-colors dark:bg-white dark:disabled:bg-white dark:text-slate-900 dark:disabled:text-slate-900 ${!isEditing ? 'readonly cursor-not-allowed opacity-90' : ''}`}
               onChange={e => setUserData({ ...userData, telefono: e.target.value })}
             />
           </div>
+
+          {userData.rol.toLowerCase() !== 'superadmin' && (
+            <div className="form-group">
+              <label>Entidad / Hospital Asignado</label>
+              <input
+                type="text"
+                value={userData.entidad}
+                disabled
+                readOnly
+                className="input-admin cursor-not-allowed bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 opacity-80 transition-colors"
+                title="La entidad asignada no se puede modificar"
+              />
+            </div>
+          )}
 
           {/* botones */}
           <div className="modal-footer">
