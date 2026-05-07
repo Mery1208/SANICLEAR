@@ -23,7 +23,8 @@ type TabType = 'zonas' | 'usuarios';
 
 const Gestion: React.FC = () => {
   const { query } = useBusquedaStore();
-  const { rol: currentUserRole } = useAuth();
+  const { usuario: currentUser } = useAuth();
+  const currentUserRole = currentUser?.rol;
   const [tab, setTab] = useState<TabType>('zonas');
   const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState("");
@@ -38,7 +39,8 @@ const Gestion: React.FC = () => {
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [showUsuarioModal, setShowUsuarioModal] = useState(false);
   const [editUsuario, setEditUsuario] = useState<any>(null);
-  const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana", entidad: "" });
+  const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana", entidad: "", entidad_id: "" });
+  const [entidades, setEntidades] = useState<any[]>([]);
 
   const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'zona' | 'usuario', id: any, nombre: string } | null>(null);
 
@@ -66,7 +68,13 @@ const Gestion: React.FC = () => {
   const fetchZonas = async () => {
     setLoading(true);
     try {
-      const result = await supabase.from('zonas').select('*').order('nombre', { ascending: true });
+      let query = supabase.from('zonas').select('*').order('nombre', { ascending: true });
+
+      if (currentUserRole === 'admin' && currentUser?.entidad_id) {
+        query = query.eq('entidad_id', currentUser.entidad_id);
+      }
+
+      const result = await query;
 
       if (result?.error) throw result.error;
       setZonas(result.data || []);
@@ -82,7 +90,14 @@ const Gestion: React.FC = () => {
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
-      const result = await supabase.from('usuarios').select('*').order('nombre', { ascending: true });
+      let query = supabase.from('usuarios').select('*').order('nombre', { ascending: true });
+
+      // Si es admin, filtrar solo por su entidad
+      if (currentUserRole === 'admin' && currentUser?.entidad_id) {
+        query = query.eq('entidad_id', currentUser.entidad_id);
+      }
+
+      const result = await query;
 
       if (result?.error) throw result.error;
       setUsuarios(result.data || []);
@@ -94,10 +109,19 @@ const Gestion: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (tab === 'zonas') fetchZonas();
-    else fetchUsuarios();
-  }, [tab]);
+   const fetchEntidades = async () => {
+     if (currentUserRole !== 'superadmin') return;
+     const { data } = await supabase.from('entidades').select('*').order('nombre_hospital');
+     setEntidades(data || []);
+   };
+
+   useEffect(() => {
+     if (tab === 'zonas') fetchZonas();
+     else {
+       fetchUsuarios();
+       fetchEntidades();
+     }
+   }, [tab]);
 
   // Zonas functions
   const openEditZona = (z: any) => {
@@ -115,13 +139,18 @@ const Gestion: React.FC = () => {
   const saveZona = async () => {
     if (!zonaForm.nombre) return;
 
+    const zonaData = {
+      ...zonaForm,
+      entidad_id: currentUserRole === 'admin' ? (currentUser?.entidad_id || null) : (zonaForm.entidad_id || null)
+    };
+
     if (editZona) {
-      const { error } = await supabase.from('zonas').update(zonaForm).eq('id', editZona.id);
+      const { error } = await supabase.from('zonas').update(zonaData).eq('id', editZona.id);
       if (!error) {
-        setZonas(prev => prev.map(z => z.id === editZona.id ? { ...zonaForm, id: editZona.id } : z));
+        setZonas(prev => prev.map(z => z.id === editZona.id ? { ...zonaData, id: editZona.id } : z));
       }
     } else {
-      const { data, error } = await supabase.from('zonas').insert([zonaForm]).select();
+      const { data, error } = await supabase.from('zonas').insert([zonaData]).select();
       if (!error && data) {
         setZonas(prev => [...prev, data[0]]);
       }
@@ -136,17 +165,33 @@ const Gestion: React.FC = () => {
   };
 
   // Usuarios functions
-   const openEditUsuario = (u: any) => {
-     setEditUsuario(u);
-     setUsuarioForm({ nombre: u.nombre, apellidos: u.apellidos || "", email: u.email, rol: u.rol, turno: u.turno || "Mañana", entidad: u.entidad || "" });
-     setShowUsuarioModal(true);
-   };
+    const openEditUsuario = (u: any) => {
+      setEditUsuario(u);
+      setUsuarioForm({ 
+        nombre: u.nombre, 
+        apellidos: u.apellidos || "", 
+        email: u.email, 
+        rol: u.rol, 
+        turno: u.turno || "Mañana", 
+        entidad: u.entidad || "",
+        entidad_id: u.entidad_id || ""
+      });
+      setShowUsuarioModal(true);
+    };
 
-   const openNewUsuario = () => {
-     setEditUsuario(null);
-     setUsuarioForm({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana", entidad: "Hospital Central" });
-     setShowUsuarioModal(true);
-   };
+    const openNewUsuario = () => {
+      setEditUsuario(null);
+      setUsuarioForm({ 
+        nombre: "", 
+        apellidos: "", 
+        email: "", 
+        rol: "operario", 
+        turno: "Mañana", 
+        entidad: "",
+        entidad_id: currentUserRole === 'admin' ? (currentUser?.entidad_id || "") : ""
+      });
+      setShowUsuarioModal(true);
+    };
 
   const saveUsuario = async () => {
     if (!usuarioForm.nombre || !usuarioForm.email) return;
@@ -156,9 +201,10 @@ const Gestion: React.FC = () => {
        apellidos: usuarioForm.apellidos,
        email: usuarioForm.email,
        rol: usuarioForm.rol,
-       turno: usuarioForm.turno,
-       entidad: usuarioForm.entidad
-     };
+        turno: usuarioForm.turno,
+        entidad: usuarioForm.entidad,
+        entidad_id: usuarioForm.entidad_id || null
+      };
 
     if (editUsuario) {
       const { error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id);
@@ -347,6 +393,23 @@ const Gestion: React.FC = () => {
               </select>
             </div>
           </div>
+
+          {currentUserRole === 'superadmin' && (
+            <div className="mb-4">
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Entidad / Hospital</label>
+              <select 
+                value={zonaForm.entidad_id || ""} 
+                onChange={e => setZonaForm({ ...zonaForm, entidad_id: e.target.value })}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-white"
+              >
+                <option value="" className="text-black">Sin Entidad (Global)</option>
+                {entidades.map(ent => (
+                  <option key={ent.id} value={ent.id} className="text-black">{ent.nombre_hospital}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowZonaModal(false)} variant="secondary" className="flex-1 py-2.5" />
             <Button text="Guardar" onClick={saveZona} variant="primary" className="flex-1 py-2.5 shadow-sm" />
@@ -395,6 +458,23 @@ const Gestion: React.FC = () => {
                </select>
              </div>
           </div>
+
+          {currentUserRole === 'superadmin' && (
+             <div className="mb-4">
+               <label className="block text-xs font-semibold text-gray-600 mb-1">Entidad / Hospital</label>
+               <select 
+                 value={usuarioForm.entidad_id} 
+                 onChange={e => setUsuarioForm({ ...usuarioForm, entidad_id: e.target.value })}
+                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-white"
+               >
+                 <option value="" className="text-black">Sin Entidad (Global)</option>
+                 {entidades.map(ent => (
+                   <option key={ent.id} value={ent.id} className="text-black">{ent.nombre_hospital}</option>
+                 ))}
+               </select>
+             </div>
+           )}
+
           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
              <Button text="Cancelar" onClick={() => setShowUsuarioModal(false)} variant="secondary" className="flex-1 py-2.5" />
              <Button text="Guardar" onClick={saveUsuario} variant="primary" className="flex-1 py-2.5 shadow-sm" />

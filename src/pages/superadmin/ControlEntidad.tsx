@@ -265,12 +265,12 @@ const ControlEntidad: React.FC = () => {
   return (
     <div className="font-sans">
       <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight">Panel de Control: {entidad.nombre_hospital}</h2>
-          <p className="text-gray-400 text-sm font-medium italic">Gestión maestra con permisos extendidos · {entidad.codigo}</p>
+          <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight">Panel de Control: {entidad.nombre_hospital}</h2>
+          <p className="text-gray-400 dark:text-gray-500 text-sm font-medium italic">Gestión maestra con permisos extendidos · {entidad.codigo}</p>
         </div>
       </div>
       
@@ -283,7 +283,7 @@ const ControlEntidad: React.FC = () => {
           { title: 'Tareas Activas', value: counts.tareas, icon: <Clock size={24} />, accent: 'text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400' },
           { title: 'Incidencias', value: counts.incidencias, icon: <AlertTriangle size={24} />, accent: 'text-red-600 bg-red-50 dark:bg-red-900/30 dark:text-red-400' },
         ].map((card) => (
-          <div key={card.title} className="bg-white dark:bg-transparent rounded-xl border border-gray-100 dark:border-gray-700 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div key={card.title} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>{card.title}</p>

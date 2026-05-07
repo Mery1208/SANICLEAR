@@ -211,7 +211,7 @@ const Notificaciones: React.FC = () => {
                 <tr><td colSpan={isSuperadmin ? 6 : 5} className="p-8 text-center text-gray-400 italic">No hay notificaciones que coincidan.</td></tr>
               )}
               {filteredNotif.map(n => (
-                <tr key={n.id} className="border-b last:border-0 hover:bg-gray-50 cursor-pointer" onClick={() => marcarLeida(n.id)}>
+                <tr key={n.id} className="border-b last:border-0 border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors" onClick={() => marcarLeida(n.id)}>
                   <td className={`px-4 py-3 font-medium text-gray-800 dark:text-white ${!n.leida ? "font-bold" : ""}`}>{n.titulo}</td>
                   {isSuperadmin && (
                     <td className="px-4 py-3 text-gray-500 dark:text-white text-xs">{entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global'}</td>
@@ -233,13 +233,13 @@ const Notificaciones: React.FC = () => {
              <div className="p-6 text-center text-gray-500 bg-white rounded-xl border border-dashed">No tienes notificaciones recientes.</div>
           )}
           {filteredNotif.map(n => (
-            <div key={n.id} onClick={() => marcarLeida(n.id)} className={`bg-white rounded-xl border p-4 cursor-pointer hover:shadow-md transition-shadow ${!n.leida ? "border-l-4 border-l-blue-500" : ""}`}>
+            <div key={n.id} onClick={() => marcarLeida(n.id)} className={`bg-white dark:bg-slate-800 rounded-xl border dark:border-slate-700 p-4 cursor-pointer hover:shadow-md transition-shadow ${!n.leida ? "border-l-4 border-l-blue-500" : ""}`}>
               <div className="flex justify-between items-start mb-1">
-                <span className="font-semibold text-gray-800 text-sm">{tipoIcon[n.tipo]} {n.titulo}</span>
+                <span className="font-semibold text-gray-800 dark:text-white text-sm flex items-center gap-2">{tipoIcon[n.tipo]} {n.titulo}</span>
                 {!n.leida && <span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 shrink-0"></span>}
               </div>
-              <p className="text-gray-500 text-xs mb-2">{n.mensaje}</p>
-              <p className="text-gray-400 text-xs">{new Date(n.fecha).toLocaleString('es-ES')}</p>
+              <p className="text-gray-500 dark:text-slate-400 text-xs mb-2">{n.mensaje}</p>
+              <p className="text-gray-400 dark:text-slate-500 text-[10px]">{new Date(n.fecha).toLocaleString('es-ES')}</p>
             </div>
           ))}
         </div>

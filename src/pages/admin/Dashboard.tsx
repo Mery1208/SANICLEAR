@@ -5,6 +5,7 @@ import { Clock, AlertTriangle, CheckCircle, RefreshCw, PlusCircle, History, Sear
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import { useBusquedaStore } from '../../store/busquedaStore';
+import { useAuth } from '../../context/AuthContext';
 
 interface Tarea {
   id: number;
@@ -39,6 +40,8 @@ const PRIORIDAD_BADGE: Record<string, string> = {
 
 const Dashboard: React.FC = () => {
   const { query } = useBusquedaStore();
+  const { usuario: currentUser } = useAuth();
+  const currentUserRole = currentUser?.rol;
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [incidencias, setIncidencias] = useState<Incidencia[]>([]);
   const [usuarios, setUsuarios] = useState<any[]>([]);
@@ -60,11 +63,24 @@ const Dashboard: React.FC = () => {
     );
 
     try {
+      let tQuery = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false });
+      let iQuery = supabase.from('incidencias').select('id, prioridad, estado, created_at');
+      let uQuery = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
+      let zQuery = supabase.from('zonas').select('id, nombre');
+
+      // Filtrado por entidad para Administradores
+      if (currentUserRole === 'admin' && currentUser?.entidad_id) {
+        tQuery = tQuery.eq('entidad_id', currentUser.entidad_id);
+        iQuery = iQuery.eq('entidad_id', currentUser.entidad_id);
+        uQuery = uQuery.eq('entidad_id', currentUser.entidad_id);
+        zQuery = zQuery.eq('entidad_id', currentUser.entidad_id);
+      }
+
       const dataPromise = Promise.all([
-        supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false }),
-        supabase.from('incidencias').select('id, prioridad, estado, created_at'),
-        supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario'),
-        supabase.from('zonas').select('id, nombre')
+        tQuery,
+        iQuery,
+        uQuery,
+        zQuery
       ]);
 
       const [tRes, iRes, uRes, zRes] = await Promise.race([dataPromise, timeoutPromise]) as any;
@@ -158,6 +174,7 @@ const Dashboard: React.FC = () => {
       asignado_id: form.operario,
       estado: "pendiente",
       prioridad: form.prioridad,
+      entidad_id: currentUserRole === 'admin' ? (currentUser?.entidad_id || null) : null
     };
 
     const { data, error } = await supabase.from('tareas').insert([insertData]).select();
@@ -209,9 +226,9 @@ const Dashboard: React.FC = () => {
         <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Panel de Control</h2>
           <p className="text-gray-400 text-sm font-medium italic">Resumen general y estado del sistema en tiempo real</p>
-      {(zonas.length === 0 || usuarios.length === 0) && (
-            <p className="text-amber-600 text-sm font-semibold bg-amber-50 px-3 py-2 rounded-lg inline-block mt-2">
-              ⚠️ Datos mínimos no configurados. Ve a <strong>Gestión Zonas y Usuarios</strong> para añadir zonas y operarios.
+          {(zonas.length === 0 || usuarios.length === 0) && (
+            <p className="text-amber-600 dark:text-amber-400 text-sm font-semibold bg-amber-50 dark:bg-amber-900/30 px-3 py-2 rounded-lg inline-block mt-2">
+               Datos mínimos no configurados. Ve a <strong>Gestión Zonas y Usuarios</strong> para añadir zonas y operarios.
             </p>
           )}
         </div>
@@ -233,23 +250,23 @@ const Dashboard: React.FC = () => {
         </button>
       </div>
 
-      {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
+      {ok && <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
-          ["Pendientes", pendientes, <Clock size={16} />, "text-yellow-600 bg-yellow-50"],
-          ["Alertas",     alertas,    <AlertTriangle size={16} />, "text-red-600 bg-red-50"],
-          ["Hechas",      hoy,       <CheckCircle size={16} />,  "text-green-600 bg-green-50"],
-          ["En Curso",    en_curso,   <RefreshCw size={16} />, "text-blue-600 bg-blue-50"],
-        ].map(([l, v, ic, cls]) => (
-          <div key={l as string} className="bg-white rounded-lg border border-gray-50 p-2 lg:p-3 shadow-sm hover:shadow-md transition-shadow">
+          { label: "Tareas Pend.", value: pendientes, icon: <Clock size={20} />, textCls: "text-yellow-600 dark:text-yellow-300", bgCls: "bg-yellow-50 dark:bg-yellow-500/30" },
+          { label: "Alertas", value: alertas, icon: <AlertTriangle size={20} />, textCls: "text-red-600 dark:text-red-300", bgCls: "bg-red-50 dark:bg-red-500/30" },
+          { label: "Tareas Hechas", value: hoy, icon: <CheckCircle size={20} />, textCls: "text-green-600 dark:text-green-300", bgCls: "bg-green-50 dark:bg-green-500/30" },
+          { label: "Tareas En Curso", value: en_curso, icon: <RefreshCw size={20} />, textCls: "text-blue-600 dark:text-blue-300", bgCls: "bg-blue-50 dark:bg-blue-500/30" },
+        ].map((item) => (
+          <div key={item.label} className="bg-white dark:bg-[#1e3a5f]/40 rounded-xl border border-gray-100 dark:border-gray-800 p-3 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start gap-3">
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-black text-gray-400 uppercase tracking-wider">{l as string}</p>
-                <p className={`text-lg font-bold ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+                <p className="text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">{item.label}</p>
+                <p className={`text-xl font-bold mt-1 ${item.textCls}`}>{item.value}</p>
               </div>
-              <div className={`flex-shrink-0 p-2 rounded-lg ${(cls as string).split(' ')[1]}`}>
-                {ic as React.ReactNode}
+              <div className={`flex-shrink-0 p-2.5 rounded-lg ${item.bgCls} ${item.textCls}`}>
+                {item.icon}
               </div>
             </div>
           </div>
@@ -257,8 +274,8 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-6">Incidencias por mes</p>
+        <div className="lg:col-span-2 bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm p-5 sm:p-8">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-10">Incidencias por mes</p>
           {chartData.length === 0 ? (
              <div className="h-[240px] flex items-center justify-center text-gray-400 font-semibold text-sm border-2 border-dashed border-gray-100 rounded-2xl">
                Aún no hay datos históricos de incidencias
@@ -277,15 +294,15 @@ const Dashboard: React.FC = () => {
           )}
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-6">Actividad reciente</p>
-          <div className="flex flex-col gap-5">
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm p-5 sm:p-8">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-10">Actividad reciente</p>
+          <div className="flex flex-col gap-6">
             {actividadReciente.map((a, i) => (
               <div key={i} className="flex gap-4 group">
-                <div className="w-1.5 h-auto bg-gray-100 group-hover:bg-blue-400 rounded-full transition-colors"></div>
+                <div className="w-1.5 h-auto bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-400 rounded-full transition-colors"></div>
                 <div>
-                  <p className="text-xs text-gray-700 font-bold leading-relaxed">{a}</p>
-                  <p className="text-[10px] text-gray-400 font-semibold mt-1 uppercase">Hace {i+1} min</p>
+                  <p className="text-xs text-gray-700 dark:text-gray-200 font-bold leading-relaxed">{a}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-1 uppercase">Hace {i+1} min</p>
                 </div>
               </div>
             ))}
@@ -302,8 +319,8 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50/50 dark:bg-slate-900/50">
-              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
+              <thead className="bg-gray-50/50 dark:bg-slate-900/50 border-b dark:border-slate-700">
+              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
                 {(query ? tareasFiltradas : tareas).length === 0 && (
@@ -370,12 +387,12 @@ const Dashboard: React.FC = () => {
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Título de la Tarea</label>
                     <input value={form.titulo} onChange={e => setForm({...form, titulo:e.target.value})}
                       placeholder="Ej: Limpieza profunda UCI"
-                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+                      className="w-full border border-blue-50 dark:border-gray-700 rounded-2xl bg-white dark:bg-[#1e293b] px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
                     <select value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
-                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                      className="w-full border border-blue-50 dark:border-gray-700 rounded-2xl bg-white dark:bg-[#1e293b] px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all">
                       <option value="">Seleccionar...</option>
                       {zonas.map(z => <option key={z.id} value={z.nombre}>{z.nombre}</option>)}
                     </select>
@@ -383,7 +400,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Operario</label>
                     <select value={form.operario} onChange={e => setForm({...form, operario:e.target.value})}
-                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white">
+                      className="w-full border border-blue-50 dark:border-gray-700 rounded-2xl bg-white dark:bg-[#1e293b] px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all">
                       <option value="">Seleccionar...</option>
                       {usuarios.map(u => <option key={u.id} value={u.id}>{u.nombre} {u.apellidos}</option>)}
                     </select>
@@ -393,7 +410,7 @@ const Dashboard: React.FC = () => {
                       <div className="flex flex-row gap-2 sm:gap-3">
                         {["alta","media","baja"].map(p => (
                           <button key={p} onClick={() => setForm({...form, prioridad:p})}
-                            className={`flex-1 py-2.5 sm:py-3 text-xs font-black uppercase tracking-widest rounded-2xl border transition-all ${form.prioridad===p ? "bg-[#1e3a5f] text-white border-[#1e3a5f] shadow-lg shadow-blue-900/10":"border-gray-100 bg-gray-50/50 text-gray-400 hover:bg-gray-100"}`}>
+                            className={`flex-1 py-2.5 sm:py-3 text-xs font-black uppercase tracking-widest rounded-2xl border transition-all ${form.prioridad===p ? "bg-[#1e3a5f] dark:bg-blue-600 text-white border-[#1e3a5f] dark:border-blue-600 shadow-lg shadow-blue-900/10" : "border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1e293b] text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
                             {p}
                           </button>
                         ))}
@@ -405,16 +422,16 @@ const Dashboard: React.FC = () => {
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
                     <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
                       rows={2} placeholder="Instrucciones especiales..."
-                      className="w-full border border-blue-50 rounded-2xl bg-gray-50/50 px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+                      className="w-full border border-blue-50 dark:border-gray-700 rounded-2xl bg-white dark:bg-[#1e293b] px-4 py-2.5 sm:py-3 text-sm font-semibold text-[#1e3a5f] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
                 </div>
 
                 <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2 sm:mt-4">
-              <button onClick={() => setShowModal(false)} className="px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 transition-colors shrink-0">Cancelar</button>
-              <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
-                className="flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:not(:disabled):bg-blue-700 hover:not(:disabled):shadow-blue-200">
-                Asignar Tarea
-              </button>
-            </div>
+                  <button onClick={() => setShowModal(false)} className="px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0">Cancelar</button>
+                  <button onClick={crearTarea} disabled={!form.titulo || !form.zona || !form.operario}
+                    className="flex-1 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:not(:disabled):bg-blue-700 hover:not(:disabled):shadow-blue-200">
+                    Asignar Tarea
+                  </button>
+                </div>
               </>
             )}
           </div>
@@ -425,3 +442,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+            

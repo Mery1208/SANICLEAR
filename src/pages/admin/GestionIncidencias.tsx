@@ -6,15 +6,15 @@ import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
 import { AlertTriangle, CheckCircle, Clock, TrendingUp, Plus, CheckCircle2, Building2 } from 'lucide-react';
 
-const ESTADO_BADGE: Record<string, string> = { 
-  abierta: "bg-red-50 text-red-500 border border-red-100", 
-  en_revision: "bg-orange-50 text-orange-500 border border-orange-100", 
-  resuelta: "bg-green-50 text-green-500 border border-green-100" 
+const ESTADO_BADGE: Record<string, string> = {
+  abierta: "bg-red-50 text-red-500 border border-red-100",
+  en_revision: "bg-orange-50 text-orange-500 border border-orange-100",
+  resuelta: "bg-green-50 text-green-500 border border-green-100"
 };
 
-const PRIORIDAD_BADGE: Record<string, string> = { 
-  alta: "text-red-600 font-bold", 
-  media: "text-orange-500 font-bold", 
+const PRIORIDAD_BADGE: Record<string, string> = {
+  alta: "text-red-600 font-bold",
+  media: "text-orange-500 font-bold",
   baja: "text-green-500 font-bold",
   critica: "text-red-800 font-black uppercase"
 };
@@ -39,12 +39,12 @@ const GestionIncidencias: React.FC = () => {
   const [notaTexto, setNotaTexto] = useState("");
   const [ok, setOk] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [createForm, setCreateForm] = useState({ tipo:"", zona:"", descripcion:"", prioridad:"media", urgente:false });
+  const [createForm, setCreateForm] = useState({ tipo: "", zona: "", descripcion: "", prioridad: "media", urgente: false });
   const [operarios, setOperarios] = useState<any[]>([]);
 
   const fetchIncidencias = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from('incidencias')
       .select(`
         id,
@@ -60,6 +60,13 @@ const GestionIncidencias: React.FC = () => {
         entidades:entidad_id ( nombre_hospital )
       `)
       .order('created_at', { ascending: false });
+
+    // Filtrado por entidad para administradores
+    if (usuario?.rol === 'admin' && usuario?.entidad_id) {
+      query = (query as any).eq('entidad_id', usuario.entidad_id);
+    }
+
+    const { data, error } = await query;
 
     // Ahora entra si no hay error y data existe
     if (!error && data) {
@@ -86,10 +93,16 @@ const GestionIncidencias: React.FC = () => {
     if (data) setEntidades(data);
   };
 
-  const fetchOperarios = async () => {
-    const { data } = await supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
-    if (data) setOperarios(data);
-  };
+   const fetchOperarios = async () => {
+     let query = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
+     
+     if (usuario?.rol === 'admin' && usuario?.entidad_id) {
+       query = query.eq('entidad_id', usuario.entidad_id);
+     }
+
+     const { data } = await query;
+     if (data) setOperarios(data);
+   };
 
   const stats = {
     abiertas: incidencias.filter(i => i.estado === "abierta").length,
@@ -104,10 +117,10 @@ const GestionIncidencias: React.FC = () => {
   const filteredIncidencias = useMemo(() => {
     return incidencias.filter(i => {
       const matchStatus =
-          filterStatus === 'Todas' ? true :
+        filterStatus === 'Todas' ? true :
           filterStatus === 'Abiertas' ? i.estado === 'abierta' :
-          filterStatus === 'En Revisión' ? (i.estado === 'en_revision' || i.estado === 'en_proceso') :
-          i.estado === 'resuelta';
+            filterStatus === 'En Revisión' ? (i.estado === 'en_revision' || i.estado === 'en_proceso') :
+              i.estado === 'resuelta';
 
       const matchCat = filterCategory ? i.tipo === filterCategory : true;
       const matchEntidad = filterEntidad ? i.hospital === filterEntidad : true;
@@ -118,7 +131,7 @@ const GestionIncidencias: React.FC = () => {
   const updateEstado = async (id: number, estado: string, notas: string) => {
     const { error } = await supabase.from('incidencias').update({ estado, notas }).eq('id', id);
     if (!error) {
-      setIncidencias(prev => prev.map(i => i.id === id ? {...i, estado, notas} : i));
+      setIncidencias(prev => prev.map(i => i.id === id ? { ...i, estado, notas } : i));
       setSelected(null);
       setOk("¡Estado actualizado!");
       setTimeout(() => setOk(""), 3000);
@@ -148,7 +161,7 @@ const GestionIncidencias: React.FC = () => {
       setShowCreateModal(false);
       setOk("¡Incidencia creada!");
       fetchIncidencias();
-      setCreateForm({ tipo:"", zona:"", descripcion:"", prioridad:"media", urgente:false });
+      setCreateForm({ tipo: "", zona: "", descripcion: "", prioridad: "media", urgente: false });
       setTimeout(() => setOk(""), 3000);
     } else {
       console.error(error);
@@ -176,275 +189,262 @@ const GestionIncidencias: React.FC = () => {
 
       {ok && <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl p-4 text-sm font-bold animate-bounce">✓ {ok}</div>}
 
-       {/* Stats row */}
-       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
-         {[
-           ["Abiertas",  stats.abiertas,    <AlertTriangle size={16} />, "text-red-600 bg-red-50"],
-           ["Resueltas", stats.resueltas,   <CheckCircle size={16} />,   "text-green-600 bg-green-50"],
-           ["En Rev.",   stats.en_revision, <Clock size={16} />,         "text-orange-600 bg-orange-50"],
-           ["Total",     stats.total,       <TrendingUp size={16} />,    "text-blue-600 bg-blue-50"]
-         ].map(([l, v, ic, cls]) => (
-           <div key={l as string} className="bg-white rounded-lg border border-gray-50 p-2 lg:p-3 shadow-sm hover:shadow-md transition-shadow">
-             <div className="flex justify-between items-start gap-3">
-               <div className="min-w-0 flex-1">
-                 <p className="text-xs font-black text-gray-400 uppercase tracking-wider">{l as string}</p>
-                 <p className={`text-lg font-bold ${(cls as string).split(' ')[0]}`}>{v as number}</p>
-               </div>
-               <div className={`flex-shrink-0 p-2 rounded-lg ${(cls as string).split(' ')[1]}`}>
-                 {ic as React.ReactNode}
-               </div>
-             </div>
-           </div>
-         ))}
-       </div>
+      {/* Stats row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {[
+          ["Abiertas", stats.abiertas, <AlertTriangle size={16} />, "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30"],
+          ["Resueltas", stats.resueltas, <CheckCircle size={16} />, "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30"],
+          ["En Rev.", stats.en_revision, <Clock size={16} />, "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30"],
+          ["Total", stats.total, <TrendingUp size={16} />, "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30"]
+        ].map(([l, v, ic, cls]) => (
+          <div key={l as string} className="bg-white dark:bg-[#1e3a5f]/40 rounded-xl border border-gray-50 dark:border-gray-800 p-2 lg:p-3 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 dark:text-gray-300 tracking-wider truncate">{l as string}</p>
+                <p className={`text-xl lg:text-2xl font-black mt-1 ${(cls as string).split(' ')[0]}`}>{v as number}</p>
+              </div>
+              <div className={`p-2 lg:p-2.5 rounded-lg shrink-0 ${cls as string}`}>
+                {ic as React.ReactNode}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Filter Categories */}
       <div className="flex gap-2 py-2 overflow-x-auto no-scrollbar">
         {categories.map(cat => (
-          <button 
-            key={cat} 
+          <button
+            key={cat}
             onClick={() => setFilterCategory(filterCategory === cat ? null : cat)}
-            className={`px-4 py-2.5 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${filterCategory === cat ? "bg-[#1e3a5f] text-white border-[#1e3a5f] shadow-md":"bg-white text-gray-400 border-gray-100 hover:bg-gray-50"}`}
+            className={`px-4 py-2.5 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${filterCategory === cat ? "bg-[#1e3a5f] text-white border-[#1e3a5f] shadow-md" : "bg-white text-gray-400 border-gray-100 hover:bg-gray-50"}`}
           >
-            {cat} <span className={`ml-1.5 ${filterCategory === cat ? "text-blue-300":"text-blue-400"}`}>{getCatCount(cat)}</span>
+            {cat} <span className={`ml-1.5 ${filterCategory === cat ? "text-blue-300" : "text-blue-400"}`}>{getCatCount(cat)}</span>
           </button>
         ))}
-      </div>
-
-       {/* Status & Entity Filter Tabs */}
-       <div className="flex flex-wrap items-center gap-4">
-         <div className="flex gap-1.5 bg-gray-100/50 p-1 rounded-2xl w-fit">
-           {['Todas', 'Abiertas', 'En Revisión', 'Resueltas'].map((s: any) => (
-              <button 
-               key={s} 
-               onClick={() => setFilterStatus(s)}
-               className={`px-3 py-1.5 text-[8px] sm:px-4 sm:py-2 sm:text-[9px] md:px-6 md:py-2 md:text-[10px] rounded-xl font-black uppercase tracking-widest transition-all whitespace-nowrap ${filterStatus === s ? "bg-white text-[#1e3a5f] shadow-sm":"text-gray-400 hover:text-gray-600"}`}
+        {/* Status Tabs */}
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex gap-1.5 bg-gray-100/50 dark:bg-slate-700/50 p-1 rounded-2xl w-fit">
+            {['Todas', 'Abiertas', 'En Revisión', 'Resueltas'].map((s: any) => (
+              <button
+                key={s}
+                onClick={() => setFilterStatus(s)}
+                className={`px-3 py-1.5 text-[8px] sm:px-4 sm:py-2 sm:text-[9px] md:px-6 md:py-2 md:text-[10px] rounded-xl font-black uppercase tracking-widest transition-all whitespace-nowrap ${filterStatus === s ? "bg-white dark:bg-blue-500 text-[#1e3a5f] dark:text-white shadow-sm" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}`}
               >
-               {s}
+                {s}
               </button>
-           ))}
-         </div>
-
-         {/* Entity Selector (Visible for superadmins or as simple display for admins) */}
-         <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-2xl px-3 py-1.5">
-           <Building2 size={14} className="text-gray-400" />
-           <select 
-             value={filterEntidad || ""} 
-             onChange={(e) => setFilterEntidad(e.target.value || null)}
-             className="text-[10px] font-bold text-[#1e3a5f] bg-transparent border-none focus:outline-none focus:ring-0 uppercase tracking-wider"
-           >
-             <option value="">Todas las entidades</option>
-             {entidades.map(e => <option key={e.id} value={e.nombre_hospital}>{e.nombre_hospital}</option>)}
-           </select>
-         </div>
-       </div>
+            ))}
+          </div>
+        </div>    </div>
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-         <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50/50 dark:bg-slate-900/50">
-                <tr>{["#","Hospital","Título","Tipo","Zona","Operario","Prioridad","Estado","Fecha",""].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">{h}</th>)}</tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
-               {filteredIncidencias.length === 0 && (
-                 <tr><td colSpan={9} className="p-10 text-center text-gray-400 font-bold italic">No se han encontrado reportes con estos filtros.</td></tr>
-               )}
-               {filteredIncidencias.map(i => (
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50/50 dark:bg-slate-900/50">
+              <tr>{["#", "Hospital", "Título", "Tipo", "Zona", "Operario", "Prioridad", "Estado", "Fecha", ""].map(h => <th key={h} className="text-left px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">{h}</th>)}</tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50 dark:divide-slate-700">
+              {filteredIncidencias.length === 0 && (
+                <tr><td colSpan={9} className="p-10 text-center text-gray-400 font-bold italic">No se han encontrado reportes con estos filtros.</td></tr>
+              )}
+              {filteredIncidencias.map(i => (
                 <tr key={i.id} className="hover:bg-blue-50/10 dark:hover:bg-blue-900/10 transition-colors">
                   <td className="px-6 py-4 text-[11px] font-bold text-gray-300">#{i.id}</td>
                   <td className="px-6 py-4">
                     <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">{i.hospital}</span>
                   </td>
-                  <td className="px-6 py-4 font-bold text-[#1e3a5f] text-[13px]">{i.titulo}</td>
-                  <td className="px-6 py-4 text-gray-400 text-[11px] font-black uppercase">{i.tipo || "Otro"}</td>
-                  <td className="px-6 py-4 text-gray-500 text-[12px] font-semibold">{i.zona}</td>
-                  <td className="px-6 py-4 text-[#1e3a5f] text-[12px] font-bold">{i.operario || "Sistema"}</td>
+                  <td className="px-6 py-4 font-bold text-[#1e3a5f] dark:text-white text-[13px]">{i.titulo}</td>
+                  <td className="px-6 py-4 text-gray-400 dark:text-gray-400 text-[11px] font-black uppercase">{i.tipo || "Otro"}</td>
+                  <td className="px-6 py-4 text-gray-500 dark:text-slate-300 text-[12px] font-semibold">{i.zona}</td>
+                  <td className="px-6 py-4 text-[#1e3a5f] dark:text-white text-[12px] font-bold">{i.operario || "Sistema"}</td>
                   <td className="px-6 py-4 text-[11px] uppercase tracking-wider font-black">
-                     <span className={PRIORIDAD_BADGE[i.prioridad] || "text-gray-400"}>{i.prioridad}</span>
+                    <span className={PRIORIDAD_BADGE[i.prioridad] || "text-gray-400"}>{i.prioridad}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${ESTADO_BADGE[i.estado === 'en_proceso' ? 'en_revision' : i.estado] || "bg-gray-100 text-gray-500"}`}>
-                       {i.estado.replace('_',' ')}
+                      {i.estado.replace('_', ' ')}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-400 text-[10px] font-semibold whitespace-nowrap">{new Date(i.created_at || i.fecha).toLocaleDateString('es-ES')}</td>
-                   <td className="px-2 sm:px-6 py-2 sm:py-4 text-right">
-                     <Button 
-                       text="Ver" 
-                       onClick={() => { setSelected(i); setNotaTexto(i.notas || ""); }} 
-                       variant="primary" 
-                       className="px-2 py-1 text-[10px] sm:px-4 sm:py-1.5 shadow-lg shadow-blue-100"
-                     />
-                   </td>
+                  <td className="px-2 sm:px-6 py-2 sm:py-4 text-right">
+                    <Button
+                      text="Ver"
+                      onClick={() => { setSelected(i); setNotaTexto(i.notas || ""); }}
+                      variant="primary"
+                      className="px-2 py-1 text-[10px] sm:px-4 sm:py-1.5 shadow-lg shadow-blue-100"
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-         </div>
+        </div>
       </div>
 
-       {/* Modal Crear Incidencia */}
-       {showCreateModal && (
-         <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)}>
-           <div className="flex flex-col gap-5 max-w-3xl w-full">
-             {/* Info de Entidad */}
-             <div className="flex flex-col gap-1.5">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Entidad / Hospital</label>
-               <div className="flex items-center gap-2 w-full border border-gray-100 rounded-2xl bg-gray-50 px-5 py-3.5 shadow-inner">
-                 <Building2 size={16} className="text-blue-500" />
-                 <span className="text-sm font-bold text-gray-600 uppercase tracking-tight">
-                   {usuario?.entidades?.nombre_hospital || (usuario?.rol === 'superadmin' ? "Gestión Global" : "Sin asignar")}
-                 </span>
-               </div>
-               <p className="text-[9px] text-gray-400 italic ml-1 mt-1">
-                 {usuario?.rol === 'superadmin' ? 'Como superadmin, registras en el sistema global.' : `Registrando incidencia para su entidad asignada.`}
-               </p>
-             </div>
-             <div className="flex flex-col gap-1.5">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
-                <select value={createForm.tipo} onChange={e => setCreateForm({...createForm, tipo:e.target.value})}
-                  className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
-                  <option value="" className="bg-white text-gray-400">Seleccionar...</option>
-                  {["Equipo","Material","Acceso","Zona","Otro"].map(t => <option key={t} value={t} className="bg-white text-[#1e3a5f]">{t}</option>)}
-                </select>
-             </div>
+      {/* Modal Crear Incidencia */}
+      {showCreateModal && (
+        <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)} maxWidth="max-w-4xl">
+          <div className="flex flex-col gap-5 w-full">
+            {/* Info de Entidad */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Entidad / Hospital</label>
+              <div className="flex items-center gap-2 w-full border border-gray-100 rounded-2xl bg-gray-50 px-5 py-3.5 shadow-inner">
+                <Building2 size={16} className="text-blue-500" />
+                <span className="text-sm font-bold text-gray-600 uppercase tracking-tight">
+                  {usuario?.entidades?.nombre_hospital || (usuario?.rol === 'superadmin' ? "Gestión Global" : "Sin asignar")}
+                </span>
+              </div>
+              <p className="text-[9px] text-gray-400 italic ml-1 mt-1">
+                {usuario?.rol === 'superadmin' ? 'Como superadmin, registras en el sistema global.' : `Registrando incidencia para su entidad asignada.`}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
+              <select value={createForm.tipo} onChange={e => setCreateForm({ ...createForm, tipo: e.target.value })}
+                className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
+                <option value="" className="bg-white text-gray-400">Seleccionar...</option>
+                {["Equipo", "Material", "Acceso", "Zona", "Otro"].map(t => <option key={t} value={t} className="bg-white text-[#1e3a5f]">{t}</option>)}
+              </select>
+            </div>
 
-             <div className="flex flex-col gap-1.5">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
-                <input value={createForm.zona} onChange={e => setCreateForm({...createForm, zona:e.target.value})}
-                  placeholder="Ej: UCI - Planta 2"
-                  className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
-             </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
+              <input value={createForm.zona} onChange={e => setCreateForm({ ...createForm, zona: e.target.value })}
+                placeholder="Ej: UCI - Planta 2"
+                className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+            </div>
 
-             <div className="flex flex-col gap-1.5">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
-                <textarea value={createForm.descripcion} onChange={e => setCreateForm({...createForm, descripcion:e.target.value})}
-                  rows={4} placeholder="Describe el problema detalladamente..."
-                  className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
-             </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+              <textarea value={createForm.descripcion} onChange={e => setCreateForm({ ...createForm, descripcion: e.target.value })}
+                rows={4} placeholder="Describe el problema detalladamente..."
+                className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+            </div>
 
-             <div className="flex flex-col gap-1.5">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                  {["baja","media","alta","critica"].map(p => {
-                    const isActive = (createForm.urgente && p === 'critica') || (!createForm.urgente && createForm.prioridad === p);
-                    return (
-                      <button key={p} type="button"
-                        onClick={() => !createForm.urgente && setCreateForm({...createForm, prioridad: p})}
-                        disabled={createForm.urgente}
-                        className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${isActive ? PRIORIDAD_COLORS[p].active : PRIORIDAD_COLORS[p].inactive} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
-                        {p.charAt(0).toUpperCase() + p.slice(1)}
-                      </button>
-                    );
-                  })}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                {["baja", "media", "alta", "critica"].map(p => {
+                  const isActive = (createForm.urgente && p === 'critica') || (!createForm.urgente && createForm.prioridad === p);
+                  return (
+                    <button key={p} type="button"
+                      onClick={() => !createForm.urgente && setCreateForm({ ...createForm, prioridad: p })}
+                      disabled={createForm.urgente}
+                      className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${isActive ? PRIORIDAD_COLORS[p].active : PRIORIDAD_COLORS[p].inactive} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                      {p.charAt(0).toUpperCase() + p.slice(1)}
+                    </button>
+                  );
+                })}
+              </div>
+              {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3 bg-gray-100 p-3 rounded-xl cursor-pointer hover:bg-gray-200 transition-colors shadow-sm border border-gray-100"
+                onClick={() => setCreateForm({ ...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad })}>
+                <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-gray-300"}`}>
+                  {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
                 </div>
-               {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
-             </div>
-
-             <div className="flex flex-col gap-3">
-               <div className="flex items-center gap-3 bg-gray-100 p-3 rounded-xl cursor-pointer hover:bg-gray-200 transition-colors shadow-sm border border-gray-100"
-                 onClick={() => setCreateForm({...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad})}>
-                 <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-gray-300"}`}>
-                   {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
-                 </div>
-                 <label className="text-xs text-[#1e3a5f] font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
-               </div>
-             </div>
+                <label className="text-xs text-[#1e3a5f] font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
+              </div>
+            </div>
 
             <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2">
               <Button text="Cancelar" onClick={() => setShowCreateModal(false)} variant="secondary" className="flex-1 py-3" />
               <Button text={loading ? "Creando..." : "Crear Incidencia"} onClick={handleCreateIncidencia} variant="primary" disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion} className="flex-1 py-3 shadow-sm" />
-             </div>
-           </div>
-         </Modal>
-       )}
+            </div>
+          </div>
+        </Modal>
+      )}
 
-       {/* Modal Detail View matched to Screenshot 2 */}
-       {selected && (
-         <Modal title={selected.titulo} onClose={() => setSelected(null)}>
-           <div className="p-2 max-w-3xl w-full">
-             <div className="flex justify-between items-start mb-6">
-                <div>
-                   <p className="text-[10px] font-black text-gray-300 mb-1 uppercase tracking-widest">#{selected.id}</p>
-                   <h3 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">{selected.titulo}</h3>
-                   <div className="flex gap-3 mt-1">
-                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.zona}</span>
-                      <span className="text-[10px] text-gray-400 font-bold">•</span>
-                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.operario}</span>
-                      <span className="text-[10px] text-gray-400 font-bold">•</span>
-                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')}</span>
-                   </div>
+      {/* Modal Detail View matched to Screenshot 2 */}
+      {selected && (
+        <Modal title={selected.titulo} onClose={() => setSelected(null)} maxWidth="max-w-4xl">
+          <div className="p-2 w-full">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <p className="text-[10px] font-black text-gray-300 mb-1 uppercase tracking-widest">#{selected.id}</p>
+                <h3 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">{selected.titulo}</h3>
+                <div className="flex gap-3 mt-1">
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.zona}</span>
+                  <span className="text-[10px] text-gray-400 font-bold">•</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.operario}</span>
+                  <span className="text-[10px] text-gray-400 font-bold">•</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')}</span>
                 </div>
-             </div>
-
-             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                {[
-                  ["Operario", selected.operario],
-                  ["Zona", selected.zona],
-                  ["Fecha", new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')],
-                  ["Prioridad", selected.prioridad]
-                ].map(([l, v]) => (
-                  <div key={l as string} className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
-                     <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">{l as string}</p>
-                     <p className={`text-[11px] font-bold text-[#1e3a5f] truncate ${l==="Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              {[
+                ["Operario", selected.operario],
+                ["Zona", selected.zona],
+                ["Fecha", new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')],
+                ["Prioridad", selected.prioridad]
+              ].map(([l, v]) => (
+                <div key={l as string} className="bg-white dark:bg-slate-700/30 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col gap-1 shadow-sm">
+                  <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest leading-none">{l as string}</p>
+                  <p className={`text-sm font-black text-[#1e3a5f] dark:text-white truncate ${l === "Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-3 mb-6">
+              <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1">Descripción</p>
+              <div className="bg-white dark:bg-slate-700/20 border border-blue-50 dark:border-slate-700/50 rounded-3xl p-5 text-sm font-bold text-slate-600 dark:text-slate-200 leading-relaxed shadow-sm">
+                {selected.descripcion || selected.desc}
+              </div>
+            </div>
+
+            {selected.foto_url && (
+              <div className="mb-10">
+                <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1 mb-8">Foto Adjunta</p>
+                <img src={selected.foto_url} alt="Incidencia" className="rounded-2xl max-h-64 object-cover border border-gray-100 shadow-sm" />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 mb-8">
+              <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1">Cambiar estado:</p>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {[
+                  ["resuelta", "Resuelta", "success"],
+                  ["abierta", "Abierta", "danger"],
+                  ["en_revision", "En Revisión", "primary"]
+                ].map(([v, l, varType]) => (
+                    <Button
+                      key={v}
+                      text={l as string}
+                      onClick={() => updateEstado(selected.id, v as string, notaTexto)}
+                      variant={varType as any}
+                      className="px-6 py-2 text-[10px] sm:py-2.5 sm:text-[11px] shadow-lg rounded-xl flex-initial min-w-[100px]"
+                    />
                 ))}
-             </div>
+              </div>
+            </div>
 
-             <div className="mb-8">
-                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Descripción</p>
-                 <div className="bg-blue-50/20 border border-blue-50 rounded-2xl p-5 text-sm font-semibold text-slate-600 leading-relaxed italic break-words">
-                   {selected.descripcion || selected.desc}
-                 </div>
-             </div>
+            <div className="flex flex-col gap-3 mb-6">
+              <label className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1">Añadir comentario de resolución:</label>
+              <textarea
+                value={notaTexto}
+                onChange={e => setNotaTexto(e.target.value)}
+                rows={3}
+                placeholder="Escribe cómo se resolvió la incidencia..."
+                className="w-full border border-gray-100 dark:border-slate-700/50 rounded-3xl p-5 text-sm font-black text-slate-700 dark:text-white bg-white dark:bg-slate-700/30 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none shadow-inner"
+              />
+            </div>
 
-             {selected.foto_url && (
-               <div className="mb-8">
-                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Foto Adjunta</p>
-                 <img src={selected.foto_url} alt="Incidencia" className="rounded-2xl max-h-64 object-cover border border-gray-100 shadow-sm" />
-               </div>
-             )}
-
-             <div className="mb-8">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-3">Cambiar estado:</p>
-                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                    {[
-                      ["resuelta", "Resuelta", "success"],
-                      ["abierta", "Abierta", "danger"],
-                      ["en_revision", "En Rev.", "primary"]
-                    ].map(([v, l, varType]) => (
-                      <Button 
-                        key={v} 
-                        text={l as string}
-                        onClick={() => updateEstado(selected.id, v as string, notaTexto)}
-                        variant={varType as any}
-                        className="flex-1 py-2 text-xs sm:py-3 sm:text-sm shadow-xl"
-                      />
-                    ))}
-                 </div>
-             </div>
-
-             <div className="flex flex-col gap-2 mb-6">
-                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Añadir comentario de resolución:</label>
-                 <textarea 
-                   value={notaTexto} 
-                   onChange={e => setNotaTexto(e.target.value)} 
-                   rows={4}
-                   placeholder="Escribe cómo se resolvió la incidencia..."
-                   className="w-full border border-gray-100 rounded-2xl p-5 text-sm font-semibold text-slate-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" 
-                 />
-             </div>
-
-             <Button 
-               text="Guardar comentario"
-               onClick={() => updateEstado(selected.id, selected.estado, notaTexto)}
-               variant="primary"
-               className="w-full py-2 text-xs sm:py-4 sm:text-sm shadow-xl shadow-blue-100"
-             />
-           </div>
-         </Modal>
-       )}
+            <div className="flex justify-center">
+              <Button
+                text="Guardar comentario"
+                onClick={() => updateEstado(selected.id, selected.estado, notaTexto)}
+                variant="primary"
+                className="px-10 py-3 text-xs sm:py-4 sm:text-sm shadow-xl shadow-blue-100 w-fit"
+              />
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

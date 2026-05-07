@@ -172,10 +172,10 @@ return (
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           {filteredEntidades.map((entidad) => (
-            <div key={entidad.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 flex flex-col group">
+            <div key={entidad.id} className="bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-all p-6 flex flex-col group">
               <div className="flex justify-between items-start mb-5 gap-2">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform">
                     <Building2 size={20} />
                   </div>
                   <div className="min-w-0">
@@ -204,20 +204,20 @@ return (
 
               <div className="flex items-center justify-between mb-6 mt-auto">
                 <Badge 
-                  cls={entidad.activa ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'} 
+                  cls={entidad.activa ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'} 
                   label={entidad.activa ? 'Activa' : 'Inactiva'} 
                 />
                 <Badge 
                   cls={
-                    entidad.plan_tipo === 'premium' ? 'bg-purple-50 text-purple-600 border-purple-200' : 
-                    entidad.plan_tipo === 'basic' ? 'bg-blue-50 text-blue-600 border-blue-200' : 
-                    'bg-gray-100 text-gray-500 border-gray-200'
+                    entidad.plan_tipo === 'premium' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800' : 
+                    entidad.plan_tipo === 'basic' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 
+                    'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-slate-600'
                   } 
                   label={`Plan ${entidad.plan_tipo}`} 
                 />
               </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-gray-50">
+          <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-gray-50 dark:border-slate-700">
                 <Button
                   text="Controlar"
                   variant="primary"
