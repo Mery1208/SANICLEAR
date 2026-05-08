@@ -14,6 +14,7 @@
     <img src="https://img.shields.io/badge/TAILWIND-v4_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind">
     <img src="https://img.shields.io/badge/SUPABASE-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
     <img src="https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+    <img src="https://img.shields.io/badge/GEMINI_AI-v1.5-8E75C2?style=for-the-badge&logo=google-gemini&logoColor=white" alt="Gemini AI">
   </p>
 
   <p align="center">
@@ -47,6 +48,7 @@ El sistema sustituye los partes de trabajo en papel por una gestión en tiempo r
 - **TypeScript 5.9** – Tipado estático
 - **Tailwind CSS 4** – Framework utility-first, diseño Mobile-First
 - **GSAP** – Animaciones fluidas (transiciones, scroll-trigger)
+- **React Markdown** – Renderizado de respuestas de la IA con formato premium
 - **Recharts** – Librería de gráficos (BarChart, LineChart)
 - **Lucide React** – Iconografía SVG consistente
 
@@ -140,6 +142,12 @@ El sistema sustituye los partes de trabajo en papel por una gestión en tiempo r
 - Cierre de sesión
 - Integración con Supabase Auth
 
+#### 7. SaniclearBot (Asistente de IA)
+- **Integración de LLM:** Uso de la API de Google Gemini (1.5 Flash/Pro)
+- **Grounding Dinámico:** Respuestas basadas 100% en la documentación técnica del proyecto
+- **UI de Chat:** Ventana flotante con animaciones y renderizado de Markdown
+- **Ayuda Contextual:** Capaz de explicar el manual de usuario y la arquitectura técnica al evaluador
+
 ---
 
 ## 📂 Estructura del Proyecto
@@ -159,24 +167,22 @@ limpieza-hospitalaria/
 │   ├── 📂 assets/              # Imágenes importadas + CSS global
 │   │   └── 📂 img/             # hospital.avif, medico.avif, pasillo.avif
 │   ├── 📂 components/          # Componentes reutilizables
-│   │   ├── 📂 common/          # Badge, Button, Modal, MenuLateral, StatCard, etc.
-│   │   └── 📂 operario/        # TarjetaTarea, ContadorTareas, NotificacionItem
+│   │   ├── 📂 common/          # Botón, Modal, AIAssistant (IA), etc.
+│   │   └── 📂 operario/        # Tareas, Incidencias, etc.
 │   ├── 📂 context/             # AuthContext (proveedor autenticación)
 │   ├── 📂 css/                 # Estilos específicos por rol
 │   ├── 📂 layouts/             # AdminLayout, OperarioLayout, SuperadminLayout
 │   ├── 📂 mock/                # Datos estáticos de prueba (incidencias.json, etc.)
-│   ├── 📂 pages/               # Vistas de la aplicación
-│   │   ├── 📂 admin/           # Dashboard, GestionZonaUsuarios, GestionIncidencias
-│   │   ├── 📂 common/          # Notificaciones, Perfil
-│   │   ├── 📂 operario/        # MisTareas, ReportarIncidencia, Tareas
-│   │   ├── 📂 public/          # Landing, Login, Terminos
-│   │   └── 📂 superadmin/      # PanelGlobal, EstadisticasSuperadmin, MetricasEntidad
-│   ├── 📂 routes/              # AppRouter (definición de rutas), RutaProtegida
-│   ├── 📂 store/               # Zustand stores (authStore, dataStore, busquedaStore)
+│   ├── 📂 pages/               # Vistas de la aplicación (Admin, Operario, etc.)
+│   ├── 📂 services/            # Servicios API e Inteligencia Artificial
+│   │   ├── 📜 gemini.ts       # Integración con Google Gemini
+│   │   └── 📜 SANICLEARS_TFG_1.md # Documentación (Contexto IA)
+│   ├── 📂 routes/              # AppRouter y protección de rutas
+│   ├── 📂 store/               # Zustand stores (estado global)
 │   ├── 📂 supabase/            # Cliente Supabase (client.ts)
-│   ├── 📜 App.tsx
-│   ├── 📜 main.tsx
-│   └── 📜 index.css
+│   ├── 📜 App.tsx              # Componente raíz
+│   ├── 📜 main.tsx             # Punto de entrada
+│   └── 📜 index.css            # Estilos globales
 │
 ├── 📜 .env.local               # Variables de entorno (NO COMMIT)
 ├── 📜 .env.example             # Ejemplo de variables
@@ -212,6 +218,7 @@ npm install
 # Crear archivo .env.local con:
 VITE_SUPABASE_URL=https://zwmfzqdamdibjermgnyo.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_GEMINI_API_KEY=AIzaSy... (Clave de Google AI Studio)
 
 # 4. Ejecutar en modo desarrollo
 npm run dev
@@ -250,7 +257,15 @@ Accede a: http://localhost:5173
 
 ---
 
-### 🗓️ MAYO 2026 — Pulido Final y UI/UX
+### 🗓️ MAYO 2026 — Integración de IA y Pulido Final
+ 
+ #### 📍 Semana 35 | Inteligencia Artificial y Experiencia de Usuario
+  
+ ✨ **Hito: SaniclearBot - El Asistente Inteligente:**
+ - **Integración de Gemini API:** Implementación de un asistente de IA capaz de responder dudas sobre el proyecto usando el manual oficial como fuente de verdad.
+ - **Renderizado de Markdown:** Soporte para tablas, listas y formato enriquecido en el chat para una comunicación profesional.
+ - **Grounding Técnico:** Configuración del sistema de "inyección de contexto" para evitar alucinaciones de la IA.
+ - **Refactorización UI/UX:** Mejora visual de los mensajes y optimización de la ventana de chat flotante.
 
 #### 📍 Semana 34 | Estandarización de Entidades y Accesibilidad
  
@@ -270,7 +285,7 @@ Accede a: http://localhost:5173
 - **Validación UI:** Añadidos contadores de caracteres interactivos visuales en los campos de texto (ej. creación de Notificaciones).
 - **Proyección de Futuro:** Integración de un apartado "Próximamente" (con estado bloqueado) en el menú lateral informando sobre la futura Fase 2 del proyecto: **Mapas interactivos 2D y Predicciones Avanzadas con IA**.
 
-#### 📍 Semana 32 | Corrección de Bugs y Consistencia Visual
+#### 📍 Semana 32 | 6, 7 y 8 de Mayo Corrección de Bugs y Consistencia Visual
 
 ✨ **Mejoras de Interfaz y Estabilidad:**
 - **Estandarización de Paneles:** Alineación corregida en las cabeceras de Admin y Superadmin (`Dashboard`, `GestionZonaUsuarios`, `PanelGlobal`) utilizando un sistema Flexbox homogéneo y responsivo.
@@ -282,7 +297,7 @@ Accede a: http://localhost:5173
 
 ### 🗓️ ABRIL 2026 — Recta Final, Superadmin y Supabase
 
-#### 📍 Semana 31 | 25-27 Abril 2026 · Estado Final
+#### 📍 Semana 31 | 25-27-28 Abril 2026 · Estado Final
 
 ✨ **Refinamiento y Seguridad:**
 - **25 y 26 de Abril:** Conexión completa de la aplicación con la base de datos real en Supabase. Resolución profunda de errores de código y configuración de las políticas de seguridad (RLS) en todas las tablas. Testing completo de flujos.
@@ -500,4 +515,4 @@ Accede a: http://localhost:5173
 
 ---
 
-*Documento vivo. Última actualización: 07/05/2026*
+*Documento vivo. Última actualización: 08/05/2026*
