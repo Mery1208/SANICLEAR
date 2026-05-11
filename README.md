@@ -175,8 +175,7 @@ limpieza-hospitalaria/
 │   ├── 📂 mock/                # Datos estáticos de prueba (incidencias.json, etc.)
 │   ├── 📂 pages/               # Vistas de la aplicación (Admin, Operario, etc.)
 │   ├── 📂 services/            # Servicios API e Inteligencia Artificial
-│   │   ├── 📜 gemini.ts       # Integración con Google Gemini
-│   │   └── 📜 SANICLEARS_TFG_1.md # Documentación (Contexto IA)
+│   │   └── 📜 gemini.ts       # Integración con Google Gemini (lee de /public/documentos)
 │   ├── 📂 routes/              # AppRouter y protección de rutas
 │   ├── 📂 store/               # Zustand stores (estado global)
 │   ├── 📂 supabase/            # Cliente Supabase (client.ts)
@@ -255,10 +254,38 @@ Accede a: http://localhost:5173
 | 🏥 Proyecto | Gestión Inteligente de Higiene Hospitalaria |
 
 
+
 ---
+
+### 🎓 Sesiones de Seguimiento y Tutorías
+
+A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la tutora del proyecto, **María Mercedes Martínez Fragoso**, para validar los avances:
+
+- 📅 **14/04/2026 — 1ª Tutoría (Toma de contacto y UI)**
+  - **Asistentes:** María Ceballos y María Mercedes Martínez.
+  - **Temas tratados:** Inicio de contacto. Revisión de mejoras de diseño: refactorización visual de interfaces, afinado de estilos y coherencia general para lograr un aspecto profesional.
+
+- 📅 **16/04/2026 — 2ª Tutoría (Evolución de Arquitectura)**
+  - **Asistentes:** María Ceballos y María Mercedes Martínez.
+  - **Temas tratados:** Presentación de la idea clave de añadir un nuevo usuario **Superadmin**. Esto permite convertir la aplicación en un sistema **multiusuario y multicéntrico** con gestión centralizada de múltiples hospitales o entidades.
+
+- 📅 **28/04/2026 — 3ª Tutoría (Cierre y Presentación)**
+  - **Asistentes:** María Ceballos y María Mercedes Martínez.
+  - **Temas tratados:** Revisión de arreglos finales de código, corrección de últimos bugs y preparación general de la presentación y defensa del proyecto.
+
+---
+
+## 📘 Diario de Desarrollo del TFG
 
 ### 🗓️ MAYO 2026 — Integración de IA y Pulido Final
  
+ #### 📍 Semana 36 | 11 y 12 de Mayo - Corrección UI e Inyección Avanzada en IA
+ 
+ ✨ **Mejoras de UI y Base de Conocimiento de IA:**
+ - **Corrección Visual de Usuarios:** Eliminación de burbujas informativas redundantes ("Entidad") en la vista general de la lista de usuarios, manteniendo la interfaz más limpia y focalizada en los roles.
+ - **Inyección Multi-Manual (Grounding Dinámico):** Refactorización del asistente de IA para que ahora lea simultáneamente los 3 documentos oficiales (`MANUAL_TECNICO.md`, `MANUAL_DESPLIEGUE.md` y `MANUAL_USUARIO.md`), extrayendo el contenido dinámicamente desde la carpeta `public/documentos`. Esto permite cruzar la información técnica, de instalación y de usuario para dar respuestas precisas.
+ - **Extracción Automatizada:** Creación de scripts para extraer automáticamente el texto de los manuales originales (`.docx`) y convertirlos a un formato Markdown plano para su perfecta asimilación por la IA.
+
  #### 📍 Semana 35 | Inteligencia Artificial y Experiencia de Usuario
   
  ✨ **Hito: SaniclearBot - El Asistente Inteligente:**
@@ -515,4 +542,4 @@ Accede a: http://localhost:5173
 
 ---
 
-*Documento vivo. Última actualización: 08/05/2026*
+*Documento vivo. Última actualización: 12/05/2026*

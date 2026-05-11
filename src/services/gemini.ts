@@ -1,6 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 // @ts-ignore
-import documentation from './SANICLEARS_TFG_1.md?raw';
+import manualTecnico from '../../public/documentos/MANUAL_TECNICO.md?raw';
+// @ts-ignore
+import manualDespliegue from '../../public/documentos/MANUAL_DESPLIEGUE.md?raw';
+// @ts-ignore
+import manualUsuario from '../../public/documentos/MANUAL_USUARIO.md?raw';
 
 const API_KEY = "AIzaSyBKDKZgLLQLAfukzuHs-tMtgpeuJQdz6h4";
 const genAI = new GoogleGenerativeAI(API_KEY);
@@ -9,8 +13,15 @@ const SYSTEM_PROMPT = `
 Eres SaniclearBot, el asistente inteligente oficial de SANICLEARS. 
 SANICLEARS es una plataforma avanzada para la gestión de higiene hospitalaria, desarrollada como TFG por María Ceballos.
 
-TU CONOCIMIENTO (BASADO EN EL MANUAL DEL PROYECTO):
-${documentation}
+TU CONOCIMIENTO (BASADO EN LOS MANUALES DEL PROYECTO):
+--- MANUAL TÉCNICO ---
+${manualTecnico}
+
+--- MANUAL DE DESPLIEGUE ---
+${manualDespliegue}
+
+--- MANUAL DE USUARIO ---
+${manualUsuario}
 
 TU MISIÓN:
 Asistir al tribunal evaluador y a los usuarios. Conoces cada detalle técnico, funcional y de despliegue del proyecto.

@@ -338,7 +338,6 @@ const Gestion: React.FC = () => {
                   <div className="flex gap-2 mt-2">
                      <Badge cls={ROL_BADGE[u.rol] || "bg-gray-100 text-gray-700"} label={u.rol === 'superadmin' ? 'Super Admin' : u.rol === 'admin' ? 'Administrador' : 'Operario'} />
                      {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
-                     {u.entidad && <Badge cls="bg-blue-100 text-blue-700" label={u.entidad} />}
                   </div>
                 </div>
                 <div className="flex gap-2">
