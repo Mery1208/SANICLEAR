@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from '../../components/Button';
 import {
   Building2,
   Search,
@@ -14,7 +15,6 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { supabase } from '../../supabase/client';
-import Button from '../../components/Button';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 
@@ -34,7 +34,7 @@ const PanelControlEntidades: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Estado del Modal
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState<Entidad | null>(null);
@@ -69,7 +69,7 @@ const PanelControlEntidades: React.FC = () => {
 
   const handleGuardar = async () => {
     if (!form.nombre_hospital || !form.codigo) return;
-    
+
     if (editando) {
       const { error } = await supabase.from('entidades').update(form).eq('id', editando.id);
       if (!error) setEntidades(prev => prev.map(e => e.id === editando.id ? { ...e, ...form } as Entidad : e));
@@ -112,24 +112,24 @@ const PanelControlEntidades: React.FC = () => {
     );
   }, [entidades, searchTerm]);
 
-return (
+  return (
     <div className="font-sans w-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 w-full">
-        <div className="text-left w-full md:w-auto">
-          <h2 className="text-xl sm:text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
+      <div className="flex flex-wrap justify-between items-start gap-4 mb-6 w-full">
+        <div className="text-left">
+          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">
             Control entidades
           </h2>
-          <p className="text-gray-400 text-xs sm:text-sm font-medium italic">
-            Listado maestro.
+          <p className="text-gray-400 text-sm font-medium italic">
+            Listado maestro de centros hospitalarios.
           </p>
         </div>
-          
-        <div className="flex flex-row items-center gap-2 w-full md:w-auto">
+
+        <div className="flex flex-wrap items-center gap-2">
           <div className="relative flex-1 md:flex-none">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Buscar..." 
+            <input
+              type="text"
+              placeholder="Buscar..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-3 py-2 rounded-xl border border-gray-200 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all w-32 md:w-48"
@@ -142,13 +142,13 @@ return (
           >
             <RefreshCw size={16} />
           </button>
-          <button
+          <Button
+            text="Nueva Entidad"
             onClick={() => abrirModal()}
-            className="flex items-center justify-center gap-1 py-2 px-4 text-sm font-bold rounded-xl transition-all duration-200 cursor-pointer border-none bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
-          >
-            <Plus size={16} />
-            <span>Nueva Entidad</span>
-          </button>
+            variant="primary"
+            icon={Plus}
+            className="shadow-lg shadow-blue-100 shrink-0"
+          />
         </div>
       </div>
 
@@ -203,33 +203,33 @@ return (
               </div>
 
               <div className="flex items-center justify-between mb-6 mt-auto">
-                <Badge 
-                  cls={entidad.activa ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'} 
-                  label={entidad.activa ? 'Activa' : 'Inactiva'} 
+                <Badge
+                  cls={entidad.activa ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'}
+                  label={entidad.activa ? 'Activa' : 'Inactiva'}
                 />
-                <Badge 
+                <Badge
                   cls={
-                    entidad.plan_tipo === 'premium' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800' : 
-                    entidad.plan_tipo === 'basic' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800' : 
-                    'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-slate-600'
-                  } 
-                  label={`Plan ${entidad.plan_tipo}`} 
+                    entidad.plan_tipo === 'premium' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800' :
+                      entidad.plan_tipo === 'basic' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800' :
+                        'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-slate-600'
+                  }
+                  label={`Plan ${entidad.plan_tipo}`}
                 />
               </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-gray-50 dark:border-slate-700">
+              <div className="flex flex-row justify-center gap-4 pt-4 border-t border-gray-50 dark:border-slate-700">
                 <Button
                   text="Controlar"
                   variant="primary"
                   icon={ShieldCheck}
-                  className="flex-1 py-2.5 shadow-sm shadow-blue-100"
+                  className="!px-4 !py-2 !text-[10px] sm:!px-6 sm:!py-2.5 sm:!text-sm shadow-sm shadow-blue-100"
                   onClick={() => navigate(`/superadmin/entidades/${entidad.id}`)}
                 />
                 <Button
                   text="Métricas"
                   variant="secondary"
                   icon={Activity}
-                  className="flex-1 py-2.5"
+                  className="!px-4 !py-2 !text-[10px] sm:!px-6 sm:!py-2.5 sm:!text-sm"
                   onClick={() => navigate(`/superadmin/entidades/${entidad.id}/estadisticas`)}
                 />
               </div>
@@ -244,22 +244,22 @@ return (
           <div className="flex flex-col gap-4 mb-4">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre del Hospital</label>
-              <input value={form.nombre_hospital || ''} onChange={e => setForm({...form, nombre_hospital: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: Hospital Central" />
+              <input value={form.nombre_hospital || ''} onChange={e => setForm({ ...form, nombre_hospital: e.target.value })} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: Hospital Central" />
             </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Código</label>
-                <input value={form.codigo || ''} onChange={e => setForm({...form, codigo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: HC-01" />
+                <input value={form.codigo || ''} onChange={e => setForm({ ...form, codigo: e.target.value })} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: HC-01" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Ciudad</label>
-                <input value={form.ciudad || ''} onChange={e => setForm({...form, ciudad: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: Madrid" />
+                <input value={form.ciudad || ''} onChange={e => setForm({ ...form, ciudad: e.target.value })} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Ej: Madrid" />
               </div>
             </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Plan</label>
-                <select value={form.plan_tipo || 'basic'} onChange={e => setForm({...form, plan_tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none bg-white">
+                <select value={form.plan_tipo || 'basic'} onChange={e => setForm({ ...form, plan_tipo: e.target.value })} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none bg-white">
                   <option value="freemium">Freemium</option>
                   <option value="basic">Basic</option>
                   <option value="premium">Premium</option>
@@ -267,7 +267,7 @@ return (
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label>
-                <select value={form.activa ? 'true' : 'false'} onChange={e => setForm({...form, activa: e.target.value === 'true'})} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none bg-white">
+                <select value={form.activa ? 'true' : 'false'} onChange={e => setForm({ ...form, activa: e.target.value === 'true' })} className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none bg-white">
                   <option value="true">Activa</option>
                   <option value="false">Inactiva</option>
                 </select>
@@ -287,7 +287,7 @@ return (
             </div>
             <h3 className="text-xl font-black text-gray-800 uppercase tracking-tight">¿Estás completamente seguro?</h3>
             <p className="text-sm text-gray-500 font-medium">
-              Estás a punto de eliminar permanentemente la entidad <strong className="text-gray-800">"{deleteTarget.nombre}"</strong> y todos sus datos asociados.<br/><br/>Esta acción <strong className="text-red-500">NO</strong> se puede deshacer.
+              Estás a punto de eliminar permanentemente la entidad <strong className="text-gray-800">"{deleteTarget.nombre}"</strong> y todos sus datos asociados.<br /><br />Esta acción <strong className="text-red-500">NO</strong> se puede deshacer.
             </p>
             <div className="flex gap-3 w-full mt-6">
               <Button text="No, cancelar" onClick={() => setDeleteTarget(null)} variant="secondary" className="flex-1 py-3" />
@@ -296,6 +296,7 @@ return (
           </div>
         </Modal>
       )}
+
     </div>
   );
 };

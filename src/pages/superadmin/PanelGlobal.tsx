@@ -293,9 +293,9 @@ const PanelGlobal: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex flex-wrap justify-between items-start mb-2 gap-4">
         <div className="text-left">
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">
+          <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-1">
             Panel global del superadmin
           </h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -303,7 +303,7 @@ const PanelGlobal: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2">
           <div className="relative">
             <select 
               value={filtroEntidad} 
@@ -321,9 +321,10 @@ const PanelGlobal: React.FC = () => {
           <button
             onClick={fetchGlobalData}
             title="Actualizar panel"
-            className="flex items-center justify-center p-2.5 rounded-xl bg-white dark:bg-[#1e3a5f] border border-gray-200 dark:border-gray-700 text-[#1e3a5f] dark:text-white hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm"
+            className="flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-white dark:bg-[#1e3a5f] border border-gray-200 dark:border-gray-700 text-[#1e3a5f] dark:text-white hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm text-sm font-semibold shrink-0"
           >
-            <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+            <span className="hidden sm:inline">Actualizar</span>
           </button>
         </div>
       </div>

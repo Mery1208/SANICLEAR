@@ -177,9 +177,9 @@ const MisTareas: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-1">
-        <div>
-              <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors mb-4">Mis Tareas</h2>
+      <div className="flex flex-wrap justify-between items-start mb-1 gap-4">
+        <div className="text-left">
+              <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors mb-2 sm:mb-4">Mis Tareas</h2>
               <p className="text-gray-400 dark:text-slate-400 text-sm font-medium italic mb-4 transition-colors">
             {query ? `Filtrando por: "${query}"` : "Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas."}
           </p>
@@ -218,21 +218,21 @@ const MisTareas: React.FC = () => {
         }).map(t => {
           const isCompleted = t.estado === "completada" || t.estado === "hecha";
           return (
-                <div key={t.id} className={`bg-white dark:bg-slate-800 rounded-2xl border dark:border-slate-700 p-4 sm:p-5 flex flex-row justify-between items-center gap-4 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50 dark:bg-slate-800/50" : ""}`}>
-              <div className="flex-1 min-w-0">
+                <div key={t.id} className={`bg-white dark:bg-slate-800 rounded-2xl border dark:border-slate-700 p-4 sm:p-5 flex flex-wrap justify-between items-center gap-4 sm:gap-6 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50 dark:bg-slate-800/50" : ""}`}>
+              <div className="flex-1 w-full sm:w-auto min-w-[200px]">
                     <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 transition-colors ${isCompleted ? "line-through decoration-green-500 dark:decoration-green-600 decoration-2 text-green-700 dark:text-green-500" : "text-[#1e3a5f] dark:text-blue-300"}`}>{t.zona}</p>
                     <p className={`text-sm sm:text-base font-medium mb-3 line-clamp-2 transition-colors ${isCompleted ? "line-through decoration-green-400 dark:decoration-green-700 text-green-600 dark:text-green-500" : "text-gray-500 dark:text-slate-400"}`}>{t.desc || t.tarea}</p>
                 <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
               </div>
-              {!isCompleted ? (
-                    <Button
-                      text="Hecho"
-                      onClick={() => completar(t.id)}
-                      variant="success"
-                      icon={CheckCircle}
-                          className="px-5 py-3 sm:px-6 sm:py-4 text-sm sm:text-base font-black shrink-0 shadow-md shadow-green-100 dark:shadow-none w-auto"
-                    />
-              ) : (
+{!isCompleted ? (
+                     <Button
+                       text="Hecho"
+                       onClick={() => completar(t.id)}
+                       variant="success"
+                       icon={CheckCircle}
+                           className="px-3 py-2 sm:px-4 sm:py-2.5 text-[10px] sm:text-sm font-black shrink-0 shadow-md shadow-green-100 w-full"
+                     />
+               ) : (
                     <span className="text-green-600 dark:text-green-500 font-bold text-sm sm:text-base shrink-0 flex items-center gap-1.5 transition-colors">
                   <CheckCircle size={16} />
                   <span>Completada</span>

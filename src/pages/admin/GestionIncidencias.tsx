@@ -173,8 +173,8 @@ const GestionIncidencias: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      <div className="flex justify-between items-start">
-        <div>
+      <div className="flex flex-wrap justify-between items-start gap-4">
+        <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">Gestión de Incidencias</h2>
           <p className="text-gray-400 text-sm font-medium italic">Revisa, asigna y resuelve reportes técnicos</p>
         </div>
@@ -183,7 +183,7 @@ const GestionIncidencias: React.FC = () => {
           onClick={() => setShowCreateModal(true)}
           variant="primary"
           icon={Plus}
-          className="py-1.5 px-3 text-xs sm:py-2 sm:px-5 shadow-lg shadow-blue-100"
+          className="shadow-lg shadow-blue-100 shrink-0"
         />
       </div>
 

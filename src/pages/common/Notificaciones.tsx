@@ -151,12 +151,12 @@ const Notificaciones: React.FC = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <div>
+      <div className="flex flex-wrap justify-between items-start mb-4 gap-4">
+        <div className="text-left">
            <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">Notificaciones</h2>
           <p className="text-gray-400 text-sm font-medium italic">{noLeidas > 0 ? `Tienes ${noLeidas} notificaciones sin leer.` : "Todo al día."}</p>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex flex-wrap gap-4 items-center">
           {isAdmin && (
             <div className="relative hidden sm:block">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -186,7 +186,7 @@ const Notificaciones: React.FC = () => {
               onClick={() => setShowForm(true)} 
               variant="primary" 
               icon={Plus} 
-              className="py-2 px-4 shadow-sm"
+              className="shadow-lg shadow-blue-100 shrink-0"
             />
           )}
         </div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Clock, AlertTriangle, CheckCircle, RefreshCw, PlusCircle, History, Search, X } from 'lucide-react';
+import { Clock, AlertTriangle, CheckCircle, RefreshCw, PlusCircle, History, Search, X, Plus } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
+import Button from '../../components/Button';
 import { useBusquedaStore } from '../../store/busquedaStore';
 import { useAuth } from '../../context/AuthContext';
 
@@ -219,7 +220,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-wrap justify-between items-start mb-4 gap-4">
         <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Panel de Control</h2>
           <p className="text-gray-400 text-sm font-medium italic">Resumen general y estado del sistema en tiempo real</p>
@@ -229,7 +230,9 @@ const Dashboard: React.FC = () => {
             </p>
           )}
         </div>
-        <button
+        <Button
+          text="Nueva Tarea"
+          icon={Plus}
           onClick={() => {
             if (zonas.length === 0 || usuarios.length === 0) {
               alert('Primero debes crear al menos una zona y un operario en "Gestión Zonas y Usuarios"');
@@ -238,18 +241,14 @@ const Dashboard: React.FC = () => {
             setShowModal(true);
           }}
           disabled={zonas.length === 0 || usuarios.length === 0}
-          className={`${zonas.length === 0 || usuarios.length === 0
-            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
-          } shrink-0 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-blue-100`}
-        >
-          + Nueva Tarea
-        </button>
+          variant="primary"
+          className="shadow-lg shadow-blue-100 shrink-0"
+        />
       </div>
 
       {ok && <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 w-full">
         {[
           { label: "Tareas Pend.", value: pendientes, icon: <Clock size={20} />, textCls: "text-yellow-600 dark:text-yellow-300", bgCls: "bg-yellow-50 dark:bg-yellow-500/30" },
           { label: "Alertas", value: alertas, icon: <AlertTriangle size={20} />, textCls: "text-red-600 dark:text-red-300", bgCls: "bg-red-50 dark:bg-red-500/30" },
@@ -278,22 +277,24 @@ const Dashboard: React.FC = () => {
                Aún no hay datos históricos de incidencias
              </div>
           ) : (
-            <ResponsiveContainer width="100%" height={240} initialDimension={{ width: 10, height: 240 }}>
-              <BarChart data={chartData} barSize={20}>
+            <div className="mt-8">
+              <ResponsiveContainer width="100%" height={240} initialDimension={{ width: 10, height: 240 }}>
+                <BarChart data={chartData} barSize={20} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis dataKey="mes" tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip cursor={{fill: 'rgba(148, 163, 184, 0.1)'}} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
               <Bar dataKey="Abiertas"  fill="#3B82F6" radius={[6,6,0,0]} />
               <Bar dataKey="Resueltas" fill="#10B981" radius={[6,6,0,0]} />
-            </BarChart>
-            </ResponsiveContainer>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           )}
         </div>
 
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm p-5 sm:p-8">
           <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-10">Actividad reciente</p>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 mt-8">
             {actividadReciente.map((a, i) => (
               <div key={i} className="flex gap-4 group">
                 <div className="w-1.5 h-auto bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-400 rounded-full transition-colors"></div>
@@ -308,7 +309,7 @@ const Dashboard: React.FC = () => {
       </div>
 
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex flex-wrap justify-between items-center gap-3 bg-gray-50/30">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas activas</p>
             <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
               <RefreshCw size={16} />

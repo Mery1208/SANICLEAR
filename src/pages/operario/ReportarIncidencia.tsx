@@ -97,12 +97,12 @@ const ReportarIncidencia: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans w-full">
-          <div className="flex justify-between items-start mb-2">
-             <div className="text-left">
+          <div className="flex flex-wrap justify-between items-start mb-2 gap-4">
+             <div className="text-left flex-1 min-w-[200px]">
                  <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Gestión de Incidencias</h2>
                 <p className="text-gray-400 dark:text-gray-500 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
              </div>
-             <button onClick={() => navigate('/operario')} className="text-gray-300 hover:text-gray-500 transition-colors">
+             <button onClick={() => navigate('/operario')} className="text-gray-300 hover:text-gray-500 transition-colors shrink-0">
                 <X size={28} strokeWidth={1.5} />
              </button>
           </div>

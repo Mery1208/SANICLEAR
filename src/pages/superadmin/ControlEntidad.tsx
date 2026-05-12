@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, MapPinned, ClipboardList, AlertTriangle, Clock, RefreshCw, CheckCircle, UserCog, Edit2, Trash2, Plus } from 'lucide-react';
+import { ArrowLeft, Users, MapPinned, ClipboardList, AlertTriangle, Clock, RefreshCw, CheckCircle, UserCog, Edit2, Trash2, Plus, Building2, Layout, ShieldCheck, Search, Bell } from 'lucide-react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
@@ -279,11 +279,11 @@ const ControlEntidad: React.FC = () => {
 
   return (
     <div className="font-sans">
-      <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div className="flex flex-wrap items-start gap-4 mb-8">
         <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <div>
+        <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight">Panel de Control: {entidad.nombre_hospital}</h2>
           <p className="text-gray-400 dark:text-gray-500 text-sm font-medium italic">Gestión maestra con permisos extendidos · {entidad.codigo}</p>
         </div>
@@ -317,7 +317,13 @@ const ControlEntidad: React.FC = () => {
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas Activas del Centro</p>
-            <button onClick={() => openTarea()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Tarea"><Plus size={18} /></button>
+            <Button 
+              text="Nueva Tarea" 
+              onClick={() => openTarea()} 
+              variant="primary" 
+              icon={Plus} 
+              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+            />
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -334,9 +340,9 @@ const ControlEntidad: React.FC = () => {
                       <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100"} label={t.estado} />
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
-                      <button onClick={() => handleCompletarTarea(t.id)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Completar"><CheckCircle size={16} /></button>
-                      <button onClick={() => openTarea(t)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                      <button onClick={() => deleteTarea(t.id, t.tarea || t.descripcion || 'Tarea')} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                      <button onClick={() => handleCompletarTarea(t.id)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Completar"><CheckCircle size={14} /> Completar</button>
+                      <button onClick={() => openTarea(t)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
+                      <button onClick={() => deleteTarea(t.id, t.tarea || t.descripcion || 'Tarea')} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                     </td>
                   </tr>
                 ))}
@@ -349,7 +355,13 @@ const ControlEntidad: React.FC = () => {
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
-            <button onClick={() => openIncid()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Incidencia"><Plus size={18} /></button>
+            <Button 
+              text="Nueva Incidencia" 
+              onClick={() => openIncid()} 
+              variant="primary" 
+              icon={Plus} 
+              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+            />
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -366,9 +378,9 @@ const ControlEntidad: React.FC = () => {
                       <Badge cls={PRIORIDAD_BADGE[i.prioridad] || "bg-gray-100"} label={i.prioridad} />
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
-                      <button onClick={() => handleResolverIncidencia(i.id)} className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Resolver"><CheckCircle size={16} /></button>
-                      <button onClick={() => openIncid(i)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                      <button onClick={() => deleteIncid(i.id, i.titulo)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                      <button onClick={() => handleResolverIncidencia(i.id)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Resolver"><CheckCircle size={14} /> Resolver</button>
+                      <button onClick={() => openIncid(i)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
+                      <button onClick={() => deleteIncid(i.id, i.titulo)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                     </td>
                   </tr>
                 ))}
@@ -385,7 +397,13 @@ const ControlEntidad: React.FC = () => {
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
             <div className="flex items-center gap-3">
               <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block">Control Total</span>
-              <button onClick={() => handleOpenEditUser()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Personal"><Plus size={18} /></button>
+              <Button 
+                text="Nuevo Personal" 
+                onClick={() => handleOpenEditUser()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1">
@@ -409,8 +427,8 @@ const ControlEntidad: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
-                      <button onClick={() => handleOpenEditUser(u)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                      <button onClick={() => handleDeleteUser(u.id, `${u.nombre} ${u.apellidos}`)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                      <button onClick={() => handleOpenEditUser(u)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
+                      <button onClick={() => handleDeleteUser(u.id, `${u.nombre} ${u.apellidos}`)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                     </td>
                   </tr>
                 ))}
@@ -423,7 +441,13 @@ const ControlEntidad: React.FC = () => {
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
               <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
-            <button onClick={() => openNotif()} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Añadir Notificación"><Plus size={18} /></button>
+            <Button 
+              text="Nueva Notificación" 
+              onClick={() => openNotif()} 
+              variant="primary" 
+              icon={Plus} 
+              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+            />
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -441,10 +465,10 @@ const ControlEntidad: React.FC = () => {
                         <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{n.dest}</td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
-                    {n.entidad_id ? (
+{n.entidad_id ? (
                        <>
-                         <button onClick={() => openNotif(n)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={16} /></button>
-                         <button onClick={() => deleteNotif(n.id, n.titulo)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={16} /></button>
+                         <button onClick={() => openNotif(n)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
+                         <button onClick={() => deleteNotif(n.id, n.titulo)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                        </>
                     ) : (
                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Global</span>

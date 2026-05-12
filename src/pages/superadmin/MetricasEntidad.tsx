@@ -132,11 +132,11 @@ const MetricasEntidad: React.FC = () => {
 
   return (
     <div className="font-sans">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex flex-wrap items-start gap-4 mb-8">
         <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <div>
+        <div className="text-left">
            <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">Métricas - {entidad.nombre_hospital}</h2>
           <p className="text-gray-400 text-sm font-medium italic">Rendimiento y análisis de datos de la entidad</p>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import AIAssistant from '../components/common/AIAssistant/AIAssistant';
 
 // Layouts
 import PublicLayout from '../layouts/PublicLayout';
@@ -37,6 +38,14 @@ import MetricasEntidad from '../pages/superadmin/MetricasEntidad';
 
 // Genérica En Construcción
 import EnConstruccion from '../pages/EnConstruccion';
+
+const BotWrapper = () => {
+    const location = useLocation();
+    if (location.pathname === '/' || location.pathname === '/login') {
+        return <AIAssistant />;
+    }
+    return null;
+};
 
 const AppRouter: React.FC = () => {
     return (
@@ -91,6 +100,7 @@ const AppRouter: React.FC = () => {
                 {/* Redirigir rutas antiguas o no encontradas al inicio */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <BotWrapper />
         </BrowserRouter>
     );
 };

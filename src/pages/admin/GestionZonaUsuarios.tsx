@@ -239,7 +239,7 @@ const Gestion: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-wrap justify-between items-start mb-2 gap-4">
         <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Gestión de Zonas y Usuarios</h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -258,7 +258,7 @@ const Gestion: React.FC = () => {
           onClick={tab === 'zonas' ? openNewZona : openNewUsuario}
           variant="primary"
           icon={Plus}
-          className="px-4 py-2 shadow-sm"
+          className="shadow-lg shadow-blue-100 shrink-0"
         />
       </div>
 
@@ -303,8 +303,8 @@ const Gestion: React.FC = () => {
             <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay zonas.</div>
           ) : (
             zonasFiltradas.map(z => (
-              <div key={z.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
-                <div>
+              <div key={z.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex flex-wrap justify-between items-center gap-4 hover:shadow-md transition-shadow">
+                <div className="w-full sm:w-auto flex-1 min-w-[200px]">
                   <p className="font-bold text-gray-800 dark:text-white text-lg">{z.nombre}</p>
                   <p className="text-sm text-gray-500">Planta {z.planta} · {z.metros} m² · {z.tipo}</p>
                   <div className="flex gap-2 mt-2">
@@ -312,9 +312,9 @@ const Gestion: React.FC = () => {
                     <Badge cls={z.estado === 'Activo' ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} label={z.estado} />
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-3 py-1.5" />
-                  <Button text="Eliminar" onClick={() => requestDeleteZona(z)} variant="danger" className="px-3 py-1.5" />
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-3 py-1.5 flex-1 sm:flex-none" />
+                  <Button text="Eliminar" onClick={() => requestDeleteZona(z)} variant="danger" className="px-3 py-1.5 flex-1 sm:flex-none" />
                 </div>
               </div>
             ))
@@ -331,8 +331,8 @@ const Gestion: React.FC = () => {
             <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay usuarios.</div>
           ) : (
             usuariosFiltrados.map(u => (
-              <div key={u.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex justify-between items-center hover:shadow-md transition-shadow">
-                <div>
+              <div key={u.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex flex-wrap justify-between items-center gap-4 hover:shadow-md transition-shadow">
+                <div className="w-full sm:w-auto flex-1 min-w-[200px]">
                   <p className="font-bold text-gray-800 dark:text-white text-lg">{u.nombre} {u.apellidos}</p>
                   <p className="text-sm text-gray-500">{u.email}</p>
                   <div className="flex gap-2 mt-2">
@@ -340,11 +340,11 @@ const Gestion: React.FC = () => {
                      {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   {!(currentUserRole !== 'superadmin' && u.rol === 'superadmin') && (
                     <>
-                      <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5" />
-                      <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-3 py-1.5" />
+                      <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5 flex-1 sm:flex-none" />
+                      <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-3 py-1.5 flex-1 sm:flex-none" />
                     </>
                   )}
                 </div>
@@ -491,7 +491,7 @@ const Gestion: React.FC = () => {
             <p className="text-sm text-gray-500 font-medium">
               Estás a punto de eliminar {deleteTarget.tipo === 'zona' ? 'la zona' : 'el usuario'} <strong className="text-gray-800">"{deleteTarget.nombre}"</strong>.<br/>Esta acción <strong className="text-red-500">NO</strong> se puede deshacer.
             </p>
-            <div className="flex gap-3 w-full mt-6">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 w-full mt-6">
               <Button text="No, cancelar" onClick={() => setDeleteTarget(null)} variant="secondary" className="flex-1 py-3" />
               <Button text="Sí, eliminar" onClick={confirmDelete} variant="danger" className="flex-1 py-3 shadow-lg shadow-red-100" />
             </div>
