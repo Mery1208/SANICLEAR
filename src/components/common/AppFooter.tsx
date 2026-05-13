@@ -16,51 +16,51 @@ const SectionItem = ({ title, text }: { title: string, text: string }) => (
 );
 
 const LEGAL_INFO = {
-  privacidad: {
-    title: 'Política de Privacidad',
-    icon: <Lock className="text-blue-500" />,
-    intro: 'Protegemos la integridad de los datos sanitarios bajo estándares europeos.',
-    sections: [
-      { title: 'Cumplimiento RGPD', text: 'Cumplimos estrictamente con el Reglamento General de Protección de Datos y normativas locales de salud.' },
-      { title: 'Datos Operativos', text: 'Solo almacenamos nombres, correos institucionales y registros de actividad para la gestión del centro.' },
-      { title: 'No Comercialización', text: 'Sus datos personales nunca serán vendidos ni compartidos con terceros con fines publicitarios.' },
-      { title: 'Control Total', text: 'Puede solicitar el acceso, rectificación o eliminación de sus datos a través de su panel de administración.' }
-    ]
-  },
-  terminos: {
-    title: 'Términos y Condiciones',
-    icon: <FileText className="text-blue-500" />,
-    intro: 'Marco legal para el uso profesional de nuestra plataforma de higiene.',
-    sections: [
-      { title: 'Licencia de Uso', text: 'Acceso exclusivo para personal sanitario y de limpieza autorizado por el hospital contratante.' },
-      { title: 'Uso Correcto', text: 'La plataforma debe utilizarse únicamente para el reporte y gestión de tareas de limpieza hospitalaria.' },
-      { title: 'Propiedad Intelectual', text: 'Todo el software, algoritmos y diseño visual son propiedad exclusiva de SANICLEARS.' },
-      { title: 'Actualizaciones', text: 'Nos reservamos el derecho de mejorar y modificar la plataforma para garantizar la mejor experiencia.' }
-    ]
-  },
-  cookies: {
-    title: 'Política de Cookies',
-    icon: <Cookie className="text-blue-500" />,
-    intro: 'Utilizamos tecnología mínima necesaria para garantizar el funcionamiento.',
-    sections: [
-      { title: 'Cookies Esenciales', text: 'Mantenimiento de sesión, seguridad del login y preferencias de idioma o tema visual.' },
-      { title: 'Rendimiento', text: 'Cookies analíticas anónimas que nos permiten detectar fallos y optimizar la velocidad de carga.' },
-      { title: 'Privacidad', text: 'No utilizamos cookies de seguimiento de terceros ni píxeles publicitarios de redes sociales.' },
-      { title: 'Gestión', text: 'Puede bloquear las cookies desde su navegador, aunque algunas funciones podrían no estar disponibles.' }
-    ]
-  },
-  seguridad: {
-    title: 'Seguridad del Sistema',
-    icon: <Shield className="text-blue-500" />,
-    intro: 'Infraestructura blindada para entornos de misión crítica hospitalaria.',
-    sections: [
-      { title: 'Encriptación SSL/TLS', text: 'Toda la comunicación entre el navegador y el servidor está cifrada mediante certificados de 256 bits.' },
-      { title: 'Backups Diarios', text: 'Copias de seguridad automáticas y redundantes para garantizar la disponibilidad de los datos 24/7.' },
-      { title: 'Trazabilidad', text: 'Registro detallado (Audit Log) de cada acción realizada en el sistema para auditorías internas.' },
-      { title: 'Aislamiento de Datos', text: 'Cada entidad hospitalaria tiene su propio espacio de datos lógico para evitar filtraciones.' }
-    ]
-  }
-};
+    privacidad: {
+      title: 'Política de Privacidad',
+      icon: Lock,
+      intro: 'Protegemos la integridad de los datos sanitarios bajo estándares europeos.',
+      sections: [
+        { title: 'Cumplimiento RGPD', text: 'Cumplimos estrictamente con el Reglamento General de Protección de Datos y normativas locales de salud.' },
+        { title: 'Datos Operativos', text: 'Solo almacenamos nombres, correos institucionales y registros de actividad para la gestión del centro.' },
+        { title: 'No Comercialización', text: 'Sus datos personales nunca serán vendidos ni compartidos con terceros con fines publicitarios.' },
+        { title: 'Control Total', text: 'Puede solicitar el acceso, rectificación o eliminación de sus datos a través de su panel de administración.' }
+      ]
+    },
+    terminos: {
+      title: 'Términos y Condiciones',
+      icon: FileText,
+      intro: 'Marco legal para el uso profesional de nuestra plataforma de higiene.',
+      sections: [
+        { title: 'Licencia de Uso', text: 'Acceso exclusivo para personal sanitario y de limpieza autorizado por el hospital contratante.' },
+        { title: 'Uso Correcto', text: 'La plataforma debe utilizarse únicamente para el reporte y gestión de tareas de limpieza hospitalaria.' },
+        { title: 'Propiedad Intelectual', text: 'Todo el software, algoritmos y diseño visual son propiedad exclusiva de SANICLEARS.' },
+        { title: 'Actualizaciones', text: 'Nos reservamos el derecho de mejorar y modificar la plataforma para garantizar la mejor experiencia.' }
+      ]
+    },
+    cookies: {
+      title: 'Política de Cookies',
+      icon: Cookie,
+      intro: 'Utilizamos tecnología mínima necesaria para garantizar el funcionamiento.',
+      sections: [
+        { title: 'Cookies Esenciales', text: 'Mantenimiento de sesión, seguridad del login y preferencias de idioma o tema visual.' },
+        { title: 'Rendimiento', text: 'Cookies analíticas anónimas que nos permiten detectar fallos y optimizar la velocidad de carga.' },
+        { title: 'Privacidad', text: 'No utilizamos cookies de seguimiento de terceros ni píxeles publicitarios de redes sociales.' },
+        { title: 'Gestión', text: 'Puede bloquear las cookies desde su navegador, aunque algunas funciones podrían no estar disponibles.' }
+      ]
+    },
+    seguridad: {
+      title: 'Seguridad del Sistema',
+      icon: Shield,
+      intro: 'Infraestructura blindada para entornos de misión crítica hospitalaria.',
+      sections: [
+        { title: 'Encriptación SSL/TLS', text: 'Toda la comunicación entre el navegador y el servidor está cifrada mediante certificados de 256 bits.' },
+        { title: 'Backups Diarios', text: 'Copias de seguridad automáticas y redundantes para garantizar la disponibilidad de los datos 24/7.' },
+        { title: 'Trazabilidad', text: 'Registro detallado (Audit Log) de cada acción realizada en el sistema para auditorías internas.' },
+        { title: 'Aislamiento de Datos', text: 'Cada entidad hospitalaria tiene su propio espacio de datos lógico para evitar filtraciones.' }
+      ]
+    }
+  };
 
 const AppFooter: React.FC = () => {
   const [modalType, setModalType] = useState<keyof typeof LEGAL_INFO | null>(null);
@@ -93,8 +93,11 @@ const AppFooter: React.FC = () => {
         >
           <div className="flex flex-col">
             <div className="bg-blue-50/50 dark:bg-blue-900/10 p-6 rounded-3xl mb-6 text-center border border-blue-100/50 dark:border-blue-800/30">
-              <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                {React.cloneElement(LEGAL_INFO[modalType].icon as React.ReactElement, { size: 32 })}
+              <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md border border-slate-100 dark:border-slate-700">
+                {React.createElement(LEGAL_INFO[modalType].icon, { 
+                  size: 32, 
+                  className: "text-blue-600 dark:text-blue-400" 
+                })}
               </div>
               <p className="text-sm font-bold text-slate-700 dark:text-slate-200 leading-relaxed italic px-4">
                 "{LEGAL_INFO[modalType].intro}"
