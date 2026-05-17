@@ -26,16 +26,16 @@ interface Incidencia {
 
 
 const ESTADO_BADGE: Record<string, string> = { 
-  hecha:"bg-green-100 text-green-700", 
-  completada:"bg-green-100 text-green-700", 
-  pendiente:"bg-yellow-100 text-yellow-700", 
-  en_curso:"bg-blue-100 text-blue-700" 
+  hecha:"bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400", 
+  completada:"bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400", 
+  pendiente:"bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400", 
+  en_curso:"bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400" 
 };
 
 const PRIORIDAD_BADGE: Record<string, string> = { 
-  alta: "bg-red-100 text-red-700", 
-  media: "bg-yellow-100 text-yellow-700", 
-  baja: "bg-green-100 text-green-700" 
+  alta: "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400", 
+  media: "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400", 
+  baja: "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400" 
 };
 
 
@@ -308,8 +308,8 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 flex flex-wrap justify-between items-center gap-3 bg-gray-50/30">
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-800 flex flex-wrap justify-between items-center gap-3 bg-gray-50/30 dark:bg-transparent">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas activas</p>
             <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
               <RefreshCw size={16} />
@@ -317,31 +317,31 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50/50">
-              <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">{h}</th>)}</tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {(query ? tareasFiltradas : tareas).length === 0 && (
-                  <tr><td colSpan={6} className="p-10 text-center text-gray-400 font-bold italic">
-                    {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
-                  </td></tr>
-                )}
+<thead className="bg-gray-50/50 dark:bg-gray-800/30">
+               <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">{h}</th>)}</tr>
+               </thead>
+               <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
+{(query ? tareasFiltradas : tareas).length === 0 && (
+                   <tr><td colSpan={6} className="p-10 text-center text-gray-400 dark:text-gray-500 font-bold italic">
+                     {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
+                   </td></tr>
+                 )}
                 {(query ? tareasFiltradas : tareas).map(t => (
-                  <tr key={t.id} className="hover:bg-blue-50/20 transition-colors group">
-                  <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] dark:text-white text-base">{t.zona}</td>
-                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-700 dark:text-white text-sm font-semibold min-w-[200px]">{t.tarea || t.descripcion}</td>
-                  <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] dark:text-white text-sm font-bold flex items-center gap-2 whitespace-nowrap">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-black">
-                        {t.asignado.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      {t.asignado}
-                    </td>
-                  <td className="px-5 sm:px-8 py-4 sm:py-5">
-                      <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100 text-gray-600"} label={t.estado === "en_curso" ? "En Curso" : t.estado.charAt(0).toUpperCase()+t.estado.slice(1)} />
-                  </td>
-                  <td className="px-5 sm:px-8 py-4 sm:py-5">
-                      <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-600"} label={t.prioridad.charAt(0).toUpperCase()+t.prioridad.slice(1)} />
-                  </td>
+<tr key={t.id} className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
+                   <td className="px-5 sm:px-8 py-4 sm:py-5 font-bold text-[#1e3a5f] dark:text-white text-base">{t.zona}</td>
+                   <td className="px-5 sm:px-8 py-4 sm:py-5 text-gray-700 dark:text-white text-sm font-semibold min-w-[200px]">{t.tarea || t.descripcion}</td>
+                   <td className="px-5 sm:px-8 py-4 sm:py-5 text-[#1e3a5f] dark:text-white text-sm font-bold flex items-center gap-2 whitespace-nowrap">
+                       <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xs font-black">
+                         {t.asignado.split(' ').map(n => n[0]).join('')}
+                       </div>
+                       {t.asignado}
+                     </td>
+                   <td className="px-5 sm:px-8 py-4 sm:py-5">
+                       <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"} label={t.estado === "en_curso" ? "En Curso" : t.estado.charAt(0).toUpperCase()+t.estado.slice(1)} />
+                   </td>
+                   <td className="px-5 sm:px-8 py-4 sm:py-5">
+                       <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"} label={t.prioridad.charAt(0).toUpperCase()+t.prioridad.slice(1)} />
+                   </td>
                   <td className="px-5 sm:px-8 py-4 sm:py-5 text-right">
                       <button
                         onClick={async () => {

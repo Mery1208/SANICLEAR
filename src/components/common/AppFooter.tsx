@@ -74,13 +74,13 @@ const AppFooter: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={() => setModalType('privacidad')} className="text-[10px] sm:text-xs text-white/50 hover:text-white transition-colors cursor-pointer">Política de Privacidad</button>
-          <span className="text-white/20 text-[10px]">|</span>
-          <button onClick={() => setModalType('terminos')} className="text-[10px] sm:text-xs text-white/50 hover:text-white transition-colors cursor-pointer">Términos</button>
-          <span className="text-white/20 text-[10px]">|</span>
-          <button onClick={() => setModalType('seguridad')} className="text-[10px] sm:text-xs text-white/50 hover:text-white transition-colors cursor-pointer">Seguridad</button>
-          <span className="text-white/20 text-[10px]">|</span>
-          <button onClick={() => setModalType('cookies')} className="text-[10px] sm:text-xs text-white/50 hover:text-white transition-colors cursor-pointer">Cookies</button>
+          <button onClick={() => setModalType('privacidad')} className="text-[10px] sm:text-xs text-white/70 hover:text-white transition-colors cursor-pointer">Política de Privacidad</button>
+          <span className="text-white/30 text-[10px]">|</span>
+          <button onClick={() => setModalType('terminos')} className="text-[10px] sm:text-xs text-white/70 hover:text-white transition-colors cursor-pointer">Términos</button>
+          <span className="text-white/30 text-[10px]">|</span>
+          <button onClick={() => setModalType('seguridad')} className="text-[10px] sm:text-xs text-white/70 hover:text-white transition-colors cursor-pointer">Seguridad</button>
+          <span className="text-white/30 text-[10px]">|</span>
+          <button onClick={() => setModalType('cookies')} className="text-[10px] sm:text-xs text-white/70 hover:text-white transition-colors cursor-pointer">Cookies</button>
         </div>
 
         <span className="text-[9px] text-white/30">v1.0.0</span>
