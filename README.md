@@ -17,11 +17,11 @@
     <img src="https://img.shields.io/badge/GEMINI_AI-v1.5-8E75C2?style=for-the-badge&logo=google-gemini&logoColor=white" alt="Gemini AI">
   </p>
 
-  <p align="center">
-    <img src="https://img.shields.io/badge/Estado-En_Desarrollo-orange?style=flat-square" alt="Estado">
-    <img src="https://img.shields.io/badge/Versión-0.0.0-blue?style=flat-square" alt="Versión">
-    <img src="https://img.shields.io/badge/Licencia-MIT-green?style=flat-square" alt="Licencia">
-  </p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Estado-Preparando_Presentaci%C3%B3n_y_Guion-orange?style=flat-square" alt="Estado">
+  <img src="https://img.shields.io/badge/Versión-0.0.0-blue?style=flat-square" alt="Versión">
+  <img src="https://img.shields.io/badge/Licencia-MIT-green?style=flat-square" alt="Licencia">
+</p>
 </div>
 
 <br>
@@ -270,8 +270,16 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
   - **Temas tratados:** Presentación de la idea clave de añadir un nuevo usuario **Superadmin**. Esto permite convertir la aplicación en un sistema **multiusuario y multicéntrico** con gestión centralizada de múltiples hospitales o entidades.
 
 - 📅 **28/04/2026 — 3ª Tutoría (Cierre y Presentación)**
-  - **Asistentes:** María Ceballos y María Mercedes Martínez.
-  - **Temas tratados:** Revisión de arreglos finales de código, corrección de últimos bugs y preparación general de la presentación y defensa del proyecto.
+   - **Asistentes:** María Ceballos y María Mercedes Martínez.
+   - **Temas tratados:** Revisión de arreglos finales de código, corrección de últimos bugs y preparación general de la presentación y defensa del proyecto.
+
+- 📅 **13/05/2026 — Tutoría de Seguimiento**
+   - **Asistentes:** María Ceballos y María Mercedes Martínez (Merche).
+   - **Temas tratados:** Seguimiento del avance del proyecto, revisión de funcionalidades implementadas y planificación de próximos pasos.
+
+- 📅 **18/05/2026 — Reunión de Trabajo**
+   - **Asistentes:** María Ceballos, María Mercedes Martínez y Paco.
+   - **Temas tratados:** Preparación de la presentación del TFG y elaboración del guion para la defensa.
 
 ---
 
@@ -542,4 +550,4 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
 
 ---
 
-*Documento vivo. Última actualización: 12/05/2026*
+*Documento vivo. Última actualización: 18/05/2026*
