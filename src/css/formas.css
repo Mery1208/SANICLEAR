@@ -102,3 +102,9 @@
   font-size: var(--text-xs);
   margin-top: 0.25rem;
 }
+
+/* Input editable de perfil: fondo blanco forzado en modo oscuro */
+.dark .perfil-input-editable {
+  background-color: #ffffff !important;
+  color: #1e3a5f !important;
+}

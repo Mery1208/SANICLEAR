@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
-import { AlertTriangle, CheckCircle, Clock, TrendingUp, Plus, CheckCircle2, Building2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, TrendingUp, Plus, CheckCircle2, Building2, Trash2 } from 'lucide-react';
 
 const ESTADO_BADGE: Record<string, string> = {
   abierta: "bg-red-50 text-red-500 border border-red-100",
@@ -39,6 +39,7 @@ const GestionIncidencias: React.FC = () => {
   const [notaTexto, setNotaTexto] = useState("");
   const [ok, setOk] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [incidenciaToDelete, setIncidenciaToDelete] = useState<any | null>(null);
   const [createForm, setCreateForm] = useState({ tipo: "", zona: "", descripcion: "", prioridad: "media", urgente: false });
   const [operarios, setOperarios] = useState<any[]>([]);
 
@@ -169,6 +170,22 @@ const GestionIncidencias: React.FC = () => {
     }
   };
 
+  const handleDeleteIncidencia = async () => {
+    if (!incidenciaToDelete) return;
+
+    const { error } = await supabase.from('incidencias').delete().eq('id', incidenciaToDelete.id);
+
+    if (!error) {
+      setIncidencias(prev => prev.filter(i => i.id !== incidenciaToDelete.id));
+      setIncidenciaToDelete(null);
+      setOk("¡Incidencia eliminada correctamente!");
+      setTimeout(() => setOk(""), 3000);
+    } else {
+      console.error('Error al eliminar la incidencia:', error.message);
+      alert('Error al eliminar la incidencia.');
+    }
+  };
+
   if (loading) return <div className="p-10 text-gray-400 font-bold animate-pulse text-center">Iniciando gestión de reportes...</div>;
 
   return (
@@ -250,7 +267,7 @@ const GestionIncidencias: React.FC = () => {
               )}
               {filteredIncidencias.map(i => (
                 <tr key={i.id} className="hover:bg-blue-50/10 dark:hover:bg-blue-900/10 transition-colors">
-                  <td className="px-6 py-4 text-[11px] font-bold text-gray-300">#{i.id}</td>
+                  <td className="px-6 py-4 text-[11px] font-bold text-gray-300">#{String(i.id).slice(0, 8)}</td>
                   <td className="px-6 py-4">
                     <span className="text-[10px] font-black text-blue-500 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">{i.hospital}</span>
                   </td>
@@ -268,12 +285,21 @@ const GestionIncidencias: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 text-gray-400 text-[10px] font-semibold whitespace-nowrap">{new Date(i.created_at || i.fecha).toLocaleDateString('es-ES')}</td>
                   <td className="px-2 sm:px-6 py-2 sm:py-4 text-right">
-                    <Button
-                      text="Ver"
-                      onClick={() => { setSelected(i); setNotaTexto(i.notas || ""); }}
-                      variant="primary"
-                      className="px-2 py-1 text-[10px] sm:px-4 sm:py-1.5 shadow-lg shadow-blue-100"
-                    />
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        text="Ver"
+                        onClick={() => { setSelected(i); setNotaTexto(i.notas || ""); }}
+                        variant="primary"
+                        className="px-2 py-1 text-[10px] sm:px-4 sm:py-1.5 shadow-lg shadow-blue-100"
+                      />
+                      <button
+                        onClick={() => setIncidenciaToDelete(i)}
+                        className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                        title="Eliminar incidencia"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -285,74 +311,74 @@ const GestionIncidencias: React.FC = () => {
       {/* Modal Crear Incidencia */}
       {showCreateModal && (
         <Modal title="NUEVA INCIDENCIA" onClose={() => setShowCreateModal(false)} maxWidth="max-w-4xl">
-          <div className="flex flex-col gap-5 w-full">
+          <div className="flex flex-col gap-3 w-full">
             {/* Info de Entidad */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Entidad / Hospital</label>
-              <div className="flex items-center gap-2 w-full border border-gray-100 rounded-2xl bg-gray-50 px-5 py-3.5 shadow-inner">
+              <div className="flex items-center gap-2 w-full border border-gray-100 rounded-xl bg-gray-50 px-4 py-2.5 shadow-inner">
                 <Building2 size={16} className="text-blue-500" />
                 <span className="text-sm font-bold text-gray-600 uppercase tracking-tight">
                   {usuario?.entidades?.nombre_hospital || (usuario?.rol === 'superadmin' ? "Gestión Global" : "Sin asignar")}
                 </span>
               </div>
-              <p className="text-[9px] text-gray-400 italic ml-1 mt-1">
+              <p className="text-[9px] text-gray-400 italic ml-1 mt-0.5">
                 {usuario?.rol === 'superadmin' ? 'Como superadmin, registras en el sistema global.' : `Registrando incidencia para su entidad asignada.`}
               </p>
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
               <select value={createForm.tipo} onChange={e => setCreateForm({ ...createForm, tipo: e.target.value })}
-                className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
+                className="w-full border border-blue-50 rounded-xl bg-white dark:bg-white px-4 py-2.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
                 <option value="" className="bg-white text-gray-400">Seleccionar...</option>
                 {["Equipo", "Material", "Acceso", "Zona", "Otro"].map(t => <option key={t} value={t} className="bg-white text-[#1e3a5f]">{t}</option>)}
               </select>
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
               <input value={createForm.zona} onChange={e => setCreateForm({ ...createForm, zona: e.target.value })}
                 placeholder="Ej: UCI - Planta 2"
-                className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
+                className="w-full border border-blue-50 rounded-xl bg-white dark:bg-white shadow-sm px-4 py-2.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
               <textarea value={createForm.descripcion} onChange={e => setCreateForm({ ...createForm, descripcion: e.target.value })}
-                rows={4} placeholder="Describe el problema detalladamente..."
-                className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white shadow-sm px-5 py-3.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+                rows={2} placeholder="Describe el problema detalladamente..."
+                className="w-full border border-blue-50 rounded-xl bg-white dark:bg-white shadow-sm px-4 py-2.5 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {["baja", "media", "alta", "critica"].map(p => {
                   const isActive = (createForm.urgente && p === 'critica') || (!createForm.urgente && createForm.prioridad === p);
                   return (
                     <button key={p} type="button"
                       onClick={() => !createForm.urgente && setCreateForm({ ...createForm, prioridad: p })}
                       disabled={createForm.urgente}
-                      className={`px-2 py-2 text-[10px] sm:px-3 sm:py-2.5 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${isActive ? PRIORIDAD_COLORS[p].active : PRIORIDAD_COLORS[p].inactive} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                      className={`px-2 py-1.5 text-[10px] sm:px-3 sm:py-2 sm:text-[10px] rounded-lg sm:rounded-xl border font-black uppercase tracking-wider transition-all ${isActive ? PRIORIDAD_COLORS[p].active : PRIORIDAD_COLORS[p].inactive} ${createForm.urgente && p !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
                       {p.charAt(0).toUpperCase() + p.slice(1)}
                     </button>
                   );
                 })}
               </div>
-              {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-1">Prioridad fijada a Crítica</p>}
+              {createForm.urgente && <p className="text-[10px] text-red-600 font-bold ml-1 mt-0.5">Prioridad fijada a Crítica</p>}
             </div>
 
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 bg-gray-100 p-3 rounded-xl cursor-pointer hover:bg-gray-200 transition-colors shadow-sm border border-gray-100"
+            <div className="flex flex-col gap-2 mt-1">
+              <div className="flex items-center gap-3 bg-gray-100 p-2.5 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors shadow-sm border border-gray-100"
                 onClick={() => setCreateForm({ ...createForm, urgente: !createForm.urgente, prioridad: !createForm.urgente ? 'critica' : createForm.prioridad })}>
-                <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-gray-300"}`}>
-                  {createForm.urgente && <CheckCircle2 size={12} className="text-white" />}
+                <div className={`w-4 h-4 rounded-[6px] border-2 flex items-center justify-center transition-all ${createForm.urgente ? "bg-red-500 border-red-500" : "border-gray-300"}`}>
+                  {createForm.urgente && <CheckCircle2 size={10} className="text-white" />}
                 </div>
                 <label className="text-xs text-[#1e3a5f] font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
               </div>
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-2">
-              <Button text="Cancelar" onClick={() => setShowCreateModal(false)} variant="secondary" className="flex-1 py-3" />
-              <Button text={loading ? "Creando..." : "Crear Incidencia"} onClick={handleCreateIncidencia} variant="primary" disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion} className="flex-1 py-3 shadow-sm" />
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mt-1">
+              <Button text="Cancelar" onClick={() => setShowCreateModal(false)} variant="secondary" className="flex-1 py-2 sm:py-2.5" />
+              <Button text={loading ? "Creando..." : "Crear Incidencia"} onClick={handleCreateIncidencia} variant="primary" disabled={loading || !createForm.tipo || !createForm.zona || !createForm.descripcion} className="flex-1 py-2 sm:py-2.5 shadow-sm" />
             </div>
           </div>
         </Modal>
@@ -361,11 +387,11 @@ const GestionIncidencias: React.FC = () => {
       {/* Modal Detail View matched to Screenshot 2 */}
       {selected && (
         <Modal title={selected.titulo} onClose={() => setSelected(null)} maxWidth="max-w-4xl">
-          <div className="p-2 w-full">
-            <div className="flex justify-between items-start mb-6">
+          <div className="p-0 sm:p-2 w-full">
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <p className="text-[10px] font-black text-gray-300 mb-1 uppercase tracking-widest">#{selected.id}</p>
-                <h3 className="text-xl font-black text-[#1e3a5f] uppercase tracking-tight">{selected.titulo}</h3>
+                <p className="text-[10px] font-black text-gray-300 mb-1 uppercase tracking-widest">#{String(selected.id).slice(0, 8)}</p>
+                <h3 className="text-lg sm:text-xl font-black text-[#1e3a5f] uppercase tracking-tight">{selected.titulo}</h3>
                 <div className="flex gap-3 mt-1">
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{selected.zona}</span>
                   <span className="text-[10px] text-gray-400 font-bold">•</span>
@@ -376,37 +402,37 @@ const GestionIncidencias: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               {[
                 ["Operario", selected.operario],
                 ["Zona", selected.zona],
                 ["Fecha", new Date(selected.created_at || selected.fecha).toLocaleDateString('es-ES')],
                 ["Prioridad", selected.prioridad]
               ].map(([l, v]) => (
-                <div key={l as string} className="bg-white dark:bg-slate-700/30 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col gap-1 shadow-sm">
-                  <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest leading-none">{l as string}</p>
-                  <p className={`text-sm font-black text-[#1e3a5f] dark:text-white truncate ${l === "Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
+                <div key={l as string} className="bg-white dark:bg-slate-700/30 border border-gray-100 dark:border-slate-700/50 rounded-xl p-3 flex flex-col gap-0.5 shadow-sm">
+                  <p className="text-[9px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest leading-none">{l as string}</p>
+                  <p className={`text-xs font-black text-[#1e3a5f] dark:text-white truncate ${l === "Prioridad" && PRIORIDAD_BADGE[v as string]}`}>{v as string}</p>
                 </div>
               ))}
             </div>
 
-            <div className="flex flex-col gap-3 mb-6">
+            <div className="flex flex-col gap-1 mb-4">
               <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1">Descripción</p>
-              <div className="bg-white dark:bg-slate-700/20 border border-blue-50 dark:border-slate-700/50 rounded-3xl p-5 text-sm font-bold text-slate-600 dark:text-slate-200 leading-relaxed shadow-sm">
+              <div className="bg-white dark:bg-slate-700/20 border border-blue-50 dark:border-slate-700/50 rounded-2xl p-3 text-xs font-bold text-slate-600 dark:text-slate-200 leading-relaxed shadow-sm">
                 {selected.descripcion || selected.desc}
               </div>
             </div>
 
             {selected.foto_url && (
-              <div className="mb-10">
-                <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1 mb-8">Foto Adjunta</p>
-                <img src={selected.foto_url} alt="Incidencia" className="rounded-2xl max-h-64 object-cover border border-gray-100 shadow-sm" />
+              <div className="mb-4">
+                <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1 mb-2">Foto Adjunta</p>
+                <img src={selected.foto_url} alt="Incidencia" className="rounded-xl max-h-32 object-cover border border-gray-100 shadow-sm" />
               </div>
             )}
 
-            <div className="flex flex-col gap-3 mb-8">
+            <div className="flex flex-col gap-2 mb-4">
               <p className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1">Cambiar estado:</p>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
+              <div className="flex flex-wrap gap-2">
                 {[
                   ["resuelta", "Resuelta", "success"],
                   ["abierta", "Abierta", "danger"],
@@ -417,20 +443,20 @@ const GestionIncidencias: React.FC = () => {
                       text={l as string}
                       onClick={() => updateEstado(selected.id, v as string, notaTexto)}
                       variant={varType as any}
-                      className="px-6 py-2 text-[10px] sm:py-2.5 sm:text-[11px] shadow-lg rounded-xl flex-initial min-w-[100px]"
+                      className="px-4 py-1.5 text-[10px] sm:py-2 sm:text-[11px] shadow-sm rounded-lg flex-initial min-w-[90px]"
                     />
                 ))}
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 mb-6">
+            <div className="flex flex-col gap-2 mb-4">
               <label className="text-[10px] font-black text-gray-400 dark:text-slate-400 uppercase tracking-widest ml-1">Añadir comentario de resolución:</label>
               <textarea
                 value={notaTexto}
                 onChange={e => setNotaTexto(e.target.value)}
-                rows={3}
+                rows={2}
                 placeholder="Escribe cómo se resolvió la incidencia..."
-                className="w-full border border-gray-100 dark:border-slate-700/50 rounded-3xl p-5 text-sm font-black text-slate-700 dark:text-white bg-white dark:bg-slate-700/30 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none shadow-inner"
+                className="w-full border border-gray-100 dark:border-slate-700/50 rounded-2xl p-3 text-xs font-black text-slate-700 dark:text-white bg-white dark:bg-slate-700/30 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none shadow-inner"
               />
             </div>
 
@@ -439,8 +465,38 @@ const GestionIncidencias: React.FC = () => {
                 text="Guardar comentario"
                 onClick={() => updateEstado(selected.id, selected.estado, notaTexto)}
                 variant="primary"
-                className="px-10 py-3 text-xs sm:py-4 sm:text-sm shadow-xl shadow-blue-100 w-fit"
+                className="px-8 py-2 text-xs sm:py-2.5 sm:text-xs shadow-md shadow-blue-100 w-fit"
               />
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {/* Modal de confirmación de borrado */}
+      {incidenciaToDelete && (
+        <Modal title="Confirmar Eliminación" onClose={() => setIncidenciaToDelete(null)} maxWidth="max-w-md">
+          <div className="text-center -mt-2 sm:-mt-4">
+            <AlertTriangle className="mx-auto mb-3 h-12 w-12 text-red-400 drop-shadow-md" />
+            <h3 className="mb-2 text-xl font-black text-[#1e3a5f] uppercase tracking-tight">
+              ¿Eliminar Incidencia?
+            </h3>
+            <p className="mb-4 text-sm text-gray-500 font-medium">
+              Estás a punto de eliminar la incidencia <span className="font-black text-gray-700">#{String(incidenciaToDelete.id).slice(0, 8)}</span>.
+            </p>
+            <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 mb-6 mx-auto max-w-[85%] shadow-inner">
+              <span className="font-bold text-[#1e3a5f]">"{incidenciaToDelete.titulo}"</span>
+            </div>
+            <p className="text-xs text-red-600 font-black uppercase tracking-widest" style={{ marginBottom: '2.5rem' }}>
+              Esta acción es irreversible.
+            </p>
+            <div className="flex justify-center gap-3">
+              <Button
+                text="Cancelar"
+                onClick={() => setIncidenciaToDelete(null)}
+                variant="secondary"
+                className="flex-1 py-3"
+              />
+              <Button text="Sí, Eliminar" onClick={handleDeleteIncidencia} variant="danger" className="flex-1 py-3 shadow-md" />
             </div>
           </div>
         </Modal>
