@@ -295,6 +295,12 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
 ✨ **Mejoras en la UI:**
 - **Desplegable en Panel Superadmin:**Añadido mostrar datos en panel superadmin un desplegable para seleccionar entidades y ver datos específicos de cada una.
 
+-**Tablas de Datos:** Añadido datos para ver que todo funciona correctamente en los 3 tipos de usuarios. En el panel de superadmin se ven todas las tareas, incidencias y notificaciones de todos los usuarios. En el panel de admin se ven todas las tareas, incidencias y notificaciones de todos los usuarios de su entidad. En el panel de operario se ven todas las tareas, incidencias y notificaciones de su entidad. 
+
+✨**Vistas de Entidades:** 
+* Panel Superadmin: Se ven todas las entidades.
+* Panel Admin: Se ven solo las entidades de su entidad.
+* Panel Operario: Se ven solo las entidades de su entidad.
 
  
  #### 📍 Semana 36 | 11 y 12 de Mayo - Corrección UI e Inyección Avanzada en IA
