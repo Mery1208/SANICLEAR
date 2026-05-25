@@ -50,8 +50,12 @@ const BarraSuperior: React.FC = () => {
                       className="flex items-center gap-1 sm:gap-2 md:gap-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl md:rounded-2xl py-1 pl-1.5 sm:py-1.5 sm:pl-2 md:py-2 md:pl-2.5 pr-1 sm:pr-2 md:pr-4 shadow-sm cursor-pointer transition-all shrink-0 max-w-[140px] sm:max-w-[180px] md:max-w-none"
                       title="Ir a Mi Perfil"
                   >
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-sm shrink-0 text-[8px] sm:text-[9px] md:text-sm flex-shrink-0">
-                          {nombreMostrar.charAt(0).toUpperCase()}{apellidosMostrar ? apellidosMostrar.charAt(0).toUpperCase() : ''}
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-sm shrink-0 text-[8px] sm:text-[9px] md:text-sm flex-shrink-0 overflow-hidden">
+                          {usuario?.avatar_url ? (
+                              <img src={usuario.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                          ) : (
+                              <>{nombreMostrar.charAt(0).toUpperCase()}{apellidosMostrar ? apellidosMostrar.charAt(0).toUpperCase() : ''}</>
+                          )}
                       </div>
                        <div className="flex flex-col text-left min-w-0">
                            <p className="text-[9px] sm:text-[10px] md:text-sm font-bold text-slate-700 dark:text-slate-200 leading-none truncate">{nombreMostrar} {apellidosMostrar}</p>
