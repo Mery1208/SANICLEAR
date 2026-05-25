@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   AlertTriangle,
   Bell,
+  ChevronDown,
+  ChevronRight,
   ClipboardList,
   MapPinned,
   RefreshCw,
@@ -79,6 +81,12 @@ const PanelGlobal: React.FC = () => {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
 
+  const [activeAlertId, setActiveAlertId] = useState<string | null>(null);
+  const [detallesUsuarios, setDetallesUsuarios] = useState<any[]>([]);
+  const [detallesIncidencias, setDetallesIncidencias] = useState<any[]>([]);
+  const [detallesNotificaciones, setDetallesNotificaciones] = useState<any[]>([]);
+  const [detallesTareas, setDetallesTareas] = useState<any[]>([]);
+
   const fetchGlobalData = async () => {
     setLoading(true);
     setError(null);
@@ -88,28 +96,20 @@ const PanelGlobal: React.FC = () => {
     const endDate = new Date(parseInt(year), parseInt(month), 1).toISOString();
 
     try {
-      let qUsuarios = supabase.from('usuarios').select('*', { count: 'exact', head: true });
-      let qZonas = supabase.from('zonas').select('*', { count: 'exact', head: true });
-      let qTareasPendientes = supabase.from('tareas').select('id, zona', { count: 'exact' }).eq('estado', 'pendiente');
-      let qTareasCurso = supabase.from('tareas').select('id, zona', { count: 'exact' }).eq('estado', 'en_curso');
-      let qIncidenciasAbiertas = supabase.from('incidencias').select('id, zona, prioridad', { count: 'exact' }).eq('estado', 'abierta');
-      let qIncidenciasCriticas = supabase.from('incidencias').select('id, zona, prioridad', { count: 'exact' }).eq('prioridad', 'critica');
-      let qNotificaciones = supabase.from('notificaciones').select('*', { count: 'exact', head: true }).eq('leida', false);
-      let qAdmins = supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('rol', 'admin');
-      let qOperarios = supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('rol', 'operario');
+      let qUsuarios = supabase.from('usuarios').select('id, nombre, apellidos, rol, email');
+      let qZonas = supabase.from('zonas').select('id, nombre', { count: 'exact' });
+      let qTareasActivas = supabase.from('tareas').select('id, tarea, zona, asignado, estado, prioridad').in('estado', ['pendiente', 'en_curso']);
+      let qIncidenciasAbiertas = supabase.from('incidencias').select('id, titulo, zona, prioridad, estado').eq('estado', 'abierta');
+      let qNotificaciones = supabase.from('notificaciones').select('id, titulo, mensaje, created_at').eq('leida', false);
       let qTareasZonas = supabase.from('tareas').select('id, zona, estado').gte('created_at', startDate).lt('created_at', endDate);
       let qIncidenciasZonas = supabase.from('incidencias').select('id, zona, prioridad, estado').gte('created_at', startDate).lt('created_at', endDate);
 
       if (filtroEntidad !== 'todas') {
         qUsuarios = qUsuarios.eq('entidad_id', filtroEntidad);
         qZonas = qZonas.eq('entidad_id', filtroEntidad);
-        qTareasPendientes = qTareasPendientes.eq('entidad_id', filtroEntidad);
-        qTareasCurso = qTareasCurso.eq('entidad_id', filtroEntidad);
+        qTareasActivas = qTareasActivas.eq('entidad_id', filtroEntidad);
         qIncidenciasAbiertas = qIncidenciasAbiertas.eq('entidad_id', filtroEntidad);
-        qIncidenciasCriticas = qIncidenciasCriticas.eq('entidad_id', filtroEntidad);
         qNotificaciones = qNotificaciones.eq('entidad_id', filtroEntidad);
-        qAdmins = qAdmins.eq('entidad_id', filtroEntidad);
-        qOperarios = qOperarios.eq('entidad_id', filtroEntidad);
         qTareasZonas = qTareasZonas.eq('entidad_id', filtroEntidad);
         qIncidenciasZonas = qIncidenciasZonas.eq('entidad_id', filtroEntidad);
       }
@@ -117,25 +117,17 @@ const PanelGlobal: React.FC = () => {
       const [
         usuariosRes,
         zonasRes,
-        tareasPendientesRes,
-        tareasCursoRes,
+        tareasActivasRes,
         incidenciasAbiertasRes,
-        incidenciasCriticasRes,
         notificacionesRes,
-        adminsRes,
-        operariosRes,
         tareasZonasRes,
         incidenciasZonasRes,
       ] = await Promise.all([
         qUsuarios,
         qZonas,
-        qTareasPendientes,
-        qTareasCurso,
+        qTareasActivas,
         qIncidenciasAbiertas,
-        qIncidenciasCriticas,
         qNotificaciones,
-        qAdmins,
-        qOperarios,
         qTareasZonas,
         qIncidenciasZonas,
       ]);
@@ -143,13 +135,9 @@ const PanelGlobal: React.FC = () => {
       const responses = [
         usuariosRes,
         zonasRes,
-        tareasPendientesRes,
-        tareasCursoRes,
+        tareasActivasRes,
         incidenciasAbiertasRes,
-        incidenciasCriticasRes,
         notificacionesRes,
-        adminsRes,
-        operariosRes,
         tareasZonasRes,
         incidenciasZonasRes,
       ];
@@ -159,17 +147,35 @@ const PanelGlobal: React.FC = () => {
         throw new Error(firstError.message);
       }
 
+      const uData = usuariosRes.data || [];
+      const tActivasData = tareasActivasRes.data || [];
+      const iAbiertasData = incidenciasAbiertasRes.data || [];
+      const nData = notificacionesRes.data || [];
+
+      const admins = uData.filter((u: any) => u.rol === 'admin');
+      const operarios = uData.filter((u: any) => u.rol === 'operario');
+
+      const tareasPendientes = tActivasData.filter((t: any) => t.estado === 'pendiente');
+      const tareasCurso = tActivasData.filter((t: any) => t.estado === 'en_curso');
+
+      const incidenciasCriticas = iAbiertasData.filter((i: any) => i.prioridad === 'critica');
+
       setSummary({
-        usuarios: usuariosRes.count || 0,
+        usuarios: uData.length,
         zonas: zonasRes.count || 0,
-        tareasPendientes: tareasPendientesRes.count || 0,
-        tareasCurso: tareasCursoRes.count || 0,
-        incidenciasAbiertas: incidenciasAbiertasRes.count || 0,
-        incidenciasCriticas: incidenciasCriticasRes.count || 0,
-        notificacionesNoLeidas: notificacionesRes.count || 0,
-        admins: adminsRes.count || 0,
-        operarios: operariosRes.count || 0,
+        tareasPendientes: tareasPendientes.length,
+        tareasCurso: tareasCurso.length,
+        incidenciasAbiertas: iAbiertasData.length,
+        incidenciasCriticas: incidenciasCriticas.length,
+        notificacionesNoLeidas: nData.length,
+        admins: admins.length,
+        operarios: operarios.length,
       });
+
+      setDetallesUsuarios(uData);
+      setDetallesIncidencias(incidenciasCriticas);
+      setDetallesNotificaciones(nData);
+      setDetallesTareas(tActivasData);
 
       const taskRows = tareasZonasRes.data || [];
       const incidRows = incidenciasZonasRes.data || [];
@@ -211,26 +217,26 @@ const PanelGlobal: React.FC = () => {
         {
           id: 'usuarios',
           titulo: 'Estado de la estructura',
-          detalle: `${adminsRes.count || 0} administradores y ${operariosRes.count || 0} operarios activos en el sistema.`,
+          detalle: `${admins.length} administradores y ${operarios.length} operarios activos en el sistema.`,
           nivel: 'info',
         },
         {
           id: 'incidencias',
           titulo: 'Incidencias críticas',
-          detalle: `${incidenciasCriticasRes.count || 0} incidencias críticas requieren supervisión prioritaria.`,
-          nivel: (incidenciasCriticasRes.count || 0) > 0 ? 'critical' : 'info',
+          detalle: `${incidenciasCriticas.length} incidencias críticas requieren supervisión prioritaria.`,
+          nivel: incidenciasCriticas.length > 0 ? 'critical' : 'info',
         },
         {
           id: 'notificaciones',
           titulo: 'Comunicaciones pendientes',
-          detalle: `${notificacionesRes.count || 0} notificaciones no leídas esperan revisión.`,
-          nivel: (notificacionesRes.count || 0) > 5 ? 'warning' : 'info',
+          detalle: `${nData.length} notificaciones no leídas esperan revisión.`,
+          nivel: nData.length > 5 ? 'warning' : 'info',
         },
         {
           id: 'operacion',
           titulo: 'Carga operativa',
-          detalle: `${(tareasPendientesRes.count || 0) + (tareasCursoRes.count || 0)} tareas abiertas en seguimiento global.`,
-          nivel: (tareasPendientesRes.count || 0) > 10 ? 'warning' : 'info',
+          detalle: `${tareasPendientes.length + tareasCurso.length} tareas abiertas en seguimiento global.`,
+          nivel: tareasPendientes.length > 10 ? 'warning' : 'info',
         },
       ]);
     } catch (err: unknown) {
@@ -462,39 +468,136 @@ const PanelGlobal: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-8 flex flex-col">
           <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-5">
             Alertas y actividad
           </p>
 
           <div className="flex flex-col gap-4">
-            {actividad.map((item) => (
-              <div key={item.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`mt-1 p-2 rounded-xl ${
-                      item.nivel === 'critical'
-                        ? 'bg-red-100 text-red-600'
-                        : item.nivel === 'warning'
-                          ? 'bg-yellow-100 text-yellow-600'
-                          : 'bg-blue-100 text-blue-600'
-                    }`}
-                  >
-                    {item.nivel === 'critical' ? (
-                      <AlertTriangle size={16} />
-                    ) : item.nivel === 'warning' ? (
-                      <Bell size={16} />
-                    ) : (
-                      <TrendingUp size={16} />
-                    )}
+            {actividad.map((item) => {
+              const isExpanded = activeAlertId === item.id;
+              return (
+                <div 
+                  key={item.id} 
+                  onClick={() => setActiveAlertId(prev => prev === item.id ? null : item.id)}
+                  className="rounded-2xl border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/40 p-4 cursor-pointer hover:bg-gray-100/50 dark:hover:bg-slate-800/70 transition-all select-none text-left"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div
+                        className={`mt-1 p-2 rounded-xl shrink-0 ${
+                          item.nivel === 'critical'
+                            ? 'bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400'
+                            : item.nivel === 'warning'
+                              ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-950/40 dark:text-yellow-400'
+                              : 'bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400'
+                        }`}
+                      >
+                        {item.nivel === 'critical' ? (
+                          <AlertTriangle size={16} />
+                        ) : item.nivel === 'warning' ? (
+                          <Bell size={16} />
+                        ) : (
+                          <TrendingUp size={16} />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-black text-[#1e3a5f] dark:text-blue-200 mb-1 truncate">{item.titulo}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed font-semibold">{item.detalle}</p>
+                      </div>
+                    </div>
+                    <div className="text-gray-400 dark:text-slate-500 mt-1.5 shrink-0">
+                      {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-black text-[#1e3a5f] mb-1">{item.titulo}</p>
-                    <p className="text-sm text-gray-500 leading-relaxed font-medium">{item.detalle}</p>
-                  </div>
+
+                  {isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-gray-200/60 dark:border-slate-700 max-h-[220px] overflow-y-auto flex flex-col gap-2 scrollbar-thin scrollbar-thumb-gray-200">
+                      {item.id === 'notificaciones' && (
+                        <>
+                          {detallesNotificaciones.map((notif) => (
+                            <div key={notif.id} className="text-left text-xs bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm">
+                              <p className="font-extrabold text-[#1e3a5f] dark:text-blue-300">{notif.titulo}</p>
+                              <p className="text-gray-500 dark:text-slate-300 mt-1 font-medium">{notif.mensaje}</p>
+                              <p className="text-[9px] text-gray-400 dark:text-slate-500 mt-1.5 uppercase font-bold">
+                                {new Date(notif.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                          ))}
+                          {detallesNotificaciones.length === 0 && (
+                            <p className="text-xs text-gray-400 dark:text-slate-500 italic text-center py-4 font-semibold">No hay notificaciones no leídas.</p>
+                          )}
+                        </>
+                      )}
+
+                      {item.id === 'incidencias' && (
+                        <>
+                          {detallesIncidencias.map((incid) => (
+                            <div key={incid.id} className="text-left text-xs bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm flex justify-between items-center gap-3">
+                              <div className="min-w-0 flex-1">
+                                <p className="font-extrabold text-red-600 dark:text-red-400 truncate">{incid.titulo}</p>
+                                <p className="text-gray-500 dark:text-slate-400 text-[10px] mt-1 font-bold">
+                                  Zona: <span className="text-gray-700 dark:text-slate-300">{incid.zona}</span>
+                                </p>
+                              </div>
+                              <Badge 
+                                cls="bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 text-[9px] uppercase font-black tracking-wider px-2 py-0.5 border border-red-200/50 dark:border-red-900/50" 
+                                label={incid.estado} 
+                              />
+                            </div>
+                          ))}
+                          {detallesIncidencias.length === 0 && (
+                            <p className="text-xs text-gray-400 dark:text-slate-500 italic text-center py-4 font-semibold">No hay incidencias críticas activas.</p>
+                          )}
+                        </>
+                      )}
+
+                      {item.id === 'operacion' && (
+                        <>
+                          {detallesTareas.map((tarea) => (
+                            <div key={tarea.id} className="text-left text-xs bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm flex justify-between items-center gap-3">
+                              <div className="min-w-0 flex-1">
+                                <p className="font-extrabold text-[#1e3a5f] dark:text-blue-300 truncate">{tarea.tarea}</p>
+                                <p className="text-gray-500 dark:text-slate-400 text-[10px] mt-1 font-bold leading-relaxed">
+                                  Zona: <span className="text-gray-700 dark:text-slate-300">{tarea.zona}</span> · Operario: <span className="text-gray-700 dark:text-slate-300">{tarea.asignado}</span>
+                                </p>
+                              </div>
+                              <Badge 
+                                cls={tarea.estado === 'en_curso' ? 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/50' : 'bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200/50 dark:border-yellow-900/50'} 
+                                label={tarea.estado === 'en_curso' ? 'En curso' : 'Pendiente'} 
+                              />
+                            </div>
+                          ))}
+                          {detallesTareas.length === 0 && (
+                            <p className="text-xs text-gray-400 dark:text-slate-500 italic text-center py-4 font-semibold">No hay tareas activas.</p>
+                          )}
+                        </>
+                      )}
+
+                      {item.id === 'usuarios' && (
+                        <>
+                          {detallesUsuarios.map((user) => (
+                            <div key={user.id} className="text-left text-xs bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-gray-100 dark:border-slate-800 shadow-sm flex justify-between items-center gap-3">
+                              <div className="min-w-0 flex-1">
+                                <p className="font-extrabold text-[#1e3a5f] dark:text-blue-300 truncate">{user.nombre} {user.apellidos}</p>
+                                <p className="text-[10px] text-gray-400 dark:text-slate-400 mt-1 font-bold">{user.email}</p>
+                              </div>
+                              <Badge 
+                                cls={user.rol === 'admin' ? 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/50' : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/50'} 
+                                label={user.rol.toUpperCase()} 
+                              />
+                            </div>
+                          ))}
+                          {detallesUsuarios.length === 0 && (
+                            <p className="text-xs text-gray-400 dark:text-slate-500 italic text-center py-4 font-semibold">No hay usuarios registrados.</p>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
