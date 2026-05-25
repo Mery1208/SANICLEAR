@@ -109,7 +109,21 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+
+    const channel = supabase
+      .channel('admin-dashboard-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tareas' }, () => {
+        fetchData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'incidencias' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [entidadId, isAdmin]);
 
   // Filtrar tareas por búsqueda
   const tareasFiltradas = useMemo(() => {

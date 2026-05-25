@@ -245,6 +245,26 @@ const PanelGlobal: React.FC = () => {
 
   useEffect(() => {
     fetchGlobalData();
+
+    const channel = supabase
+      .channel('global-panel-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tareas' }, () => {
+        fetchGlobalData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'incidencias' }, () => {
+        fetchGlobalData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'usuarios' }, () => {
+        fetchGlobalData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notificaciones' }, () => {
+        fetchGlobalData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [filtroEntidad, filtroMes]);
 
   useEffect(() => {
@@ -477,28 +497,6 @@ const PanelGlobal: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {[
-          {
-            title: 'Gobierno del sistema',
-            text: 'El superadmin puede decidir escalados, redefinir prioridades y coordinar políticas globales.',
-          },
-          {
-            title: 'Capacidad y saturación',
-            text: 'Cruza tareas pendientes, incidencias abiertas y volumen por zonas para anticipar cuellos de botella.',
-          },
-          {
-            title: 'Trazabilidad ejecutiva',
-            text: 'Mantén una visión centralizada para tomar decisiones de alto nivel sobre operación y estructura.',
-          },
-        ].map((item) => (
-          <div key={item.title} className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white mb-3">{item.title}</p>
-            <p className="text-sm text-gray-500 leading-relaxed font-medium">{item.text}</p>
-          </div>
-        ))}
       </div>
     </div>
   );
