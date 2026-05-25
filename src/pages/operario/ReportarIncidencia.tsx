@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
 import { AlertTriangle, MapPin, Clipboard, Send, CheckCircle, ArrowLeft, X, CheckCircle2, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
@@ -12,6 +12,11 @@ const PRIORIDADES = [
   { value: "critica", label: "Crítica", color: "text-red-800", bg: "bg-red-100 border-red-300" },
 ];
 
+interface Zona {
+  id: string;
+  nombre: string;
+}
+
 const ReportarIncidencia: React.FC = () => {
   const { usuario } = useAuth();
   const navigate = useNavigate();
@@ -20,6 +25,40 @@ const ReportarIncidencia: React.FC = () => {
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [zonas, setZonas] = useState<Zona[]>([]);
+  const [loadingZonas, setLoadingZonas] = useState(false);
+
+  // Cargar zonas de la entidad del operario — filtra ESTRICTAMENTE por entidad_id
+  useEffect(() => {
+    const fetchZonas = async () => {
+      // Guard estricto: entidad_id debe ser un string válido y no vacío
+      const entidadId = usuario?.entidad_id;
+      if (!entidadId || typeof entidadId !== 'string' || entidadId.trim() === '') {
+        console.warn('[ReportarIncidencia] El operario no tiene entidad_id asignado. No se cargan zonas.');
+        setZonas([]);
+        return;
+      }
+
+      console.log('[ReportarIncidencia] Cargando zonas para entidad_id:', entidadId);
+      setLoadingZonas(true);
+
+      const { data, error } = await supabase
+        .from('zonas')
+        .select('id, nombre')
+        .eq('entidad_id', entidadId)   // filtra solo las zonas de esta entidad
+        .order('nombre', { ascending: true });
+
+      if (error) {
+        console.error('[ReportarIncidencia] Error cargando zonas:', error.message);
+        setZonas([]);
+      } else {
+        console.log('[ReportarIncidencia] Zonas obtenidas:', data?.length, data);
+        setZonas(data ?? []);
+      }
+      setLoadingZonas(false);
+    };
+    fetchZonas();
+  }, [usuario?.entidad_id]);
 
   const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -132,12 +171,29 @@ const ReportarIncidencia: React.FC = () => {
                </select>
             </div>
 
-            <div className="flex flex-col gap-2">
+             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
-               <input value={form.zona} onChange={e => setForm({...form, zona:e.target.value})}
-                 placeholder="Ej: UCI - Planta 2"
-                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all" />
-            </div>
+               <select
+                 value={form.zona}
+                 onChange={e => setForm({...form, zona: e.target.value})}
+                 disabled={loadingZonas}
+                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+               >
+                 <option value="">
+                   {loadingZonas ? 'Cargando zonas...' : zonas.length === 0 ? 'Sin zonas disponibles' : 'Seleccionar zona...'}
+                 </option>
+                 {zonas.map(z => (
+                   <option key={z.id} value={z.nombre} className="bg-white text-[#1e3a5f]">
+                     {z.nombre}
+                   </option>
+                 ))}
+               </select>
+               {!loadingZonas && zonas.length === 0 && (
+                 <p className="text-[10px] text-orange-500 font-semibold ml-1">
+                   No hay zonas registradas en tu entidad. Contacta con el administrador.
+                 </p>
+               )}
+             </div>
 
             <div className="flex flex-col gap-2">
                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
