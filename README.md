@@ -281,11 +281,21 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
    - **Asistentes:** María Ceballos, María Mercedes Martínez y Paco.
    - **Temas tratados:** Preparación de la presentación del TFG y elaboración del guion para la defensa.
 
+- 📅 **26/05/2026 — Ensayo Presentación TFG**
+   - **Asistentes:** María Ceballos, María Mercedes Martínez y Paco.
+   - **Temas tratados:** Ensayo de la presentación del TFG.
+
 ---
 
 ## 📘 Diario de Desarrollo del TFG
 
 ### 🗓️ MAYO 2026 — Integración de IA y Pulido Final
+
+#### 📍 24/05/2026 — Ajustes Finales
+✨ **Mejoras en la UI:**
+- **Desplegable en Panel Superadmin:**Añadido mostrar datos en panel superadmin un desplegable para seleccionar entidades y ver datos específicos de cada una.
+
+
  
  #### 📍 Semana 36 | 11 y 12 de Mayo - Corrección UI e Inyección Avanzada en IA
  
