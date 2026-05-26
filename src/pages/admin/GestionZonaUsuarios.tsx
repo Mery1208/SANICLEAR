@@ -328,18 +328,18 @@ const Gestion: React.FC = () => {
             <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay zonas.</div>
           ) : (
             zonasFiltradas.map(z => (
-              <div key={z.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex flex-wrap justify-between items-center gap-4 hover:shadow-md transition-shadow">
-                <div className="w-full sm:w-auto flex-1 min-w-[200px]">
-                  <p className="font-bold text-gray-800 dark:text-white text-lg">{z.nombre}</p>
-                  <p className="text-sm text-gray-500">Planta {z.planta} · {z.metros} m² · {z.tipo}</p>
-                  <div className="flex gap-2 mt-2">
+              <div key={z.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex flex-row justify-between items-center gap-4 hover:shadow-md transition-shadow">
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-gray-800 dark:text-white text-lg truncate">{z.nombre}</p>
+                  <p className="text-sm text-gray-500 truncate">Planta {z.planta} · {z.metros} m² · {z.tipo}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
                     <Badge cls={NIVEL_BADGE[z.nivel] || "bg-gray-100 text-gray-700"} label={`Prioridad ${z.nivel}`} />
                     <Badge cls={z.estado === 'Activo' ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} label={z.estado} />
                   </div>
                 </div>
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-3 py-1.5 flex-1 sm:flex-none" />
-                  <Button text="Eliminar" onClick={() => requestDeleteZona(z)} variant="danger" className="px-3 py-1.5 flex-1 sm:flex-none" />
+                <div className="flex gap-2 shrink-0">
+                  <Button text="Editar" onClick={() => openEditZona(z)} variant="secondary" className="px-5 py-2 rounded-full text-xs" />
+                  <Button text="Eliminar" onClick={() => requestDeleteZona(z)} variant="danger" className="px-5 py-2 rounded-full text-xs" />
                 </div>
               </div>
             ))
@@ -356,20 +356,20 @@ const Gestion: React.FC = () => {
             <div className="p-6 text-center text-gray-500 bg-white border border-dashed rounded-xl">No hay usuarios.</div>
           ) : (
             usuariosFiltrados.map(u => (
-              <div key={u.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex flex-wrap justify-between items-center gap-4 hover:shadow-md transition-shadow">
-                <div className="w-full sm:w-auto flex-1 min-w-[200px]">
-                  <p className="font-bold text-gray-800 dark:text-white text-lg">{u.nombre} {u.apellidos}</p>
-                  <p className="text-sm text-gray-500">{u.email}</p>
-                  <div className="flex gap-2 mt-2">
+              <div key={u.id} className="bg-white dark:bg-slate-800 rounded-xl border shadow-sm p-4 flex flex-row justify-between items-center gap-4 hover:shadow-md transition-shadow">
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-gray-800 dark:text-white text-lg truncate">{u.nombre} {u.apellidos}</p>
+                  <p className="text-sm text-gray-500 truncate">{u.email}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
                      <Badge cls={ROL_BADGE[u.rol] || "bg-gray-100 text-gray-700"} label={u.rol === 'superadmin' ? 'Super Admin' : u.rol === 'admin' ? 'Administrador' : 'Operario'} />
                      {u.turno && <Badge cls="bg-gray-100 text-gray-700" label={u.turno} />}
                   </div>
                 </div>
-                <div className="flex gap-2 w-full sm:w-auto">
+                <div className="flex gap-2 shrink-0">
                   {!(currentUserRole !== 'superadmin' && u.rol === 'superadmin') && (
                     <>
-                      <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-3 py-1.5 flex-1 sm:flex-none" />
-                      <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-3 py-1.5 flex-1 sm:flex-none" />
+                      <Button text="Editar" onClick={() => openEditUsuario(u)} variant="secondary" className="px-5 py-2 rounded-full text-xs" />
+                      <Button text="Eliminar" onClick={() => requestDeleteUsuario(u)} variant="danger" className="px-5 py-2 rounded-full text-xs" />
                     </>
                   )}
                 </div>
