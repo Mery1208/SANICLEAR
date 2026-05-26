@@ -16,8 +16,8 @@ interface Tarea {
   asignado?: string | null;
 }
 
-const PRIORIDAD_BADGE: Record<string, string> = { alta:"bg-red-100 text-red-700", media:"bg-yellow-100 text-yellow-700", baja:"bg-green-100 text-green-700" };
-const PRIORIDAD_LABEL: Record<string, string> = { alta:"Alta", media:"Media", baja:"Baja" };
+const PRIORIDAD_BADGE: Record<string, string> = { alta: "bg-red-100 text-red-700", media: "bg-yellow-100 text-yellow-700", baja: "bg-green-100 text-green-700" };
+const PRIORIDAD_LABEL: Record<string, string> = { alta: "Alta", media: "Media", baja: "Baja" };
 
 const MisTareas: React.FC = () => {
   const { usuario } = useAuth();
@@ -94,7 +94,7 @@ const MisTareas: React.FC = () => {
 
   const completar = async (id: number) => {
     // Optimistic update
-    setTareas(prev => prev.map(t => t.id === id ? {...t, estado:"completada"} : t));
+    setTareas(prev => prev.map(t => t.id === id ? { ...t, estado: "completada" } : t));
 
     try {
       const { error } = await supabase.from('tareas').update({ estado: 'completada' }).eq('id', id);
@@ -114,6 +114,29 @@ const MisTareas: React.FC = () => {
     fetchTareas();
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 10; // Máximo 10 por página
+
+  // Tareas ordenadas primero
+  const sortedTasks = useMemo(() => {
+    return [...tareasFiltradas].sort((a, b) => {
+      const ord: Record<string, number> = { alta: 0, media: 1, baja: 2 };
+      const aComp = a.estado === "completada" || a.estado === "hecha";
+      const bComp = b.estado === "completada" || b.estado === "hecha";
+      if (aComp && !bComp) return 1;
+      if (!aComp && bComp) return -1;
+      return (ord[a.prioridad] ?? 3) - (ord[b.prioridad] ?? 3);
+    });
+  }, [tareasFiltradas]);
+
+  const totalPages = Math.ceil(sortedTasks.length / tasksPerPage);
+  const currentTasks = sortedTasks.slice((currentPage - 1) * tasksPerPage, currentPage * tasksPerPage);
+
+  // Reiniciar página si cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query]);
+
   if (loading) {
     return (
       <div className="p-6 font-sans">
@@ -128,17 +151,17 @@ const MisTareas: React.FC = () => {
   if (error) {
     return (
       <div className="p-6 font-sans">
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-2xl p-6 mb-6 transition-colors">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-2xl p-6 mb-6 transition-colors">
           <h3 className="font-bold mb-2 text-lg">Error al cargar tareas</h3>
           <p className="text-sm mb-4">{error}</p>
           <div className="flex gap-3">
-              <button onClick={handleRetry} className="px-4 py-2 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+            <button onClick={handleRetry} className="px-4 py-2 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
               <RefreshCw size={16} />
               Reintentar
             </button>
             {error.includes('Tabla') && (
               <a href="SUPABASE_SETUP.md" target="_blank" rel="noopener noreferrer"
-                   className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-lg text-sm font-semibold transition-colors">
+                className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-lg text-sm font-semibold transition-colors">
                 Ver guía de configuración
               </a>
             )}
@@ -151,8 +174,8 @@ const MisTareas: React.FC = () => {
   if (tareasFiltradas.length === 0) {
     return (
       <div className="p-6 font-sans">
-            <div className={`rounded-2xl p-8 text-center transition-colors ${query ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-800 dark:text-blue-300' : 'bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300'}`}>
-              {query ? <Search size={48} className="mx-auto mb-4 text-blue-400 dark:text-blue-500" /> : <CheckCircle size={48} className="mx-auto mb-4 text-gray-400 dark:text-slate-500" />}
+        <div className={`rounded-2xl p-8 text-center transition-colors ${query ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-800 dark:text-blue-300' : 'bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300'}`}>
+          {query ? <Search size={48} className="mx-auto mb-4 text-blue-400 dark:text-blue-500" /> : <CheckCircle size={48} className="mx-auto mb-4 text-gray-400 dark:text-slate-500" />}
           <h3 className="font-bold mb-2 text-xl">
             {query ? `No se encontraron tareas para "${query}"` : "No tienes tareas asignadas"}
           </h3>
@@ -163,13 +186,13 @@ const MisTareas: React.FC = () => {
           </p>
           <div className="flex gap-3 justify-center">
             {query && (
-                  <button onClick={clearQuery} className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+              <button onClick={clearQuery} className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
                 <Search size={16} />
                 Limpiar búsqueda
               </button>
             )}
             {!query && (
-                  <button onClick={handleRetry} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 dark:text-slate-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+              <button onClick={handleRetry} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 dark:text-slate-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
                 <RefreshCw size={16} />
                 Actualizar
               </button>
@@ -184,13 +207,13 @@ const MisTareas: React.FC = () => {
     <div>
       <div className="flex flex-wrap justify-between items-start mb-1 gap-4">
         <div className="text-left">
-              <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors mb-2 sm:mb-4">Mis Tareas</h2>
-              <p className="text-gray-400 dark:text-slate-400 text-sm font-medium italic mb-4 transition-colors">
+          <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors mb-2 sm:mb-4">Mis Tareas</h2>
+          <p className="text-gray-400 dark:text-slate-400 text-sm font-medium italic mb-4 transition-colors">
             {query ? `Filtrando por: "${query}"` : "Tareas asignadas en tu turno, ordenadas por prioridad. Márcalas al completarlas."}
           </p>
         </div>
         {query && (
-              <button onClick={clearQuery} className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 dark:text-slate-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+          <button onClick={clearQuery} className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 dark:text-slate-200 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
             <Search size={16} />
             Limpiar filtro
           </button>
@@ -198,88 +221,160 @@ const MisTareas: React.FC = () => {
       </div>
 
       {/* Counters */}
-      <div className="flex justify-center gap-1 sm:gap-4 mb-3 sm:mb-6 flex-wrap">
+      <div className="flex justify-center gap-2 sm:gap-4 mb-6 sm:mb-10 flex-wrap">
         {[
-              ["Prioridad Alta", alta, "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800/50"],
-              ["Completadas", completadas, "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800/50"],
-              ["Pendientes", pendientes, "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800/50"]
+          ["Prioridad Alta", alta, "bg-red-300 text-red-950 border-red-500 shadow-md shadow-red-500/20 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700"],
+          ["Completadas", completadas, "bg-green-300 text-green-950 border-green-500 shadow-md shadow-green-500/20 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700"],
+          ["Pendientes", pendientes, "bg-orange-300 text-orange-950 border-orange-500 shadow-md shadow-orange-500/20 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-700"]
         ].map(([l, v, cls]) => (
-              <div key={l as string} className={`border rounded-lg px-2 sm:px-6 py-1.5 sm:py-4 flex flex-col items-center gap-0.5 sm:gap-1 min-w-[80px] sm:min-w-[120px] transition-colors ${cls}`}>
-            <span className="font-black text-xl sm:text-3xl">{v as number}</span>
-            <span className="text-[8px] sm:text-xs font-bold uppercase tracking-wide text-center leading-tight">{l as string}</span>
+          <div key={l as string} className={`border-2 rounded-xl px-3 sm:px-8 py-2 sm:py-5 flex flex-col items-center gap-1 min-w-[100px] sm:min-w-[140px] transition-colors ${cls}`}>
+            <span className="font-black text-2xl sm:text-4xl drop-shadow-sm">{v as number}</span>
+            <span className="text-[10px] sm:text-sm font-bold uppercase tracking-wider text-center leading-tight drop-shadow-sm">{l as string}</span>
           </div>
         ))}
       </div>
 
-      {/* Task list */}
-      <div className="flex flex-col gap-3">
-        {[...tareasFiltradas].sort((a,b) => {
-          const ord: Record<string, number> = {alta:0, media:1, baja:2};
-          const aComp = a.estado === "completada" || a.estado === "hecha";
-          const bComp = b.estado === "completada" || b.estado === "hecha";
-          if (aComp && !bComp) return 1;
-          if (!aComp && bComp) return -1;
-          return (ord[a.prioridad] ?? 3) - (ord[b.prioridad] ?? 3);
-        }).map(t => {
-          const isCompleted = t.estado === "completada" || t.estado === "hecha";
-          const isExpanded = expandedIds.includes(t.id);
-          return (
-                <div key={t.id} className={`bg-white dark:bg-slate-800 rounded-2xl border dark:border-slate-700 p-4 sm:p-5 flex flex-wrap justify-between items-start gap-4 sm:gap-6 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50 dark:bg-slate-800/50" : ""}`}>
-              <div className="flex-1 w-full sm:w-auto min-w-[200px]">
-                    <div className="flex justify-between items-start gap-2">
-                      <div>
-                        <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 transition-colors ${isCompleted ? "line-through decoration-green-500 dark:decoration-green-600 decoration-2 text-green-700 dark:text-green-500" : "text-[#1e3a5f] dark:text-blue-300"}`}>{t.zona}</p>
-                        <p className={`text-base font-bold mb-2 transition-colors ${isCompleted ? "text-green-700/70 dark:text-green-500/70" : "text-gray-800 dark:text-slate-200"}`}>{t.tarea}</p>
-                      </div>
-                      <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
-                    </div>
+      {/* Task list - Grid & Pagination */}
+      <div className="flex flex-col gap-10">
+        {['alta', 'media', 'baja', 'completada'].map(grupo => {
+          let groupTasks: Tarea[] = [];
+          let title = "";
+          let titleColor = "";
+          let borderColor = "";
+          let IconComponent = ClipboardList;
+          let groupBg = "";
 
-                    {t.descripcion && (
-                      <div className="mt-1">
-                        <button 
-                          onClick={() => toggleExpand(t.id)} 
-                          className="flex items-center gap-1 text-xs font-bold text-blue-500 hover:text-blue-600 transition-colors uppercase tracking-widest"
-                        >
-                          {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                          {isExpanded ? "Ocultar info" : "Ver más info"}
-                        </button>
-                        
-                        {isExpanded && (
-                          <div className={`mt-3 p-3 rounded-xl border ${isCompleted ? 'bg-green-50/50 border-green-100 dark:bg-green-900/10 dark:border-green-800/30' : 'bg-gray-50 dark:bg-slate-800/50 border-gray-100 dark:border-slate-700'}`}>
-                            <p className={`text-sm font-medium transition-colors ${isCompleted ? "text-green-600/80 dark:text-green-500/80" : "text-gray-600 dark:text-slate-400"}`}>
-                              {t.descripcion}
-                            </p>
+          if (grupo === 'completada') {
+            groupTasks = currentTasks.filter(t => t.estado === 'completada' || t.estado === 'hecha');
+            title = "Tareas Completadas";
+            titleColor = "text-green-950 dark:text-green-400";
+            groupBg = "bg-green-300 border-2 border-green-500 dark:bg-green-900/50 dark:border-green-700";
+            IconComponent = CheckCircle;
+          } else {
+            groupTasks = currentTasks.filter(t => t.prioridad === grupo && t.estado !== 'completada' && t.estado !== 'hecha');
+            title = `Prioridad ${grupo.charAt(0).toUpperCase() + grupo.slice(1)}`;
+            if (grupo === 'alta') {
+              titleColor = "text-red-950 dark:text-red-400";
+              groupBg = "bg-red-300 border-2 border-red-500 dark:bg-red-900/50 dark:border-red-700";
+              IconComponent = AlertCircle;
+            } else if (grupo === 'media') {
+              titleColor = "text-orange-950 dark:text-orange-400";
+              groupBg = "bg-orange-300 border-2 border-orange-500 dark:bg-orange-900/50 dark:border-orange-700";
+              IconComponent = Clock;
+            } else {
+              titleColor = "text-emerald-950 dark:text-emerald-400";
+              groupBg = "bg-emerald-300 border-2 border-emerald-500 dark:bg-emerald-900/50 dark:border-emerald-700";
+            }
+          }
+
+          if (groupTasks.length === 0) return null;
+
+          return (
+            <div key={grupo} className={`flex flex-col gap-6 p-6 sm:p-8 rounded-[2rem] border border-gray-100 dark:border-slate-800/50 ${groupBg} transition-colors`}>
+              <h3 className={`text-2xl font-black flex items-center gap-2 uppercase tracking-tight ${titleColor}`}>
+                <IconComponent size={28} strokeWidth={2.5} />
+                {title}
+              </h3>
+
+              <div className="grid-tareas">
+                {groupTasks.map(t => {
+                  const isCompleted = t.estado === "completada" || t.estado === "hecha";
+                  const isExpanded = expandedIds.includes(t.id);
+
+                  return (
+                    <div key={t.id} className={`flex flex-col bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-slate-700 shadow-md hover:shadow-xl hover:-translate-y-1 overflow-hidden transition-all duration-300 ${isCompleted ? "opacity-70 grayscale-[30%]" : ""}`}>
+
+
+                      {/* Card Body */}
+                      <div className="p-6 sm:p-8 flex flex-col items-center text-center flex-1">
+                        <h3 className={`font-black text-xl mb-2 transition-colors ${isCompleted ? "line-through text-green-700 dark:text-green-500" : "text-[#7e22ce] dark:text-purple-400"}`}>
+                          {t.zona}
+                        </h3>
+                        <p className={`text-sm font-bold mb-4 transition-colors ${isCompleted ? "text-green-600/70" : "text-gray-800 dark:text-slate-200"}`}>
+                          {t.tarea}
+                        </p>
+
+                        {t.descripcion && (
+                          <div className="w-full mb-4">
+                            <button
+                              onClick={() => toggleExpand(t.id)}
+                              className="mx-auto flex items-center gap-1 text-[10px] font-black text-gray-400 hover:text-purple-500 transition-colors uppercase tracking-widest"
+                            >
+                              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                              {isExpanded ? "Ocultar info" : "Más info"}
+                            </button>
+
+                            {isExpanded && (
+                              <p className={`mt-3 text-xs font-medium leading-relaxed transition-colors ${isCompleted ? "text-green-600/80" : "text-gray-500 dark:text-slate-400"}`}>
+                                {t.descripcion}
+                              </p>
+                            )}
                           </div>
                         )}
+
+                        <div className="mt-auto pt-4 w-full flex justify-center">
+                          {!isCompleted ? (
+                            <button
+                              onClick={() => completar(t.id)}
+                              className="bg-[#a3e635] hover:bg-[#84cc16] text-white font-black uppercase tracking-wider px-6 py-3 rounded-xl text-sm shadow-lg shadow-[#a3e635]/40 transition-all active:scale-95 flex items-center gap-2"
+                            >
+                              Completar <ChevronRight size={16} />
+                            </button>
+                          ) : (
+                            <span className="text-green-500 font-bold text-sm flex items-center gap-1.5 py-3">
+                              <CheckCircle size={18} />
+                              Completada
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
+                    </div>
+                  );
+                })}
               </div>
-{!isCompleted ? (
-                     <Button
-                       text="Hecho"
-                       onClick={() => completar(t.id)}
-                       variant="success"
-                       icon={CheckCircle}
-                           className="px-3 py-2 sm:px-4 sm:py-2.5 text-[10px] sm:text-sm font-black shrink-0 shadow-md shadow-green-100 w-full"
-                     />
-               ) : (
-                    <span className="text-green-600 dark:text-green-500 font-bold text-sm sm:text-base shrink-0 flex items-center gap-1.5 transition-colors">
-                  <CheckCircle size={16} />
-                  <span>Completada</span>
-                </span>
-              )}
             </div>
           );
         })}
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center gap-4">
+          <button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 hover:text-purple-600 hover:border-purple-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all"
+          >
+            <ChevronRight size={20} className="rotate-180" />
+          </button>
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`w-10 h-10 rounded-full text-sm font-black transition-all shadow-sm ${currentPage === i + 1 ? 'bg-purple-600 text-white shadow-purple-500/30' : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 hover:text-purple-600'}`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 hover:text-purple-600 hover:border-purple-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
+
       {/* Progress */}
-      <div className="mt-3 sm:mt-4 flex justify-center">
-            <div className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl px-2 sm:px-4 py-1.5 sm:py-2 border border-green-200 dark:border-green-800/50 text-center text-green-700 dark:text-green-400 font-bold shadow-sm inline-block text-xs sm:text-sm transition-colors">
-          <span className="text-base sm:text-lg">{completadas}</span>
-          <span className="text-sm sm:text-base mx-1">/</span>
-          <span className="text-sm sm:text-base">{total}</span>
-          <span className="text-[9px] sm:text-xs ml-0.5 sm:ml-1">Comp.</span>
+      <div className="mt-8 flex justify-center">
+        <div className="bg-white dark:bg-slate-800 rounded-xl px-4 py-2 border border-green-200 dark:border-green-800/50 text-center text-green-700 dark:text-green-400 font-bold shadow-sm inline-block text-sm transition-colors">
+          <span className="text-lg">{completadas}</span>
+          <span className="mx-1">/</span>
+          <span>{total}</span>
+          <span className="text-xs ml-1 uppercase">Completadas</span>
         </div>
       </div>
     </div>
