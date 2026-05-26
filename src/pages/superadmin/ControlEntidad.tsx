@@ -483,14 +483,8 @@ const ControlEntidad: React.FC = () => {
                         <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'}</td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{n.dest}</td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
-{n.entidad_id ? (
-                       <>
                          <button onClick={() => openNotif(n)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
                          <button onClick={() => deleteNotif(n.id, n.titulo)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
-                       </>
-                    ) : (
-                       <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Global</span>
-                    )}
                   </td>
                   </tr>
                 ))}
