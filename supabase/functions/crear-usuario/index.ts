@@ -1,6 +1,4 @@
 // @ts-nocheck
-// Este archivo se ejecuta en Deno (Supabase Edge Functions), no en Node.js.
-// Los errores del editor TypeScript son esperados y no afectan al despliegue.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -14,22 +12,38 @@ const supabase = createClient(
 )
 
 Deno.serve(async (req) => {
-  // Manejo de CORS (muy importante para que funcione desde el frontend)
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { email, password, nombre, apellidos, rol, turno, entidad_id } = await req.json()
+    // Leer el body como texto primero para debug
+    const bodyText = await req.text()
+    
+    if (!bodyText || bodyText.trim() === '') {
+      return new Response(JSON.stringify({ error: 'Body vacío' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    const { email, password, nombre, apellidos, rol, turno, entidad_id } = JSON.parse(bodyText)
+
+    if (!email || !password) {
+      return new Response(JSON.stringify({ error: 'Email y contraseña son obligatorios' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
 
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
-      email_confirm: true  // ← sin email de confirmación, listo para usar
+      email_confirm: true
     })
 
     if (authError) {
-      return new Response(JSON.stringify({ error: authError.message }), { 
+      return new Response(JSON.stringify({ error: authError.message }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -50,18 +64,19 @@ Deno.serve(async (req) => {
       .single()
 
     if (dbError) {
-      return new Response(JSON.stringify({ error: dbError.message }), { 
+      return new Response(JSON.stringify({ error: dbError.message }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
-    return new Response(JSON.stringify({ user: userRow }), { 
+    return new Response(JSON.stringify({ user: userRow }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
+
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { 
+    return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
