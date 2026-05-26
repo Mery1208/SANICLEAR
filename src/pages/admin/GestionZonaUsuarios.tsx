@@ -39,7 +39,7 @@ const Gestion: React.FC = () => {
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [showUsuarioModal, setShowUsuarioModal] = useState(false);
   const [editUsuario, setEditUsuario] = useState<any>(null);
-  const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", rol: "operario", turno: "Mañana", entidad: "", entidad_id: "" });
+  const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", password: "", rol: "operario", turno: "Mañana", entidad: "", entidad_id: "" });
   const [entidades, setEntidades] = useState<any[]>([]);
 
   const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'zona' | 'usuario', id: any, nombre: string } | null>(null);
@@ -171,6 +171,7 @@ const Gestion: React.FC = () => {
         nombre: u.nombre, 
         apellidos: u.apellidos || "", 
         email: u.email, 
+        password: "",
         rol: u.rol, 
         turno: u.turno || "Mañana", 
         entidad: u.entidad || "",
@@ -185,6 +186,7 @@ const Gestion: React.FC = () => {
         nombre: "", 
         apellidos: "", 
         email: "", 
+        password: "",
         rol: "operario", 
         turno: "Mañana", 
         entidad: "",
@@ -196,25 +198,48 @@ const Gestion: React.FC = () => {
   const saveUsuario = async () => {
     if (!usuarioForm.nombre || !usuarioForm.email) return;
 
+    if (editUsuario) {
+      // Editar: solo actualiza perfil, no toca Auth
       const userData = {
         nombre: usuarioForm.nombre,
         apellidos: usuarioForm.apellidos,
         email: usuarioForm.email,
         rol: usuarioForm.rol,
         turno: usuarioForm.turno,
-        entidad_id: usuarioForm.entidad_id || null
+        entidad_id: currentUserRole === 'admin'
+          ? (currentUser?.entidad_id || null)
+          : (usuarioForm.entidad_id || null),
       };
-
-    if (editUsuario) {
       const { error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id);
       if (!error) {
         setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...userData, id: editUsuario.id } : u));
       }
     } else {
-      const { data, error } = await supabase.from('usuarios').insert([userData]).select();
-      if (!error && data) {
-        setUsuarios(prev => [...prev, data[0]]);
+      // Crear: usa Edge Function para crear cuenta en Auth + fila en DB
+      if (!usuarioForm.password) {
+        alert('La contraseña es obligatoria al crear un usuario');
+        return;
       }
+      const entidad_id = currentUserRole === 'admin'
+        ? (currentUser?.entidad_id || null)
+        : (usuarioForm.entidad_id || null);
+
+      const { data, error } = await supabase.functions.invoke('crear-usuario', {
+        body: {
+          email: usuarioForm.email,
+          password: usuarioForm.password,
+          nombre: usuarioForm.nombre,
+          apellidos: usuarioForm.apellidos,
+          rol: usuarioForm.rol,
+          turno: usuarioForm.turno,
+          entidad_id,
+        },
+      });
+      if (error || data?.error) {
+        alert('Error al crear usuario: ' + (data?.error || error?.message));
+        return;
+      }
+      setUsuarios(prev => [...prev, data.user]);
     }
     setShowUsuarioModal(false);
     setConfirm("Usuario");
@@ -436,6 +461,14 @@ const Gestion: React.FC = () => {
                placeholder="Ej: juan@gmail.com"
                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
            </div>
+           {!editUsuario && (
+             <div className="mb-3">
+               <label className="block text-xs font-semibold text-gray-600 mb-1">Contraseña inicial</label>
+               <input type="password" value={usuarioForm.password} onChange={e => setUsuarioForm({ ...usuarioForm, password: e.target.value })}
+                 placeholder="Mín. 6 caracteres"
+                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+             </div>
+           )}
            <div className="grid grid-cols-2 gap-3 mb-4">
              <div>
                <label className="block text-xs font-semibold text-gray-600 mb-1">Rol</label>

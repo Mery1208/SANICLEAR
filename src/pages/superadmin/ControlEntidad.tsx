@@ -21,7 +21,7 @@ const ControlEntidad: React.FC = () => {
   // Estado para edición de usuario
   const [showUserModal, setShowUserModal] = useState(false);
   const [editUser, setEditUser] = useState<any>(null);
-  const [userForm, setUserForm] = useState({ nombre: '', apellidos: '', email: '', rol: 'operario', turno: 'Mañana' });
+  const [userForm, setUserForm] = useState({ nombre: '', apellidos: '', email: '', password: '', rol: 'operario', turno: 'Mañana' });
   const [actionMessage, setActionMessage] = useState("");
 
   // Estados CRUD Tareas
@@ -108,29 +108,47 @@ const ControlEntidad: React.FC = () => {
 
   const handleOpenEditUser = (u?: any) => {
     setEditUser(u || null);
-    setUserForm(u ? { nombre: u.nombre || '', apellidos: u.apellidos || '', email: u.email || '', rol: u.rol || 'operario', turno: u.turno || 'Mañana' } : { nombre: '', apellidos: '', email: '', rol: 'operario', turno: 'Mañana' });
+    setUserForm(u
+      ? { nombre: u.nombre || '', apellidos: u.apellidos || '', email: u.email || '', password: '', rol: u.rol || 'operario', turno: u.turno || 'Mañana' }
+      : { nombre: '', apellidos: '', email: '', password: '', rol: 'operario', turno: 'Mañana' });
     setShowUserModal(true);
   };
 
   const handleSaveUser = async () => {
-    const dataToSave = { ...userForm, entidad_id: id };
     if (editUser) {
+      // Editar: solo actualiza datos de perfil, no toca Auth
+      const dataToSave = { nombre: userForm.nombre, apellidos: userForm.apellidos, email: userForm.email, rol: userForm.rol, turno: userForm.turno, entidad_id: id };
       const { error } = await supabase.from('usuarios').update(dataToSave).eq('id', editUser.id);
       if (!error) {
         setPersonal(prev => prev.map(p => p.id === editUser.id ? { ...p, ...dataToSave } : p));
         setActionMessage("Usuario actualizado correctamente.");
       } else { alert('Error actualizando usuario: ' + error.message); return; }
     } else {
-      if (!userForm.nombre || !userForm.email) return alert('Nombre y email son obligatorios');
-      const { data, error } = await supabase.from('usuarios').insert([dataToSave]).select();
-      if (!error && data) {
-        setPersonal(prev => [data[0], ...prev]);
-        setCounts(prev => ({...prev, usuarios: prev.usuarios + 1}));
-        setActionMessage("Usuario creado correctamente.");
-      } else { alert('Error al crear usuario: ' + error.message); return; }
+      // Crear: usa Edge Function para crear en Auth + DB
+      if (!userForm.nombre || !userForm.email || !userForm.password) {
+        return alert('Nombre, email y contraseña son obligatorios');
+      }
+      const { data, error } = await supabase.functions.invoke('crear-usuario', {
+        body: {
+          email: userForm.email,
+          password: userForm.password,
+          nombre: userForm.nombre,
+          apellidos: userForm.apellidos,
+          rol: userForm.rol,
+          turno: userForm.turno,
+          entidad_id: id,
+        },
+      });
+      if (error || data?.error) {
+        alert('Error al crear usuario: ' + (data?.error || error?.message));
+        return;
+      }
+      setPersonal(prev => [data.user, ...prev]);
+      setCounts(prev => ({...prev, usuarios: prev.usuarios + 1}));
+      setActionMessage("Usuario creado correctamente. Ya puede iniciar sesión.");
     }
     setShowUserModal(false);
-    setTimeout(() => setActionMessage(""), 3000);
+    setTimeout(() => setActionMessage(""), 4000);
   };
 
   const handleDeleteUser = (idU: string, nombre: string) => {
@@ -500,6 +518,12 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label>
               <input type="email" value={userForm.email} onChange={e => setUserForm({...userForm, email: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="usuario@gmail.com" />
             </div>
+            {!editUser && (
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña inicial</label>
+                <input type="password" value={userForm.password} onChange={e => setUserForm({...userForm, password: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="Mín. 6 caracteres" />
+              </div>
+            )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Rol en la Entidad</label>
