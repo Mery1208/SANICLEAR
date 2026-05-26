@@ -291,9 +291,15 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
 
 ### 🗓️ MAYO 2026 — Integración de IA y Pulido Final
 
+#### 📍 26/05/2026 — Creación Segura de Usuarios (Edge Functions) Arreglo
+✨ **Mejoras de Backend y UI:**
+- **Edge Function para Usuarios:** Implementación de una Supabase Edge Function (`crear-usuario`) en Deno para gestionar la creación atómica de usuarios. Esto asegura la creación segura en `auth.users` mediante Service Role y su sincronización inmediata en la tabla pública de usuarios.
+- **Flujo de Registro Corregido:** Integración de la Edge Function en los paneles de Administrador y Superadmin para permitir la asignación segura de credenciales iniciales.
+- **Mejora de UX en Formularios:** Añadido toggle para mostrar/ocultar contraseñas en los modales de creación de usuarios para mayor comodidad y prevención de errores.
+
 #### 📍 24/05/2026 — Ajustes Finales
 ✨ **Mejoras en la UI:**
-- **Desplegable en Panel Superadmin:**Añadido mostrar datos en panel superadmin un desplegable para seleccionar entidades y ver datos específicos de cada una.
+- **Desplegable en Panel Superadmin:** Añadido mostrar datos en panel superadmin un desplegable para seleccionar entidades y ver datos específicos de cada una.
 
 -**Tablas de Datos:** Añadido datos para ver que todo funciona correctamente en los 3 tipos de usuarios. En el panel de superadmin se ven todas las tareas, incidencias y notificaciones de todos los usuarios. En el panel de admin se ven todas las tareas, incidencias y notificaciones de todos los usuarios de su entidad. En el panel de operario se ven todas las tareas, incidencias y notificaciones de su entidad. 
 
