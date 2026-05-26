@@ -24,54 +24,30 @@ export default function Formulario({ onClose }: FormularioProps): React.JSX.Elem
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // primero creo el usuario en auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+  e.preventDefault()
+  setLoading(true)
+  try {
+    const { data, error } = await supabase.functions.invoke('crear-usuario', {
+      body: {
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            nombre: formData.nombre
-
-          }
-        }
-      });
-
-      if (authError) throw authError;
-
-      // si eligió admin, toca cambiarle el rol porque por defecto es operario
-      if (formData.rol === 'admin' && authData.user) {
-
-        // busco el id del rol admin
-        const { data: roleData, error: roleError } = await supabase
-          .from('roles')
-          .select('id_rol')
-          .eq('nombre', 'admin')
-          .single();
-
-        if (!roleError && roleData) {
-          // le cambio el rol al usuario nuevo
-          await supabase
-            .from('usuarios')
-            .update({ id_rol: roleData.id_rol })
-            .eq('id_usuario', authData.user.id);
-        }
+        nombre: formData.nombre,
+        rol: formData.rol,
+        turno: 'Mañana',
+        entidad_id: null
       }
+    })
 
-      alert("¡Trabajador registrado correctamente en el sistema!");
-      onClose();
+    if (error || data?.error) throw new Error(data?.error || error?.message)
 
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error desconocido';
-      console.error("Error registrando:", message);
-      alert("Error al registrar: " + message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    alert('¡Trabajador registrado correctamente!')
+    onClose()
+  } catch (error: unknown) {
+    alert('Error al registrar: ' + (error instanceof Error ? error.message : 'Error desconocido'))
+  } finally {
+    setLoading(false)
+  }
+  }
 
   return (
     <div className="modal-overlay">
