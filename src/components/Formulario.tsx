@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Save } from 'lucide-react';
+import { X, Save, Eye, EyeOff } from 'lucide-react';
 import Button from './Button';
 import { supabase } from '../supabase/client';
 
@@ -22,6 +22,7 @@ export default function Formulario({ onClose }: FormularioProps): React.JSX.Elem
     password: ''
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
   e.preventDefault()
@@ -94,16 +95,27 @@ export default function Formulario({ onClose }: FormularioProps): React.JSX.Elem
             </div>
             <div className="form-group">
               <label>Contraseña Temp.</label>
-              <input
-                type="password"
-                placeholder="Mín. 8 caracteres, mayús, minús, número y símbolo"
-                className="input-admin"
-                onChange={e => setFormData({ ...formData, password: e.target.value })}
-                required
-                minLength={8}
-                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-#]).{8,}$"
-                title="Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial"
-              />
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mín. 8 caracteres, mayús, minús, número y símbolo"
+                  className="input-admin"
+                  onChange={e => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  minLength={8}
+                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-#]).{8,}$"
+                  title="Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial"
+                  style={{ width: '100%', paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors"
+                  style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
           </div>
 
