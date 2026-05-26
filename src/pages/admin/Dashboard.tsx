@@ -262,7 +262,7 @@ const Dashboard: React.FC = () => {
 
       {ok && <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-2xl p-4 mb-6 text-sm font-bold animate-pulse">✓ Tarea creada correctamente.</div>}
 
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 w-full">
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 w-full">
         {[
           { label: "Tareas Pend.", value: pendientes, icon: <Clock size={20} />, textCls: "text-yellow-600 dark:text-yellow-300", bgCls: "bg-yellow-50 dark:bg-yellow-500/30" },
           { label: "Alertas", value: alertas, icon: <AlertTriangle size={20} />, textCls: "text-red-600 dark:text-red-300", bgCls: "bg-red-50 dark:bg-red-500/30" },
