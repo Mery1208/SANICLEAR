@@ -518,12 +518,19 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label>
               <input type="email" value={userForm.email} onChange={e => setUserForm({...userForm, email: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="usuario@gmail.com" />
             </div>
-            {!editUser && (
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña inicial</label>
-                <input type="password" value={userForm.password} onChange={e => setUserForm({...userForm, password: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white" placeholder="Mín. 6 caracteres" />
-              </div>
-            )}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
+                {editUser ? 'Contraseña (dejar vacío para no cambiar)' : 'Contraseña inicial *'}
+              </label>
+              <input
+                type="password"
+                value={userForm.password}
+                onChange={e => setUserForm({...userForm, password: e.target.value})}
+                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white"
+                placeholder={editUser ? 'Sin cambios si se deja vacío' : 'Mín. 6 caracteres'}
+              />
+            </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Rol en la Entidad</label>
