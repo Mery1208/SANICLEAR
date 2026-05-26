@@ -139,7 +139,7 @@ const ReportarIncidencia: React.FC = () => {
           <div className="flex flex-wrap justify-between items-start mb-2 gap-4">
              <div className="text-left flex-1 min-w-[200px]">
                  <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Gestión de Incidencias</h2>
-                <p className="text-gray-400 dark:text-gray-500 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
+                <p className="text-gray-400 dark:text-gray-300 text-sm font-medium italic">Reporta cualquier anomalía en tiempo real</p>
              </div>
              <button onClick={() => navigate('/operario')} className="text-gray-300 hover:text-gray-500 transition-colors shrink-0">
                 <X size={28} strokeWidth={1.5} />
@@ -160,30 +160,30 @@ const ReportarIncidencia: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-gray-100 shadow-sm p-6 sm:p-10 w-full">
+      <div className="bg-white dark:bg-gray-800 rounded-[2rem] sm:rounded-[3rem] border border-gray-100 dark:border-gray-700 shadow-sm p-6 sm:p-10 w-full">
         <div className="flex flex-col gap-6 sm:gap-8">
             <div className="flex flex-col gap-2">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
+               <label className="text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest ml-1">Tipo de Incidencia</label>
                <select value={form.tipo} onChange={e => setForm({...form, tipo:e.target.value})}
-                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer">
-                 <option value="" className="bg-white text-gray-400">Seleccionar...</option>
-                 {tipos.map(t => <option key={t} value={t} className="bg-white text-[#1e3a5f]">{t}</option>)}
+                 className="w-full border border-blue-50 dark:border-gray-600 rounded-2xl bg-white dark:bg-gray-700 px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500 transition-all appearance-none cursor-pointer">
+                 <option value="" className="bg-white dark:bg-gray-700 text-gray-400 dark:text-gray-300">Seleccionar...</option>
+                 {tipos.map(t => <option key={t} value={t} className="bg-white dark:bg-gray-700 text-[#1e3a5f] dark:text-white">{t}</option>)}
                </select>
             </div>
 
              <div className="flex flex-col gap-2">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Zona</label>
+               <label className="text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest ml-1">Zona</label>
                <select
                  value={form.zona}
                  onChange={e => setForm({...form, zona: e.target.value})}
                  disabled={loadingZonas}
-                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                 className="w-full border border-blue-50 dark:border-gray-600 rounded-2xl bg-white dark:bg-gray-700 px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                >
-                 <option value="">
+                 <option value="" className="bg-white dark:bg-gray-700 text-gray-400 dark:text-gray-300">
                    {loadingZonas ? 'Cargando zonas...' : zonas.length === 0 ? 'Sin zonas disponibles' : 'Seleccionar zona...'}
                  </option>
                  {zonas.map(z => (
-                   <option key={z.id} value={z.nombre} className="bg-white text-[#1e3a5f]">
+                   <option key={z.id} value={z.nombre} className="bg-white dark:bg-gray-700 text-[#1e3a5f] dark:text-white">
                      {z.nombre}
                    </option>
                  ))}
@@ -196,20 +196,20 @@ const ReportarIncidencia: React.FC = () => {
              </div>
 
             <div className="flex flex-col gap-2">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Descripción</label>
+               <label className="text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest ml-1">Descripción</label>
                <textarea value={form.descripcion} onChange={e => setForm({...form, descripcion:e.target.value})}
                  rows={6} placeholder="Describe el problema..."
-                 className="w-full border border-blue-50 rounded-2xl bg-white dark:bg-white px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-[#1e3a5f] placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
+                 className="w-full border border-blue-50 dark:border-gray-600 rounded-2xl bg-white dark:bg-gray-700 px-6 py-4 text-sm font-bold text-[#1e3a5f] dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500 transition-all resize-none" />
             </div>
 
              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Prioridad</label>
+                <label className="text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest ml-1">Prioridad</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2">
                    {PRIORIDADES.map(p => (
                      <button key={p.value} type="button"
                        onClick={() => !form.urgente && setForm({...form, prioridad: p.value})}
                        disabled={form.urgente}
-                       className={`px-3 py-2 text-xs sm:px-3 sm:py-2 sm:text-xs rounded-lg sm:rounded-xl border font-bold uppercase tracking-wider transition-all ${form.urgente && p.value === 'critica' ? `${p.bg} ${p.color} ring-2 ring-red-200` : form.prioridad === p.value ? `${p.bg} ${p.color} ring-2 ring-blue-100` : 'bg-white dark:bg-white border-gray-100 text-gray-400 hover:bg-gray-50'} ${form.urgente && p.value !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
+                       className={`px-3 py-2 text-xs sm:px-3 sm:py-2 sm:text-xs rounded-lg sm:rounded-xl border font-bold uppercase tracking-wider transition-all ${form.urgente && p.value === 'critica' ? `${p.bg} ${p.color} ring-2 ring-red-200` : form.prioridad === p.value ? `${p.bg} ${p.color} ring-2 ring-blue-100` : 'bg-white dark:bg-gray-700 border-gray-100 dark:border-gray-600 text-gray-400 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'} ${form.urgente && p.value !== 'critica' ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}>
                        {p.label}
                      </button>
                    ))}
@@ -218,16 +218,16 @@ const ReportarIncidencia: React.FC = () => {
              </div>
 
             <div className="flex flex-col gap-3">
-               <div className="flex items-center gap-3 bg-red-50/30 p-4 rounded-2xl cursor-pointer hover:bg-red-50/50 transition-colors" onClick={() => setForm({...form, urgente: !form.urgente, prioridad: !form.urgente ? 'critica' : form.prioridad})}>
+               <div className="flex items-center gap-3 bg-red-50/30 dark:bg-red-900/20 p-4 rounded-2xl cursor-pointer hover:bg-red-50/50 dark:hover:bg-red-900/30 transition-colors" onClick={() => setForm({...form, urgente: !form.urgente, prioridad: !form.urgente ? 'critica' : form.prioridad})}>
                   <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${form.urgente ? "bg-red-500 border-red-500 shadow-lg shadow-red-200" : "border-red-200"}`}>
                      {form.urgente && <CheckCircle2 size={14} className="text-white" />}
                   </div>
-                  <label className="text-xs text-red-700 font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
+                  <label className="text-xs text-red-700 dark:text-red-400 font-black uppercase tracking-wider cursor-pointer">Marcar como URGENTE</label>
                </div>
             </div>
 
             <div className="flex flex-col gap-2">
-               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Adjuntar Foto</label>
+               <label className="text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest ml-1">Adjuntar Foto</label>
                {fotoPreview ? (
                  <div className="relative rounded-2xl overflow-hidden border border-blue-50 bg-gray-50/50">
                    <img src={fotoPreview} alt="Vista previa" className="w-full max-h-64 object-cover" />
@@ -243,8 +243,8 @@ const ReportarIncidencia: React.FC = () => {
                      <Upload size={24} />
                    </div>
                    <div className="text-center">
-                     <p className="text-xs font-bold text-[#1e3a5f]">Haz clic para subir una imagen</p>
-                     <p className="text-[10px] text-gray-400 font-semibold mt-1">PNG, JPG o WEBP · Máx. 5 MB</p>
+                     <p className="text-xs font-bold text-[#1e3a5f] dark:text-white">Haz clic para subir una imagen</p>
+                     <p className="text-[10px] text-gray-400 dark:text-gray-400 font-semibold mt-1">PNG, JPG o WEBP · Máx. 5 MB</p>
                    </div>
                    <input type="file" accept="image/*" capture="environment" onChange={handleFotoChange} className="hidden" />
                  </label>
