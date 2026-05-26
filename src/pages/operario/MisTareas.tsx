@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { CheckCircle, Clock, AlertCircle, ClipboardList, TrendingUp, Filter, Search, ChevronRight, RefreshCw } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, ClipboardList, TrendingUp, Filter, Search, ChevronRight, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Button from '../../components/Button';
 import { useBusquedaStore } from '../../store/busquedaStore';
@@ -10,7 +10,7 @@ interface Tarea {
   id: number;
   zona: string;
   tarea?: string;
-  desc?: string;
+  descripcion?: string;
   prioridad: 'alta' | 'media' | 'baja';
   estado: 'pendiente' | 'en_curso' | 'completada' | 'hecha';
   asignado?: string | null;
@@ -25,6 +25,11 @@ const MisTareas: React.FC = () => {
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<number[]>([]);
+
+  const toggleExpand = (id: number) => {
+    setExpandedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
 
   const fetchTareas = async () => {
     if (!usuario) return;
@@ -78,7 +83,7 @@ const MisTareas: React.FC = () => {
     return tareas.filter(t =>
       t.zona.toLowerCase().includes(q) ||
       (t.tarea && t.tarea.toLowerCase().includes(q)) ||
-      (t.desc && t.desc.toLowerCase().includes(q))
+      (t.descripcion && t.descripcion.toLowerCase().includes(q))
     );
   }, [tareas, query]);
 
@@ -217,12 +222,37 @@ const MisTareas: React.FC = () => {
           return (ord[a.prioridad] ?? 3) - (ord[b.prioridad] ?? 3);
         }).map(t => {
           const isCompleted = t.estado === "completada" || t.estado === "hecha";
+          const isExpanded = expandedIds.includes(t.id);
           return (
-                <div key={t.id} className={`bg-white dark:bg-slate-800 rounded-2xl border dark:border-slate-700 p-4 sm:p-5 flex flex-wrap justify-between items-center gap-4 sm:gap-6 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50 dark:bg-slate-800/50" : ""}`}>
+                <div key={t.id} className={`bg-white dark:bg-slate-800 rounded-2xl border dark:border-slate-700 p-4 sm:p-5 flex flex-wrap justify-between items-start gap-4 sm:gap-6 shadow-sm hover:shadow-md transition-all ${isCompleted ? "opacity-60 bg-slate-50 dark:bg-slate-800/50" : ""}`}>
               <div className="flex-1 w-full sm:w-auto min-w-[200px]">
-                    <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 transition-colors ${isCompleted ? "line-through decoration-green-500 dark:decoration-green-600 decoration-2 text-green-700 dark:text-green-500" : "text-[#1e3a5f] dark:text-blue-300"}`}>{t.zona}</p>
-                    <p className={`text-sm sm:text-base font-medium mb-3 line-clamp-2 transition-colors ${isCompleted ? "line-through decoration-green-400 dark:decoration-green-700 text-green-600 dark:text-green-500" : "text-gray-500 dark:text-slate-400"}`}>{t.desc || t.tarea}</p>
-                <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
+                    <div className="flex justify-between items-start gap-2">
+                      <div>
+                        <p className={`font-black text-lg sm:text-xl tracking-tight leading-tight mb-1 transition-colors ${isCompleted ? "line-through decoration-green-500 dark:decoration-green-600 decoration-2 text-green-700 dark:text-green-500" : "text-[#1e3a5f] dark:text-blue-300"}`}>{t.zona}</p>
+                        <p className={`text-base font-bold mb-2 transition-colors ${isCompleted ? "text-green-700/70 dark:text-green-500/70" : "text-gray-800 dark:text-slate-200"}`}>{t.tarea}</p>
+                      </div>
+                      <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 text-gray-700"} label={PRIORIDAD_LABEL[t.prioridad] || t.prioridad} />
+                    </div>
+
+                    {t.descripcion && (
+                      <div className="mt-1">
+                        <button 
+                          onClick={() => toggleExpand(t.id)} 
+                          className="flex items-center gap-1 text-xs font-bold text-blue-500 hover:text-blue-600 transition-colors uppercase tracking-widest"
+                        >
+                          {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                          {isExpanded ? "Ocultar info" : "Ver más info"}
+                        </button>
+                        
+                        {isExpanded && (
+                          <div className={`mt-3 p-3 rounded-xl border ${isCompleted ? 'bg-green-50/50 border-green-100 dark:bg-green-900/10 dark:border-green-800/30' : 'bg-gray-50 dark:bg-slate-800/50 border-gray-100 dark:border-slate-700'}`}>
+                            <p className={`text-sm font-medium transition-colors ${isCompleted ? "text-green-600/80 dark:text-green-500/80" : "text-gray-600 dark:text-slate-400"}`}>
+                              {t.descripcion}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
               </div>
 {!isCompleted ? (
                      <Button
