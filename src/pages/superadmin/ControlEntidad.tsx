@@ -59,7 +59,7 @@ const ControlEntidad: React.FC = () => {
       const [u, z, t, i, tareasData, personalData, incidData, notifData, zonasData] = await Promise.all([
         supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
         supabase.from('zonas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
-        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
+        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).gte('created_at', startOfToday).not('estado', 'in', '("completada","hecha")'),
         supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('entidad_id', id).neq('estado', 'resuelta'),
         supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad, created_at').eq('entidad_id', id).order('created_at', { ascending: false }).limit(500),
         supabase.from('usuarios').select('id, nombre, apellidos, email, rol, turno').eq('entidad_id', id).order('rol', { ascending: true }),
