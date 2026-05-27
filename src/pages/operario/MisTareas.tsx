@@ -126,8 +126,8 @@ const MisTareas: React.FC = () => {
   const sortedTasks = useMemo(() => {
     return [...tareasFiltradas].sort((a, b) => {
       const ord: Record<string, number> = { alta: 0, media: 1, baja: 2 };
-      const aComp = a.estado === "completada" || a.estado === "hecha";
-      const bComp = b.estado === "completada" || b.estado === "hecha";
+      const aComp = a.estado === "completada";
+      const bComp = b.estado === "completada";
       if (aComp && !bComp) return 1;
       if (!aComp && bComp) return -1;
       return (ord[a.prioridad] ?? 3) - (ord[b.prioridad] ?? 3);

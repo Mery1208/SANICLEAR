@@ -59,7 +59,7 @@ const ControlEntidad: React.FC = () => {
       const [u, z, t, i, tareasData, personalData, incidData, notifData, zonasData] = await Promise.all([
         supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
         supabase.from('zonas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
-        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).gte('created_at', startOfToday).not('estado', 'in', '("completada","hecha")'),
+        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).gte('created_at', startOfToday).not('estado', 'eq', 'completada'),
         supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('entidad_id', id).neq('estado', 'resuelta'),
         supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, asignado_id, estado, prioridad, created_at').eq('entidad_id', id).order('created_at', { ascending: false }).limit(500),
         supabase.from('usuarios').select('id, nombre, apellidos, email, rol, turno').eq('entidad_id', id).order('rol', { ascending: true }),
@@ -91,8 +91,8 @@ const ControlEntidad: React.FC = () => {
       
       let fetchedTareas = tareasData.data || [];
       fetchedTareas.sort((a: any, b: any) => {
-        const aCompleted = a.estado === 'completada' || a.estado === 'hecha';
-        const bCompleted = b.estado === 'completada' || b.estado === 'hecha';
+        const aCompleted = a.estado === 'completada';
+        const bCompleted = b.estado === 'completada';
         if (aCompleted && !bCompleted) return 1;
         if (!aCompleted && bCompleted) return -1;
         
@@ -137,7 +137,6 @@ const ControlEntidad: React.FC = () => {
   }, [id]);
 
   const ESTADO_BADGE: Record<string, string> = { 
-    hecha:"bg-green-100 text-green-700", 
     completada:"bg-green-100 text-green-700", 
     pendiente:"bg-yellow-100 text-yellow-700", 
     en_curso:"bg-blue-100 text-blue-700" 
@@ -409,14 +408,14 @@ const ControlEntidad: React.FC = () => {
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {tareasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay historial de tareas.</td></tr>)}
                 {tareasActivas.map((t: any) => (
-                  <tr key={t.id} className={`hover:bg-blue-50/20 ${t.estado === 'completada' || t.estado === 'hecha' ? 'opacity-70 bg-gray-50 dark:bg-gray-800/30' : ''}`}>
+                  <tr key={t.id} className={`hover:bg-blue-50/20 ${t.estado === 'completada' ? 'opacity-70 bg-gray-50 dark:bg-gray-800/30' : ''}`}>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs whitespace-nowrap">{t.zona}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] dark:text-white text-xs font-bold whitespace-nowrap">{t.asignado}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <Badge cls={ESTADO_BADGE[t.estado] || "bg-gray-100"} label={t.estado} />
                     </td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
-                      {t.estado !== 'completada' && t.estado !== 'hecha' && (
+                      {t.estado !== 'completada' && (
                         <button onClick={() => handleCompletarTarea(t.id)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Completar"><CheckCircle size={14} /> Completar</button>
                       )}
                       <button onClick={() => openTarea(t)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
