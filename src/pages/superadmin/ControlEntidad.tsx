@@ -39,8 +39,13 @@ const ControlEntidad: React.FC = () => {
   const [showNotifModal, setShowNotifModal] = useState(false);
   const [editNotif, setEditNotif] = useState<any>(null);
   const [notifForm, setNotifForm] = useState({ titulo: '', mensaje: '', tipo: 'informativa', dest: 'todos' });
+
+  // Estados CRUD Zonas
+  const [showZonaModal, setShowZonaModal] = useState(false);
+  const [editZona, setEditZona] = useState<any>(null);
+  const [zonaForm, setZonaForm] = useState({ nombre: '', tipo: 'Habitación', planta: 1, metros: 0, nivel: 'alto', estado: 'Activo' });
   
-  const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'usuario' | 'tarea' | 'incidencia' | 'notificacion', id: any, nombre: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'usuario' | 'tarea' | 'incidencia' | 'notificacion' | 'zona', id: any, nombre: string } | null>(null);
 
   useEffect(() => {
     const fetchDetalles = async () => {
@@ -65,7 +70,7 @@ const ControlEntidad: React.FC = () => {
         supabase.from('usuarios').select('id, nombre, apellidos, email, rol, turno').eq('entidad_id', id).order('rol', { ascending: true }),
         supabase.from('incidencias').select('id, titulo, zona, estado, prioridad, operario, descripcion, created_at').eq('entidad_id', id).neq('estado', 'resuelta').order('prioridad', { ascending: false }),
         supabase.from('notificaciones').select('*').or(`entidad_id.eq.${id},entidad_id.is.null`).order('fecha', { ascending: false }),
-        supabase.from('zonas').select('id, nombre').eq('entidad_id', id)
+        supabase.from('zonas').select('*').eq('entidad_id', id).order('planta', { ascending: true })
       ]);
 
       
@@ -96,9 +101,9 @@ const ControlEntidad: React.FC = () => {
         if (aCompleted && !bCompleted) return 1;
         if (!aCompleted && bCompleted) return -1;
         
-        const prioMap: Record<string, number> = { alta: 0, media: 1, baja: 2 };
-        const pA = prioMap[a.prioridad] ?? 3;
-        const pB = prioMap[b.prioridad] ?? 3;
+        const prioMap: Record<string, number> = { critica: 0, alta: 1, media: 2, baja: 3 };
+        const pA = prioMap[a.prioridad] ?? 4;
+        const pB = prioMap[b.prioridad] ?? 4;
         if (pA !== pB) return pA - pB;
         
         // Si tienen misma prioridad y estado, ordenar por fecha (más reciente primero)
@@ -109,9 +114,9 @@ const ControlEntidad: React.FC = () => {
       setPersonal(personalData.data || []);
       let fetchedIncidencias = incidData.data || [];
       fetchedIncidencias.sort((a: any, b: any) => {
-        const prioMap: Record<string, number> = { alta: 0, media: 1, baja: 2 };
-        const pA = prioMap[a.prioridad] ?? 3;
-        const pB = prioMap[b.prioridad] ?? 3;
+        const prioMap: Record<string, number> = { critica: 0, alta: 1, media: 2, baja: 3 };
+        const pA = prioMap[a.prioridad] ?? 4;
+        const pB = prioMap[b.prioridad] ?? 4;
         if (pA !== pB) return pA - pB;
         // Desempate por fecha: más recientes primero
         if (a.created_at && b.created_at) {
@@ -143,6 +148,7 @@ const ControlEntidad: React.FC = () => {
   };
   
   const PRIORIDAD_BADGE: Record<string, string> = { 
+    critica: "bg-red-200 text-red-900 font-black border border-red-300",
     alta: "bg-red-100 text-red-700", 
     media: "bg-yellow-100 text-yellow-700", 
     baja: "bg-green-100 text-green-700" 
@@ -243,6 +249,13 @@ const ControlEntidad: React.FC = () => {
       if (!error) {
         setNotificacionesEntidad(prev => prev.filter(x => x.id !== id));
         setActionMessage("Notificación eliminada correctamente.");
+      }
+    } else if (tipo === 'zona') {
+      const { error } = await supabase.from('zonas').delete().eq('id', id);
+      if (!error) {
+        setZonasList(prev => prev.filter(x => x.id !== id));
+        setCounts(prev => ({...prev, zonas: Math.max(0, prev.zonas - 1)}));
+        setActionMessage("Zona eliminada correctamente.");
       }
     }
     
@@ -354,6 +367,35 @@ const ControlEntidad: React.FC = () => {
   };
   const deleteNotif = (idN: string, nombre: string) => {
     setDeleteTarget({ tipo: 'notificacion', id: idN, nombre });
+  };
+
+  // --- CRUD ZONAS ---
+  const openZona = (z?: any) => {
+    setEditZona(z || null);
+    setZonaForm(z ? { ...z } : { nombre: '', tipo: 'Habitación', planta: 1, metros: 0, nivel: 'alto', estado: 'Activo' });
+    setShowZonaModal(true);
+  };
+  const saveZona = async () => {
+    const dataToSave = { ...zonaForm, entidad_id: id };
+    if (editZona) {
+      const { error } = await supabase.from('zonas').update(dataToSave).eq('id', editZona.id);
+      if (!error) {
+        setZonasList(prev => prev.map(x => x.id === editZona.id ? { ...x, ...dataToSave } : x));
+        setActionMessage("Zona actualizada correctamente.");
+      }
+    } else {
+      const { data, error } = await supabase.from('zonas').insert([dataToSave]).select();
+      if (!error && data) {
+        setZonasList(prev => [...prev, data[0]].sort((a,b) => a.planta - b.planta));
+        setCounts(c => ({...c, zonas: c.zonas + 1}));
+        setActionMessage("Zona añadida correctamente.");
+      }
+    }
+    setShowZonaModal(false);
+    setTimeout(() => setActionMessage(""), 3000);
+  };
+  const deleteZona = (idZ: string, nombre: string) => {
+    setDeleteTarget({ tipo: 'zona', id: idZ, nombre });
   };
 
   if (loading) return <div className="p-10 text-gray-400 font-bold animate-pulse text-center">Cargando panel de control...</div>;
@@ -492,23 +534,19 @@ const ControlEntidad: React.FC = () => {
           <div className="overflow-x-auto flex-1">
             <table className="w-full">
               <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
-                <tr>{["Nombre","Rol","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
+                <tr>{["Nombre","Rol","Turno","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                {personal.length === 0 && (<tr><td colSpan={3} className="p-8 text-center text-gray-400 font-bold italic">No hay personal asignado.</td></tr>)}
                 {personal.map((u: any) => (
                   <tr key={u.id} className="hover:bg-blue-50/20">
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                      <p className="font-bold text-[#1e3a5f] dark:text-white text-sm truncate max-w-[150px]">{u.nombre} {u.apellidos}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-200 truncate max-w-[150px]">{u.email}</p>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
+                      <div className="font-bold text-[#1e3a5f] dark:text-white text-xs">{u.nombre} {u.apellidos}</div>
+                      <div className="text-[10px] text-gray-400">{u.email}</div>
                     </td>
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                      {u.rol === 'admin' ? (
-                        <Badge cls="bg-purple-100 text-purple-700" label="Administrador" />
-                      ) : (
-                        <Badge cls="bg-gray-100 text-gray-600" label="Operario" />
-                      )}
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
+                      <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${u.rol === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>{u.rol}</span>
                     </td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-gray-300 text-xs font-semibold whitespace-nowrap">{u.turno}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
                       <button onClick={() => handleOpenEditUser(u)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
                       <button onClick={() => handleDeleteUser(u.id, `${u.nombre} ${u.apellidos}`)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
@@ -520,6 +558,45 @@ const ControlEntidad: React.FC = () => {
           </div>
         </div>
 
+        {/* Zonas de la entidad */}
+        <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Zonas del Centro</p>
+            <Button 
+              text="Nueva Zona" 
+              onClick={() => openZona()} 
+              variant="primary" 
+              icon={Plus} 
+              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+            />
+          </div>
+          <div className="overflow-x-auto flex-1 max-h-96">
+            <table className="w-full">
+              <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
+                <tr>{["Nombre","Planta","Nivel","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
+                {zonasList.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay zonas registradas.</td></tr>)}
+                {zonasList.map((z: any) => (
+                  <tr key={z.id} className="hover:bg-purple-50/20">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs whitespace-nowrap">{z.nombre}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] dark:text-white text-xs font-bold whitespace-nowrap">Planta {z.planta}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
+                      <Badge cls={PRIORIDAD_BADGE[z.nivel] || "bg-gray-100"} label={z.nivel} />
+                    </td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
+                      <button onClick={() => openZona(z)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
+                      <button onClick={() => deleteZona(z.id, z.nombre)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Últimas Notificaciones */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
               <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
@@ -772,6 +849,66 @@ const ControlEntidad: React.FC = () => {
             <Button text="Guardar Notificación" variant="primary" onClick={saveNotif} className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>
         </Modal>
+      )}
+
+      {/* Modal Zonas */}
+      {showZonaModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1e3a5f]/40 dark:bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-[#0f172a] rounded-[2rem] w-full max-w-lg shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-gray-50 dark:border-gray-800 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+              <h3 className="text-xl font-black text-[#1e3a5f] dark:text-white flex items-center gap-2">
+                <MapPin className="text-purple-500" /> {editZona ? 'Editar Zona' : 'Nueva Zona'}
+              </h3>
+              <button onClick={() => setShowZonaModal(false)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"><X size={20} /></button>
+            </div>
+            <div className="p-6 space-y-4 overflow-y-auto">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre de la zona</label>
+                <input type="text" value={zonaForm.nombre} onChange={e => setZonaForm({...zonaForm, nombre: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="Ej: Habitación 205" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
+                  <select value={zonaForm.tipo} onChange={e => setZonaForm({...zonaForm, tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    <option value="Habitación">Habitación</option>
+                    <option value="Quirófano">Quirófano</option>
+                    <option value="Baño">Baño</option>
+                    <option value="Pasillo">Pasillo</option>
+                    <option value="Urgencias">Urgencias</option>
+                    <option value="Laboratorio">Laboratorio</option>
+                    <option value="Común">Área Común</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Planta</label>
+                  <input type="number" value={zonaForm.planta} onChange={e => setZonaForm({...zonaForm, planta: parseInt(e.target.value) || 0})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nivel Higiene</label>
+                  <select value={zonaForm.nivel} onChange={e => setZonaForm({...zonaForm, nivel: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    <option value="alto">Alto (Crítico)</option>
+                    <option value="medio">Medio</option>
+                    <option value="bajo">Bajo</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label>
+                  <select value={zonaForm.estado} onChange={e => setZonaForm({...zonaForm, estado: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-50 dark:border-gray-800 flex justify-end gap-3 bg-gray-50/50 dark:bg-transparent">
+              <Button text="Cancelar" onClick={() => setShowZonaModal(false)} variant="ghost" />
+              <Button text="Guardar Zona" onClick={saveZona} variant="primary" />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Modal de Confirmación de Eliminación */}
