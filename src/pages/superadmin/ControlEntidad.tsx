@@ -61,9 +61,9 @@ const ControlEntidad: React.FC = () => {
         supabase.from('zonas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
         supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).gte('created_at', startOfToday).not('estado', 'in', '("completada","hecha")'),
         supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('entidad_id', id).neq('estado', 'resuelta'),
-        supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad, created_at').eq('entidad_id', id).order('created_at', { ascending: false }).limit(500),
+        supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, asignado_id, estado, prioridad, created_at').eq('entidad_id', id).order('created_at', { ascending: false }).limit(500),
         supabase.from('usuarios').select('id, nombre, apellidos, email, rol, turno').eq('entidad_id', id).order('rol', { ascending: true }),
-        supabase.from('incidencias').select('id, titulo, zona, estado, prioridad, operario, descripcion').eq('entidad_id', id).neq('estado', 'resuelta').order('prioridad', { ascending: false }),
+        supabase.from('incidencias').select('id, titulo, zona, estado, prioridad, operario, descripcion, created_at').eq('entidad_id', id).neq('estado', 'resuelta').order('prioridad', { ascending: false }),
         supabase.from('notificaciones').select('*').or(`entidad_id.eq.${id},entidad_id.is.null`).order('fecha', { ascending: false }),
         supabase.from('zonas').select('id, nombre').eq('entidad_id', id)
       ]);
@@ -88,10 +88,48 @@ const ControlEntidad: React.FC = () => {
         tareas: t.count || 0,
         incidencias: i.count || 0
       });
-      setTareasActivas(tareasData.data || []);
+      
+      let fetchedTareas = tareasData.data || [];
+      fetchedTareas.sort((a: any, b: any) => {
+        const aCompleted = a.estado === 'completada' || a.estado === 'hecha';
+        const bCompleted = b.estado === 'completada' || b.estado === 'hecha';
+        if (aCompleted && !bCompleted) return 1;
+        if (!aCompleted && bCompleted) return -1;
+        
+        const prioMap: Record<string, number> = { alta: 0, media: 1, baja: 2 };
+        const pA = prioMap[a.prioridad] ?? 3;
+        const pB = prioMap[b.prioridad] ?? 3;
+        if (pA !== pB) return pA - pB;
+        
+        // Si tienen misma prioridad y estado, ordenar por fecha (más reciente primero)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+      
+      setTareasActivas(fetchedTareas);
       setPersonal(personalData.data || []);
-      setIncidenciasActivas(incidData.data || []);
-      setNotificacionesEntidad(notifData.data || []);
+      let fetchedIncidencias = incidData.data || [];
+      fetchedIncidencias.sort((a: any, b: any) => {
+        const prioMap: Record<string, number> = { alta: 0, media: 1, baja: 2 };
+        const pA = prioMap[a.prioridad] ?? 3;
+        const pB = prioMap[b.prioridad] ?? 3;
+        if (pA !== pB) return pA - pB;
+        // Desempate por fecha: más recientes primero
+        if (a.created_at && b.created_at) {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+        return 0;
+      });
+      setIncidenciasActivas(fetchedIncidencias);
+
+      let fetchedNotif = notifData.data || [];
+      fetchedNotif.sort((a: any, b: any) => {
+        const pA = a.tipo === 'urgente' ? 0 : 1;
+        const pB = b.tipo === 'urgente' ? 0 : 1;
+        if (pA !== pB) return pA - pB;
+        return new Date(b.fecha).getTime() - new Date(a.fecha).getTime();
+      });
+      setNotificacionesEntidad(fetchedNotif);
+
       setZonasList(zonasData.data || []);
       setLoading(false);
     };
