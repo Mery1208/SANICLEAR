@@ -1,8 +1,8 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '@supabase/supabase-js'
 
-// Just using standard fetch in Deno to check the user in DB
-const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL')
-const supabaseKey = Deno.env.get('VITE_SUPABASE_PUBLISHABLE_KEY')
-const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 console.log("Supabase URL:", supabaseUrl)
