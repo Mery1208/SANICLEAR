@@ -32,7 +32,7 @@ async function run() {
                     },
                     body: JSON.stringify({
                         email: email,
-                        password: 'password123',
+                        password: 'Operario123!',
                         nombre: nombre,
                         apellidos: apellido,
                         rol: 'operario',

@@ -1,8 +1,39 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Cargar variables de entorno desde .env.local
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+// Función para cargar variables de entorno desde .env.local
+function loadEnvFile() {
+  const fs = require('fs');
+  const path = require('path');
+  
+  const envPath = path.resolve('.env.local');
+  if (!fs.existsSync(envPath)) {
+    console.error('Archivo .env.local no encontrado');
+    process.exit(1);
+  }
+  
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  const lines = envContent.split('\n');
+  
+  lines.forEach(line => {
+    line = line.trim();
+    if (line === '' || line.startsWith('#')) return;
+    
+    const [key, ...valueParts] = line.split('=');
+    if (key) {
+      const value = valueParts.join('=').trim();
+      // Remover comillas si existen
+      const cleanValue = value.replace(/^["']|["']$/g, '');
+      process.env[key] = cleanValue;
+    }
+  });
+}
+
+// Cargar variables de entorno
+loadEnvFile();
+
+// Obtener variables de entorno
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Variables de entorno no encontradas en .env.local');

@@ -26,10 +26,22 @@ Deno.serve(async (req) => {
       })
     }
 
-    const { id, password } = JSON.parse(bodyText)
+    const { id, password, email } = JSON.parse(bodyText)
 
-    if (!id || !password) {
-      return new Response(JSON.stringify({ error: 'ID y nueva contraseña son obligatorios' }), {
+    if (!id) {
+      return new Response(JSON.stringify({ error: 'ID es obligatorio' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Preparamos los datos a actualizar dinámicamente
+    const updateData: any = {}
+    if (password && password.trim() !== '') updateData.password = password.trim()
+    if (email && email.trim() !== '') updateData.email = email.trim()
+
+    if (Object.keys(updateData).length === 0) {
+      return new Response(JSON.stringify({ error: 'No hay nada que actualizar' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -37,7 +49,7 @@ Deno.serve(async (req) => {
 
     const { data: authData, error: authError } = await supabase.auth.admin.updateUserById(
       id,
-      { password }
+      updateData
     )
 
     if (authError) {

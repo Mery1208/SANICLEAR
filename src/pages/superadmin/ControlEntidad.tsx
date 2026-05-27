@@ -115,23 +115,28 @@ const ControlEntidad: React.FC = () => {
     setEditUser(u || null);
     setUserForm(u
       ? { nombre: u.nombre || '', apellidos: u.apellidos || '', email: u.email || '', password: '', rol: u.rol || 'operario', turno: u.turno || 'Mañana' }
-      : { nombre: '', apellidos: '', email: '', password: '', rol: 'operario', turno: 'Mañana' });
+      : { nombre: '', apellidos: '', email: '', password: 'Operario123!', rol: 'operario', turno: 'Mañana' });
     setShowPassword(false);
     setShowUserModal(true);
   };
 
   const handleSaveUser = async () => {
     if (editUser) {
-      // Editar: actualiza datos de perfil y la contraseña si se indicó
+      // Editar: actualiza datos de perfil
       const dataToSave = { nombre: userForm.nombre, apellidos: userForm.apellidos, email: userForm.email, rol: userForm.rol, turno: userForm.turno, entidad_id: id };
       const { error } = await supabase.from('usuarios').update(dataToSave).eq('id', editUser.id);
       
-      if (userForm.password && userForm.password.trim() !== "") {
+      // Actualizar contraseña o email en Supabase Auth si ha cambiado
+      if ((userForm.password && userForm.password.trim() !== "") || userForm.email !== editUser.email) {
+        const payload: any = { id: editUser.id };
+        if (userForm.password && userForm.password.trim() !== "") payload.password = userForm.password;
+        if (userForm.email !== editUser.email) payload.email = userForm.email;
+
         const { error: pwdError, data } = await supabase.functions.invoke('actualizar-usuario', {
-          body: { id: editUser.id, password: userForm.password }
+          body: payload
         });
         if (pwdError || data?.error) {
-          alert('Datos de perfil actualizados, pero error al actualizar la contraseña: ' + (data?.error || pwdError?.message));
+          alert('Datos de perfil actualizados, pero error al sincronizar con Auth: ' + (data?.error || pwdError?.message));
         }
       }
 
@@ -554,7 +559,14 @@ const ControlEntidad: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Rol en la Entidad</label>
-                <select value={userForm.rol} onChange={e => setUserForm({...userForm, rol: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
+                <select value={userForm.rol} onChange={e => {
+                  const newRol = e.target.value;
+                  let newPass = userForm.password;
+                  if (!editUser && (userForm.password === 'Operario123!' || userForm.password === 'Admin123!' || userForm.password === '')) {
+                    newPass = newRol === 'admin' ? 'Admin123!' : 'Operario123!';
+                  }
+                  setUserForm({...userForm, rol: newRol, password: newPass});
+                }} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white">
                   <option value="operario">Operario</option>
                   <option value="admin">Administrador</option>
                 </select>
