@@ -41,9 +41,14 @@ const MisTareas: React.FC = () => {
     );
 
     try {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const startOfToday = hoy.toISOString();
+
       const dataPromise = supabase
         .from('tareas')
         .select('*')
+        .gte('created_at', startOfToday)
         .or(`asignado.ilike.%${usuario.nombre}%,asignado_id.eq.${usuario.id}`);
 
       const result = await Promise.race([dataPromise, timeoutPromise]) as any;
@@ -204,7 +209,7 @@ const MisTareas: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="w-full max-w-full overflow-hidden">
       <div className="flex flex-wrap justify-between items-start mb-1 gap-4">
         <div className="text-left">
           <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-blue-400 uppercase tracking-tight transition-colors mb-2 sm:mb-4">Mis Tareas</h2>
@@ -287,10 +292,10 @@ const MisTareas: React.FC = () => {
 
                       {/* Card Body */}
                       <div className="p-6 sm:p-8 flex flex-col items-center text-center flex-1">
-                        <h3 className={`font-black text-xl mb-2 transition-colors ${isCompleted ? "line-through text-green-700 dark:text-green-500" : "text-[#7e22ce] dark:text-purple-400"}`}>
+                        <h3 className={`font-black text-xl mb-2 break-words w-full transition-colors ${isCompleted ? "line-through text-green-700 dark:text-green-500" : "text-[#7e22ce] dark:text-purple-400"}`}>
                           {t.zona}
                         </h3>
-                        <p className={`text-sm font-bold mb-4 transition-colors ${isCompleted ? "text-green-600/70" : "text-gray-800 dark:text-slate-200"}`}>
+                        <p className={`text-sm font-bold mb-4 break-words w-full transition-colors ${isCompleted ? "text-green-600/70" : "text-gray-800 dark:text-slate-200"}`}>
                           {t.tarea}
                         </p>
 
@@ -347,7 +352,7 @@ const MisTareas: React.FC = () => {
           >
             <ChevronRight size={20} className="rotate-180" />
           </button>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-center gap-2 max-w-[70vw] sm:max-w-none">
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}

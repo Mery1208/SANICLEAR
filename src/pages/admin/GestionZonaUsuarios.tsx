@@ -3,7 +3,7 @@ import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
-import { Plus, Search, X, AlertTriangle } from 'lucide-react';
+import { Plus, Search, X, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { useBusquedaStore } from '../../store/busquedaStore';
 import { useAuth } from '../../context/AuthContext';
 
@@ -41,6 +41,7 @@ const Gestion: React.FC = () => {
   const [editUsuario, setEditUsuario] = useState<any>(null);
   const [usuarioForm, setUsuarioForm] = useState({ nombre: "", apellidos: "", email: "", password: "", rol: "operario", turno: "Mañana", entidad: "", entidad_id: "" });
   const [entidades, setEntidades] = useState<any[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'zona' | 'usuario', id: any, nombre: string } | null>(null);
 
@@ -177,6 +178,7 @@ const Gestion: React.FC = () => {
         entidad: u.entidad || "",
         entidad_id: u.entidad_id || ""
       });
+      setShowPassword(false);
       setShowUsuarioModal(true);
     };
 
@@ -192,6 +194,7 @@ const Gestion: React.FC = () => {
         entidad: "",
         entidad_id: currentUserRole === 'admin' ? (currentUser?.entidad_id || "") : ""
       });
+      setShowPassword(false);
       setShowUsuarioModal(true);
     };
 
@@ -199,7 +202,7 @@ const Gestion: React.FC = () => {
     if (!usuarioForm.nombre || !usuarioForm.email) return;
 
     if (editUsuario) {
-      // Editar: solo actualiza perfil, no toca Auth
+      // Editar: actualiza perfil y la contraseña si se indicó
       const userData = {
         nombre: usuarioForm.nombre,
         apellidos: usuarioForm.apellidos,
@@ -211,6 +214,16 @@ const Gestion: React.FC = () => {
           : (usuarioForm.entidad_id || null),
       };
       const { error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id);
+      
+      if (usuarioForm.password && usuarioForm.password.trim() !== "") {
+        const { error: pwdError, data } = await supabase.functions.invoke('actualizar-usuario', {
+          body: { id: editUsuario.id, password: usuarioForm.password }
+        });
+        if (pwdError || data?.error) {
+          alert('Datos actualizados, pero error al cambiar la contraseña: ' + (data?.error || pwdError?.message));
+        }
+      }
+
       if (!error) {
         setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...userData, id: editUsuario.id } : u));
       }
@@ -465,13 +478,23 @@ const Gestion: React.FC = () => {
              <label className="block text-xs font-semibold text-gray-600 mb-1">
                {editUsuario ? 'Contraseña (dejar vacío para no cambiar)' : 'Contraseña inicial *'}
              </label>
-             <input
-               type="password"
-               value={usuarioForm.password}
-               onChange={e => setUsuarioForm({ ...usuarioForm, password: e.target.value })}
-               placeholder={editUsuario ? 'Sin cambios si se deja vacío' : 'Mín. 6 caracteres'}
-               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-             />
+             <div className="relative flex items-center">
+               <input
+                 type={showPassword ? "text" : "password"}
+                 value={usuarioForm.password}
+                 onChange={e => setUsuarioForm({ ...usuarioForm, password: e.target.value })}
+                 placeholder={editUsuario ? 'Sin cambios si se deja vacío' : 'Mín. 6 caracteres'}
+                 className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                 autoComplete="new-password"
+               />
+               <button
+                 type="button"
+                 onClick={() => setShowPassword(!showPassword)}
+                 className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors bg-transparent border-none p-0 cursor-pointer"
+               >
+                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+               </button>
+             </div>
            </div>
            <div className="grid grid-cols-2 gap-3 mb-4">
              <div>

@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
 
     try {
       // Construir queries filtrando por entidad si es admin
-      let tareasQ = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').neq('estado', 'completada').order('prioridad', { ascending: false });
+      let tareasQ = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').order('created_at', { ascending: false }).limit(500);
       let incidenciasQ = supabase.from('incidencias').select('id, prioridad, estado, created_at');
       let usuariosQ = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
       let zonasQ = supabase.from('zonas').select('id, nombre');
@@ -324,7 +324,7 @@ const Dashboard: React.FC = () => {
 
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-800 flex flex-wrap justify-between items-center gap-3 bg-gray-50/30 dark:bg-transparent">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Tareas activas</p>
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
             <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
               <RefreshCw size={16} />
             </button>
@@ -337,7 +337,7 @@ const Dashboard: React.FC = () => {
                <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
 {(query ? tareasFiltradas : tareas).length === 0 && (
                    <tr><td colSpan={6} className="p-10 text-center text-gray-400 dark:text-gray-500 font-bold italic">
-                     {query ? `No se encontraron tareas para "${query}"` : "No hay tareas activas en este momento."}
+                     {query ? `No se encontraron tareas para "${query}"` : "No hay historial de tareas en este momento."}
                    </td></tr>
                  )}
                 {(query ? tareasFiltradas : tareas).map(t => (

@@ -95,7 +95,7 @@ export default function Login(): React.JSX.Element {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 placeholder="usuario@hospital.com"
                 disabled={loading}
-                autoComplete="username"
+                autoComplete="off"
               />
             </div>
 
@@ -108,7 +108,7 @@ export default function Login(): React.JSX.Element {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   disabled={loading}
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   style={{ width: '100%', paddingRight: '2.5rem' }}
                 />
                 <button

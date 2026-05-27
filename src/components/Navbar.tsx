@@ -1,10 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from './Button';
 import logoImg from '../assets/img/logo.png';
 import ThemeToggle from './ThemeToggle';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLoginClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await logout();
+    navigate('/login');
+  };
+
   return (
     <nav className="flex flex-wrap justify-between items-center py-2 px-3 sm:py-3 sm:px-4 md:py-4 md:px-8 bg-white dark:bg-slate-900 shadow-sm sticky top-0 z-50 font-inherit transition-colors gap-2">
       <div className="flex items-center shrink-0">
@@ -20,13 +30,13 @@ const Navbar: React.FC = () => {
 
         <ThemeToggle />
 
-        <Link to="/login" className="no-underline">
+        <a href="/login" onClick={handleLoginClick} className="no-underline">
           <Button 
             text="Acceso Personal" 
             variant="secondary" 
             className="px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-sm md:px-6 md:py-2.5 md:text-base whitespace-nowrap shadow-none border-blue-600/20" 
           />
-        </Link>
+        </a>
       </div>
     </nav>
   );

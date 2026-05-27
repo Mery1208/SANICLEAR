@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, MapPinned, ClipboardList, AlertTriangle, Clock, RefreshCw, CheckCircle, UserCog, Edit2, Trash2, Plus, Building2, Layout, ShieldCheck, Search, Bell } from 'lucide-react';
+import { ArrowLeft, Users, MapPinned, ClipboardList, AlertTriangle, Clock, RefreshCw, CheckCircle, UserCog, Edit2, Trash2, Plus, Building2, Layout, ShieldCheck, Search, Bell, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
@@ -23,6 +23,7 @@ const ControlEntidad: React.FC = () => {
   const [editUser, setEditUser] = useState<any>(null);
   const [userForm, setUserForm] = useState({ nombre: '', apellidos: '', email: '', password: '', rol: 'operario', turno: 'Mañana' });
   const [actionMessage, setActionMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   // Estados CRUD Tareas
   const [showTareaModal, setShowTareaModal] = useState(false);
@@ -50,13 +51,17 @@ const ControlEntidad: React.FC = () => {
       if (entError) console.error('[ControlEntidad] Error cargando entidad:', entError.message);
       setEntidad(ent);
 
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const startOfToday = hoy.toISOString();
+
       // Obtenemos todos los datos y listas operativas de la entidad en un solo bloque
       const [u, z, t, i, tareasData, personalData, incidData, notifData, zonasData] = await Promise.all([
         supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
         supabase.from('zonas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
-        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
-        supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
-        supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').eq('entidad_id', id).neq('estado', 'completada').order('prioridad', { ascending: false }),
+        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).gte('created_at', startOfToday),
+        supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('entidad_id', id).neq('estado', 'resuelta'),
+        supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').eq('entidad_id', id).gte('created_at', startOfToday).neq('estado', 'completada').order('prioridad', { ascending: false }),
         supabase.from('usuarios').select('id, nombre, apellidos, email, rol, turno').eq('entidad_id', id).order('rol', { ascending: true }),
         supabase.from('incidencias').select('id, titulo, zona, estado, prioridad, operario, descripcion').eq('entidad_id', id).neq('estado', 'resuelta').order('prioridad', { ascending: false }),
         supabase.from('notificaciones').select('*').or(`entidad_id.eq.${id},entidad_id.is.null`).order('fecha', { ascending: false }),
@@ -111,14 +116,25 @@ const ControlEntidad: React.FC = () => {
     setUserForm(u
       ? { nombre: u.nombre || '', apellidos: u.apellidos || '', email: u.email || '', password: '', rol: u.rol || 'operario', turno: u.turno || 'Mañana' }
       : { nombre: '', apellidos: '', email: '', password: '', rol: 'operario', turno: 'Mañana' });
+    setShowPassword(false);
     setShowUserModal(true);
   };
 
   const handleSaveUser = async () => {
     if (editUser) {
-      // Editar: solo actualiza datos de perfil, no toca Auth
+      // Editar: actualiza datos de perfil y la contraseña si se indicó
       const dataToSave = { nombre: userForm.nombre, apellidos: userForm.apellidos, email: userForm.email, rol: userForm.rol, turno: userForm.turno, entidad_id: id };
       const { error } = await supabase.from('usuarios').update(dataToSave).eq('id', editUser.id);
+      
+      if (userForm.password && userForm.password.trim() !== "") {
+        const { error: pwdError, data } = await supabase.functions.invoke('actualizar-usuario', {
+          body: { id: editUser.id, password: userForm.password }
+        });
+        if (pwdError || data?.error) {
+          alert('Datos de perfil actualizados, pero error al actualizar la contraseña: ' + (data?.error || pwdError?.message));
+        }
+      }
+
       if (!error) {
         setPersonal(prev => prev.map(p => p.id === editUser.id ? { ...p, ...dataToSave } : p));
         setActionMessage("Usuario actualizado correctamente.");
@@ -516,13 +532,23 @@ const ControlEntidad: React.FC = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
                 {editUser ? 'Contraseña (dejar vacío para no cambiar)' : 'Contraseña inicial *'}
               </label>
-              <input
-                type="password"
-                value={userForm.password}
-                onChange={e => setUserForm({...userForm, password: e.target.value})}
-                className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white"
-                placeholder={editUser ? 'Sin cambios si se deja vacío' : 'Mín. 6 caracteres'}
-              />
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={userForm.password}
+                  onChange={e => setUserForm({...userForm, password: e.target.value})}
+                  className="w-full border border-gray-200 rounded-xl p-3 pr-10 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white"
+                  placeholder={editUser ? 'Sin cambios si se deja vacío' : 'Mín. 6 caracteres'}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors bg-transparent border-none p-0 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
