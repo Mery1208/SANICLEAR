@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
     try {
       // Construir queries filtrando por entidad si es admin
       let tareasQ = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad, created_at, updated_at').order('created_at', { ascending: false }).limit(500);
-      let incidenciasQ = supabase.from('incidencias').select('id, prioridad, estado, created_at, titulo');
+      let incidenciasQ = supabase.from('incidencias').select('id, prioridad, estado, created_at, titulo, zona');
       let usuariosQ = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
       let zonasQ = supabase.from('zonas').select('id, nombre');
 
