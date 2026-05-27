@@ -618,7 +618,10 @@ const ControlEntidad: React.FC = () => {
                 {notificacionesEntidad.length === 0 && (<tr><td colSpan={5} className="p-8 text-center text-gray-400 font-bold italic">No hay notificaciones recientes.</td></tr>)}
                 {notificacionesEntidad.map((n: any) => (
                   <tr key={n.id} className="hover:bg-blue-50/20">
-                        <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs min-w-[150px]">{n.titulo}</td>
+                        <td className="px-4 sm:px-6 py-3 sm:py-4 min-w-[200px]">
+                          <div className="font-bold text-[#1e3a5f] dark:text-white text-xs">{n.titulo}</div>
+                          <div className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1 break-all">{n.mensaje}</div>
+                        </td>
                         <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <Badge cls={n.tipo === 'urgente' ? 'bg-red-100 text-red-700' : n.tipo === 'importante' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} label={n.tipo} />
                     </td>
@@ -853,62 +856,54 @@ const ControlEntidad: React.FC = () => {
 
       {/* Modal Zonas */}
       {showZonaModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1e3a5f]/40 dark:bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-[#0f172a] rounded-[2rem] w-full max-w-lg shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-gray-50 dark:border-gray-800 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-              <h3 className="text-xl font-black text-[#1e3a5f] dark:text-white flex items-center gap-2">
-                <MapPin className="text-purple-500" /> {editZona ? 'Editar Zona' : 'Nueva Zona'}
-              </h3>
-              <button onClick={() => setShowZonaModal(false)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"><X size={20} /></button>
+        <Modal title={editZona ? "EDITAR ZONA" : "NUEVA ZONA"} onClose={() => setShowZonaModal(false)}>
+          <div className="flex flex-col gap-4 mb-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre de la zona</label>
+              <input type="text" value={zonaForm.nombre} onChange={e => setZonaForm({...zonaForm, nombre: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="Ej: Habitación 205" />
             </div>
-            <div className="p-6 space-y-4 overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre de la zona</label>
-                <input type="text" value={zonaForm.nombre} onChange={e => setZonaForm({...zonaForm, nombre: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" placeholder="Ej: Habitación 205" />
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
+                <select value={zonaForm.tipo} onChange={e => setZonaForm({...zonaForm, tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="Habitación">Habitación</option>
+                  <option value="Quirófano">Quirófano</option>
+                  <option value="Baño">Baño</option>
+                  <option value="Pasillo">Pasillo</option>
+                  <option value="Urgencias">Urgencias</option>
+                  <option value="Laboratorio">Laboratorio</option>
+                  <option value="Común">Área Común</option>
+                </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo</label>
-                  <select value={zonaForm.tipo} onChange={e => setZonaForm({...zonaForm, tipo: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                    <option value="Habitación">Habitación</option>
-                    <option value="Quirófano">Quirófano</option>
-                    <option value="Baño">Baño</option>
-                    <option value="Pasillo">Pasillo</option>
-                    <option value="Urgencias">Urgencias</option>
-                    <option value="Laboratorio">Laboratorio</option>
-                    <option value="Común">Área Común</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Planta</label>
-                  <input type="number" value={zonaForm.planta} onChange={e => setZonaForm({...zonaForm, planta: parseInt(e.target.value) || 0})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nivel Higiene</label>
-                  <select value={zonaForm.nivel} onChange={e => setZonaForm({...zonaForm, nivel: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                    <option value="alto">Alto (Crítico)</option>
-                    <option value="medio">Medio</option>
-                    <option value="bajo">Bajo</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label>
-                  <select value={zonaForm.estado} onChange={e => setZonaForm({...zonaForm, estado: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
-                    <option value="Mantenimiento">Mantenimiento</option>
-                  </select>
-                </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Planta</label>
+                <input type="number" value={zonaForm.planta} onChange={e => setZonaForm({...zonaForm, planta: parseInt(e.target.value) || 0})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
               </div>
             </div>
-            <div className="p-6 border-t border-gray-50 dark:border-gray-800 flex justify-end gap-3 bg-gray-50/50 dark:bg-transparent">
-              <Button text="Cancelar" onClick={() => setShowZonaModal(false)} variant="ghost" />
-              <Button text="Guardar Zona" onClick={saveZona} variant="primary" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nivel Higiene</label>
+                <select value={zonaForm.nivel} onChange={e => setZonaForm({...zonaForm, nivel: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="alto">Alto (Crítico)</option>
+                  <option value="medio">Medio</option>
+                  <option value="bajo">Bajo</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label>
+                <select value={zonaForm.estado} onChange={e => setZonaForm({...zonaForm, estado: e.target.value})} className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="Mantenimiento">Mantenimiento</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-6">
+            <Button text="Cancelar" variant="secondary" onClick={() => setShowZonaModal(false)} className="flex-1 py-3" />
+            <Button text="Guardar Zona" variant="primary" onClick={saveZona} className="flex-1 py-3 shadow-lg shadow-blue-100" />
+          </div>
+        </Modal>
       )}
 
       {/* Modal de Confirmación de Eliminación */}
