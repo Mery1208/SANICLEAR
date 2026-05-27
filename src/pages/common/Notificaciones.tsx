@@ -40,6 +40,8 @@ const Notificaciones: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [entidades, setEntidades] = useState<any[]>([]);
   const [filtroEntidad, setFiltroEntidad] = useState<string>('todas');
+  const [filtroFecha, setFiltroFecha] = useState<string>('todas');
+  const [filtroTipo, setFiltroTipo] = useState<string>('todas');
 
   // Stats
   const noLeidas = notif.filter(n => !n.leida).length;
@@ -180,11 +182,34 @@ const Notificaciones: React.FC = () => {
   };
 
   const filteredNotif = notif.filter(n => {
-    if (!searchTerm) return true;
-    const s = searchTerm.toLowerCase();
-    const hospitalName = entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global';
-    return n.titulo.toLowerCase().includes(s) ||
-           hospitalName.toLowerCase().includes(s);
+    // Filtro por búsqueda
+    if (searchTerm) {
+      const s = searchTerm.toLowerCase();
+      const hospitalName = entidades.find(e => e.id === n.entidad_id)?.nombre_hospital || 'Global';
+      if (!n.titulo.toLowerCase().includes(s) && !hospitalName.toLowerCase().includes(s)) return false;
+    }
+
+    // Filtro por tipo
+    if (filtroTipo !== 'todas' && n.tipo !== filtroTipo) return false;
+
+    // Filtro por fecha
+    if (filtroFecha !== 'todas') {
+      const date = new Date(n.fecha);
+      const today = new Date();
+      if (filtroFecha === 'hoy') {
+        if (date.toDateString() !== today.toDateString()) return false;
+      } else if (filtroFecha === 'semana') {
+        const lastWeek = new Date();
+        lastWeek.setDate(today.getDate() - 7);
+        if (date < lastWeek) return false;
+      } else if (filtroFecha === 'mes') {
+        const lastMonth = new Date();
+        lastMonth.setMonth(today.getMonth() - 1);
+        if (date < lastMonth) return false;
+      }
+    }
+
+    return true;
   });
 
   if (loading) return <div className="text-gray-500 p-6 font-semibold animate-pulse">Cargando notificaciones...</div>;
@@ -219,6 +244,26 @@ const Notificaciones: React.FC = () => {
               {entidades.map(e => <option key={e.id} value={e.id}>{e.nombre_hospital}</option>)}
             </select>
           )}
+          <select 
+            value={filtroTipo} 
+            onChange={(e) => setFiltroTipo(e.target.value)}
+            className="px-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+          >
+            <option value="todas">Todos los Tipos</option>
+            <option value="urgente">Urgentes</option>
+            <option value="importante">Importantes</option>
+            <option value="informativa">Informativas</option>
+          </select>
+          <select 
+            value={filtroFecha} 
+            onChange={(e) => setFiltroFecha(e.target.value)}
+            className="px-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white"
+          >
+            <option value="todas">Cualquier Fecha</option>
+            <option value="hoy">Hoy</option>
+            <option value="semana">Últimos 7 días</option>
+            <option value="mes">Último Mes</option>
+          </select>
           {noLeidas > 0 && <button onClick={marcarTodas} className="text-xs text-blue-600 hover:underline font-bold">Marcar todas como leídas</button>}
           {isAdmin && (
             <Button 
