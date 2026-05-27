@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, MapPinned, ClipboardList, AlertTriangle, Clock, RefreshCw, CheckCircle, UserCog, Edit2, Trash2, Plus, Building2, Layout, ShieldCheck, Search, Bell, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Users, MapPinned, MapPin, X, ClipboardList, AlertTriangle, Clock, RefreshCw, CheckCircle, UserCog, Edit2, Trash2, Plus, Building2, Layout, ShieldCheck, Search, Bell, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../supabase/client';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
