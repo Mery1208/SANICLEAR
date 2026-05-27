@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, ShieldAlert, CheckCircle, Plus, Search, Edit2, Trash2 } from 'lucide-react';
+import { Bell, ShieldAlert, CheckCircle, Plus, Search, Edit2, Trash2, AlertTriangle } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
@@ -52,6 +52,7 @@ const Notificaciones: React.FC = () => {
   // Admin form
   const [showForm, setShowForm] = useState(false);
   const [editNotifId, setEditNotifId] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number, titulo: string } | null>(null);
   const [newNotif, setNewNotif] = useState({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
   const [ok, setOk] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -131,10 +132,16 @@ const Notificaciones: React.FC = () => {
     setShowForm(true);
   };
 
-  const deleteNotif = async (id: number) => {
-    if (window.confirm("¿Estás seguro de eliminar esta notificación?")) {
-      const { error } = await supabase.from('notificaciones').delete().eq('id', id);
-      if (!error) setNotif(prev => prev.filter(x => x.id !== id));
+  const deleteNotif = (id: number, titulo: string) => {
+    setDeleteTarget({ id, titulo });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const { error } = await supabase.from('notificaciones').delete().eq('id', deleteTarget.id);
+    if (!error) {
+      setNotif(prev => prev.filter(x => x.id !== deleteTarget.id));
+      setDeleteTarget(null);
     }
   };
 
@@ -319,7 +326,7 @@ const Notificaciones: React.FC = () => {
                   </td>
                   <td className="px-4 py-3 flex gap-2">
                     <button onClick={(e) => { e.stopPropagation(); openEdit(n); }} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
-                    <button onClick={(e) => { e.stopPropagation(); deleteNotif(n.id); }} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
+                    <button onClick={(e) => { e.stopPropagation(); deleteNotif(n.id, n.titulo); }} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                   </td>
                 </tr>
               ))}
@@ -399,6 +406,23 @@ const Notificaciones: React.FC = () => {
           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowForm(false)} variant="secondary" className="flex-1 py-3" />
             <Button text={editNotifId ? "Guardar Cambios" : "Enviar Notificación"} onClick={sendNotif} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
+          </div>
+        </Modal>
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteTarget && (
+        <Modal title="⚠️ CONFIRMAR ELIMINACIÓN" onClose={() => setDeleteTarget(null)}>
+          <div className="text-center p-4">
+            <AlertTriangle size={48} className="text-red-500 mx-auto mb-4" />
+            <p className="text-gray-700 dark:text-gray-300 text-lg mb-2">
+              ¿Estás seguro de que deseas eliminar permanentemente la notificación <strong>{deleteTarget.titulo}</strong>?
+            </p>
+            <p className="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer.</p>
+            <div className="flex justify-center gap-4">
+              <Button text="Cancelar" onClick={() => setDeleteTarget(null)} variant="secondary" />
+              <Button text="Sí, Eliminar" onClick={confirmDelete} variant="danger" />
+            </div>
           </div>
         </Modal>
       )}

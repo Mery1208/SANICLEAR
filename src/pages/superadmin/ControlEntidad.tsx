@@ -47,6 +47,26 @@ const ControlEntidad: React.FC = () => {
   
   const [deleteTarget, setDeleteTarget] = useState<{ tipo: 'usuario' | 'tarea' | 'incidencia' | 'notificacion' | 'zona', id: any, nombre: string } | null>(null);
 
+  // Filters for tables
+  const [fTareaAsignado, setFTareaAsignado] = useState('todos');
+  const [fTareaEstado, setFTareaEstado] = useState('todos');
+  const [fTareaZona, setFTareaZona] = useState('todas');
+  
+  const [fIncidZona, setFIncidZona] = useState('todas');
+  const [fIncidPrioridad, setFIncidPrioridad] = useState('todas');
+  
+  const [fPersonalRol, setFPersonalRol] = useState('todos');
+  const [fPersonalTurno, setFPersonalTurno] = useState('todos');
+  const [fPersonalNombre, setFPersonalNombre] = useState('');
+  
+  const [fZonaNombre, setFZonaNombre] = useState('');
+  const [fZonaPlanta, setFZonaPlanta] = useState('todas');
+  const [fZonaNivel, setFZonaNivel] = useState('todos');
+  
+  const [fNotifTipo, setFNotifTipo] = useState('todas');
+  const [fNotifDestino, setFNotifDestino] = useState('todos');
+  const [fNotifEmisor, setFNotifEmisor] = useState('todos');
+
   useEffect(() => {
     const fetchDetalles = async () => {
       if (!id) return;
@@ -64,7 +84,7 @@ const ControlEntidad: React.FC = () => {
       const [u, z, t, i, tareasData, personalData, incidData, notifData, zonasData] = await Promise.all([
         supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
         supabase.from('zonas').select('*', { count: 'exact', head: true }).eq('entidad_id', id),
-        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).gte('created_at', startOfToday).not('estado', 'eq', 'completada'),
+        supabase.from('tareas').select('*', { count: 'exact', head: true }).eq('entidad_id', id).not('estado', 'eq', 'completada'),
         supabase.from('incidencias').select('*', { count: 'exact', head: true }).eq('entidad_id', id).neq('estado', 'resuelta'),
         supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, asignado_id, estado, prioridad, created_at').eq('entidad_id', id).order('created_at', { ascending: false }).limit(500),
         supabase.from('usuarios').select('id, nombre, apellidos, email, rol, turno').eq('entidad_id', id).order('rol', { ascending: true }),
@@ -438,15 +458,33 @@ const ControlEntidad: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
-            <Button 
-              text="Nueva Tarea" 
-              onClick={() => openTarea()} 
-              variant="primary" 
-              icon={Plus} 
-              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-            />
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
+              <Button 
+                text="Nueva Tarea" 
+                onClick={() => openTarea()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <select value={fTareaEstado} onChange={e => setFTareaEstado(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Estado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_curso">En Curso</option>
+                <option value="completada">Completada</option>
+              </select>
+              <select value={fTareaZona} onChange={e => setFTareaZona(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todas">Zona</option>
+                {Array.from(new Set(tareasActivas.map((t: any) => t.zona))).sort().map(z => <option key={String(z)} value={String(z)}>{String(z)}</option>)}
+              </select>
+              <select value={fTareaAsignado} onChange={e => setFTareaAsignado(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Asignado</option>
+                {Array.from(new Set(tareasActivas.map((t: any) => t.asignado))).sort().map(a => <option key={String(a)} value={String(a)}>{String(a)}</option>)}
+              </select>
+            </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -454,8 +492,16 @@ const ControlEntidad: React.FC = () => {
                 <tr>{["Zona","Asignado","Estado","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                {tareasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay historial de tareas.</td></tr>)}
-                {tareasActivas.map((t: any) => (
+                {tareasActivas.filter((t: any) => 
+                  (fTareaAsignado === 'todos' || t.asignado === fTareaAsignado) &&
+                  (fTareaEstado === 'todos' || t.estado === fTareaEstado) &&
+                  (fTareaZona === 'todas' || t.zona === fTareaZona)
+                ).length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay tareas que coincidan con el filtro.</td></tr>)}
+                {tareasActivas.filter((t: any) => 
+                  (fTareaAsignado === 'todos' || t.asignado === fTareaAsignado) &&
+                  (fTareaEstado === 'todos' || t.estado === fTareaEstado) &&
+                  (fTareaZona === 'todas' || t.zona === fTareaZona)
+                ).map((t: any) => (
                   <tr key={t.id} className={`hover:bg-blue-50/20 ${t.estado === 'completada' ? 'opacity-70 bg-gray-50 dark:bg-gray-800/30' : ''}`}>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs whitespace-nowrap">{t.zona}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] dark:text-white text-xs font-bold whitespace-nowrap">{t.asignado}</td>
@@ -478,15 +524,30 @@ const ControlEntidad: React.FC = () => {
         
         {/* Incidencias de la entidad */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
-            <Button 
-              text="Nueva Incidencia" 
-              onClick={() => openIncid()} 
-              variant="primary" 
-              icon={Plus} 
-              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-            />
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
+              <Button 
+                text="Nueva Incidencia" 
+                onClick={() => openIncid()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <select value={fIncidZona} onChange={e => setFIncidZona(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todas">Zona</option>
+                {Array.from(new Set(incidenciasActivas.map((i: any) => i.zona))).sort().map(z => <option key={String(z)} value={String(z)}>{String(z)}</option>)}
+              </select>
+              <select value={fIncidPrioridad} onChange={e => setFIncidPrioridad(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todas">Prioridad</option>
+                <option value="critica">Crítica</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+              </select>
+            </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -494,8 +555,14 @@ const ControlEntidad: React.FC = () => {
                 <tr>{["Título","Zona","Prioridad","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                {incidenciasActivas.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay incidencias críticas ni abiertas.</td></tr>)}
-                {incidenciasActivas.map((i: any) => (
+                {incidenciasActivas.filter((i: any) => 
+                  (fIncidZona === 'todas' || i.zona === fIncidZona) &&
+                  (fIncidPrioridad === 'todas' || i.prioridad === fIncidPrioridad)
+                ).length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay incidencias que coincidan.</td></tr>)}
+                {incidenciasActivas.filter((i: any) => 
+                  (fIncidZona === 'todas' || i.zona === fIncidZona) &&
+                  (fIncidPrioridad === 'todas' || i.prioridad === fIncidPrioridad)
+                ).map((i: any) => (
                   <tr key={i.id} className="hover:bg-red-50/20">
                     <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs min-w-[150px]">{i.titulo}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 text-gray-500 dark:text-white text-xs font-semibold whitespace-nowrap">{i.zona}</td>
@@ -518,10 +585,9 @@ const ControlEntidad: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Administradores y Personal */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <div className="flex items-center gap-3">
-              <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block">Control Total</span>
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
               <Button 
                 text="Nuevo Personal" 
                 onClick={() => handleOpenEditUser()} 
@@ -530,6 +596,26 @@ const ControlEntidad: React.FC = () => {
                 className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
               />
             </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <input 
+                type="text" 
+                placeholder="Nombre..." 
+                value={fPersonalNombre} 
+                onChange={e => setFPersonalNombre(e.target.value)} 
+                className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1"
+              />
+              <select value={fPersonalRol} onChange={e => setFPersonalRol(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Rol</option>
+                <option value="admin">Admin</option>
+                <option value="operario">Operario</option>
+              </select>
+              <select value={fPersonalTurno} onChange={e => setFPersonalTurno(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Turno</option>
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
+            </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -537,7 +623,16 @@ const ControlEntidad: React.FC = () => {
                 <tr>{["Nombre","Rol","Turno","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                {personal.map((u: any) => (
+                {personal.filter((p: any) => 
+                  (fPersonalRol === 'todos' || p.rol === fPersonalRol) &&
+                  (fPersonalTurno === 'todos' || p.turno === fPersonalTurno) &&
+                  (!fPersonalNombre || `${p.nombre} ${p.apellidos}`.toLowerCase().includes(fPersonalNombre.toLowerCase()))
+                ).length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay personal que coincida.</td></tr>)}
+                {personal.filter((p: any) => 
+                  (fPersonalRol === 'todos' || p.rol === fPersonalRol) &&
+                  (fPersonalTurno === 'todos' || p.turno === fPersonalTurno) &&
+                  (!fPersonalNombre || `${p.nombre} ${p.apellidos}`.toLowerCase().includes(fPersonalNombre.toLowerCase()))
+                ).map((u: any) => (
                   <tr key={u.id} className="hover:bg-blue-50/20">
                     <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <div className="font-bold text-[#1e3a5f] dark:text-white text-xs">{u.nombre} {u.apellidos}</div>
@@ -560,15 +655,36 @@ const ControlEntidad: React.FC = () => {
 
         {/* Zonas de la entidad */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Zonas del Centro</p>
-            <Button 
-              text="Nueva Zona" 
-              onClick={() => openZona()} 
-              variant="primary" 
-              icon={Plus} 
-              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-            />
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Zonas del Centro</p>
+              <Button 
+                text="Nueva Zona" 
+                onClick={() => openZona()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <input 
+                type="text" 
+                placeholder="Nombre..." 
+                value={fZonaNombre} 
+                onChange={e => setFZonaNombre(e.target.value)} 
+                className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1"
+              />
+              <select value={fZonaPlanta} onChange={e => setFZonaPlanta(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todas">Planta</option>
+                {Array.from(new Set(zonasList.map((z: any) => String(z.planta)))).sort().map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <select value={fZonaNivel} onChange={e => setFZonaNivel(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Nivel</option>
+                <option value="alto">Alto</option>
+                <option value="medio">Medio</option>
+                <option value="bajo">Bajo</option>
+              </select>
+            </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -576,8 +692,16 @@ const ControlEntidad: React.FC = () => {
                 <tr>{["Nombre","Planta","Nivel","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                {zonasList.length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay zonas registradas.</td></tr>)}
-                {zonasList.map((z: any) => (
+                {zonasList.filter((z: any) => 
+                  (fZonaPlanta === 'todas' || String(z.planta) === fZonaPlanta) &&
+                  (fZonaNivel === 'todos' || z.nivel === fZonaNivel) &&
+                  (!fZonaNombre || z.nombre.toLowerCase().includes(fZonaNombre.toLowerCase()))
+                ).length === 0 && (<tr><td colSpan={4} className="p-8 text-center text-gray-400 font-bold italic">No hay zonas que coincidan.</td></tr>)}
+                {zonasList.filter((z: any) => 
+                  (fZonaPlanta === 'todas' || String(z.planta) === fZonaPlanta) &&
+                  (fZonaNivel === 'todos' || z.nivel === fZonaNivel) &&
+                  (!fZonaNombre || z.nombre.toLowerCase().includes(fZonaNombre.toLowerCase()))
+                ).map((z: any) => (
                   <tr key={z.id} className="hover:bg-purple-50/20">
                     <td className="px-4 sm:px-6 py-3 sm:py-4 font-bold text-[#1e3a5f] dark:text-white text-xs whitespace-nowrap">{z.nombre}</td>
                     <td className="px-4 sm:px-6 py-3 sm:py-4 text-[#1e3a5f] dark:text-white text-xs font-bold whitespace-nowrap">Planta {z.planta}</td>
@@ -599,15 +723,33 @@ const ControlEntidad: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Últimas Notificaciones */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-              <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
-            <Button 
-              text="Nueva Notificación" 
-              onClick={() => openNotif()} 
-              variant="primary" 
-              icon={Plus} 
-              className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-            />
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
+              <Button 
+                text="Nueva Notificación" 
+                onClick={() => openNotif()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <select value={fNotifTipo} onChange={e => setFNotifTipo(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todas">Tipo</option>
+                <option value="urgente">Urgente</option>
+                <option value="importante">Importante</option>
+                <option value="informativa">Informativa</option>
+              </select>
+              <select value={fNotifDestino} onChange={e => setFNotifDestino(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Destino</option>
+                {Array.from(new Set(notificacionesEntidad.map((n: any) => n.dest))).sort().map(d => <option key={String(d)} value={String(d)}>{String(d)}</option>)}
+              </select>
+              <select value={fNotifEmisor} onChange={e => setFNotifEmisor(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+                <option value="todos">Emisor</option>
+                {Array.from(new Set(notificacionesEntidad.map((n: any) => n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'))).sort().map(e => <option key={String(e)} value={String(e)}>{String(e)}</option>)}
+              </select>
+            </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
@@ -615,8 +757,16 @@ const ControlEntidad: React.FC = () => {
                     <tr>{["Título","Tipo","Emisor","Destino","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                {notificacionesEntidad.length === 0 && (<tr><td colSpan={5} className="p-8 text-center text-gray-400 font-bold italic">No hay notificaciones recientes.</td></tr>)}
-                {notificacionesEntidad.map((n: any) => (
+                {notificacionesEntidad.filter((n: any) => 
+                  (fNotifTipo === 'todas' || n.tipo === fNotifTipo) &&
+                  (fNotifDestino === 'todos' || n.dest === fNotifDestino) &&
+                  (fNotifEmisor === 'todos' || (n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema') === fNotifEmisor)
+                ).length === 0 && (<tr><td colSpan={5} className="p-8 text-center text-gray-400 font-bold italic">No hay notificaciones que coincidan.</td></tr>)}
+                {notificacionesEntidad.filter((n: any) => 
+                  (fNotifTipo === 'todas' || n.tipo === fNotifTipo) &&
+                  (fNotifDestino === 'todos' || n.dest === fNotifDestino) &&
+                  (fNotifEmisor === 'todos' || (n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema') === fNotifEmisor)
+                ).map((n: any) => (
                   <tr key={n.id} className="hover:bg-blue-50/20">
                         <td className="px-4 sm:px-6 py-3 sm:py-4 min-w-[200px]">
                           <div className="font-bold text-[#1e3a5f] dark:text-white text-xs">{n.titulo}</div>

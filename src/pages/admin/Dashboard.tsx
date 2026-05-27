@@ -16,12 +16,16 @@ interface Tarea {
   asignado: string;
   estado: string;
   prioridad: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface Incidencia {
   id: number;
   prioridad: string;
   estado: string;
+  created_at?: string;
+  titulo?: string;
 }
 
 
@@ -56,6 +60,15 @@ const Dashboard: React.FC = () => {
   const [form, setForm] = useState({ titulo:"", zona:"", operario:"", prioridad:"media", fecha:"", descripcion:"" });
   const [ok, setOk] = useState(false);
 
+  // Filtros tabla
+  const [filtroAsignado, setFiltroAsignado] = useState<string>('todos');
+  const [filtroEstado, setFiltroEstado] = useState<string>('todos');
+  const [filtroPrioridad, setFiltroPrioridad] = useState<string>('todas');
+  const [filtroZona, setFiltroZona] = useState<string>('todas');
+
+  // Filtro grafica
+  const [chartMonths, setChartMonths] = useState<number>(6);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -67,8 +80,8 @@ const Dashboard: React.FC = () => {
 
     try {
       // Construir queries filtrando por entidad si es admin
-      let tareasQ = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad').order('created_at', { ascending: false }).limit(500);
-      let incidenciasQ = supabase.from('incidencias').select('id, prioridad, estado, created_at');
+      let tareasQ = supabase.from('tareas').select('id, zona, tarea, descripcion, asignado, estado, prioridad, created_at, updated_at').order('created_at', { ascending: false }).limit(500);
+      let incidenciasQ = supabase.from('incidencias').select('id, prioridad, estado, created_at, titulo');
       let usuariosQ = supabase.from('usuarios').select('id, nombre, apellidos').eq('rol', 'operario');
       let zonasQ = supabase.from('zonas').select('id, nombre');
 
@@ -125,17 +138,25 @@ const Dashboard: React.FC = () => {
     };
   }, [entidadId, isAdmin]);
 
-  // Filtrar tareas por búsqueda
+  // Filtrar tareas por búsqueda y filtros
   const tareasFiltradas = useMemo(() => {
-    if (!query.trim()) return tareas;
-    const q = query.toLowerCase();
-    return tareas.filter(t =>
-      t.zona.toLowerCase().includes(q) ||
-      (t.tarea && t.tarea.toLowerCase().includes(q)) ||
-      (t.descripcion && t.descripcion.toLowerCase().includes(q)) ||
-      t.asignado.toLowerCase().includes(q)
-    );
-  }, [tareas, query]);
+    let result = tareas;
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      result = result.filter(t =>
+        t.zona.toLowerCase().includes(q) ||
+        (t.tarea && t.tarea.toLowerCase().includes(q)) ||
+        (t.descripcion && t.descripcion.toLowerCase().includes(q)) ||
+        t.asignado.toLowerCase().includes(q)
+      );
+    }
+    if (filtroAsignado !== 'todos') result = result.filter(t => t.asignado === filtroAsignado);
+    if (filtroEstado !== 'todos') result = result.filter(t => t.estado === filtroEstado);
+    if (filtroPrioridad !== 'todas') result = result.filter(t => t.prioridad === filtroPrioridad);
+    if (filtroZona !== 'todas') result = result.filter(t => t.zona === filtroZona);
+    
+    return result;
+  }, [tareas, query, filtroAsignado, filtroEstado, filtroPrioridad, filtroZona]);
 
   // Calcular CHART_DATA real basado en incidencias de Supabase
   const chartData = useMemo(() => {
@@ -143,13 +164,13 @@ const Dashboard: React.FC = () => {
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     const now = new Date();
     
-    // Pre-cargamos siempre los últimos 6 meses (para que la gráfica no se vea vacía)
-    const last6Months = Array.from({ length: 6 }).map((_, index) => {
-      const d = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
+    // Pre-cargamos meses basados en el filtro chartMonths
+    const lastXMonths = Array.from({ length: chartMonths }).map((_, index) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - ((chartMonths - 1) - index), 1);
       return { key: `${d.getFullYear()}-${d.getMonth()}`, mes: months[d.getMonth()], Abiertas: 0, Resueltas: 0 };
     });
 
-    const bucketMap = new Map(last6Months.map(b => [b.key, b]));
+    const bucketMap = new Map(lastXMonths.map(b => [b.key, b]));
     
     incidencias.forEach((i: any) => {
       if (!i.created_at) return;
@@ -157,15 +178,15 @@ const Dashboard: React.FC = () => {
       const key = `${d.getFullYear()}-${d.getMonth()}`;
       const bucket = bucketMap.get(key);
 
-      // Solo sumamos si la incidencia pertenece a uno de esos últimos 6 meses
+      // Solo sumamos si la incidencia pertenece a uno de los meses mostrados
       if (bucket) {
         if (i.estado === 'resuelta') bucket.Resueltas++;
         else bucket.Abiertas++;
       }
     });
     
-    return last6Months;
-  }, [incidencias]);
+    return lastXMonths;
+  }, [incidencias, chartMonths]);
 
   const pendientes = tareas.filter(t => t.estado === "pendiente").length;
   const alertas = incidencias.filter(i => i.prioridad === "alta" && i.estado !== "resuelta").length;
@@ -203,12 +224,35 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const actividadReciente = [
-    "Juan Pérez completó tarea en UCI Quirófano 3",
-    "Nueva incidencia: Aspiradora averiada",
-    "Notificación urgente enviada a Carlos Fernández",
-    "Nuevo operario registrado: Ana Martínez",
-  ];
+  const actividadRecienteReal = useMemo(() => {
+    const activities: any[] = [];
+    
+    tareas.forEach((t: any) => {
+      if (t.updated_at) {
+        activities.push({
+          date: new Date(t.updated_at),
+          text: `${t.asignado.split(' ')[0]} cambió estado de tarea a ${t.estado} en ${t.zona}`,
+        });
+      } else if (t.created_at) {
+        activities.push({
+          date: new Date(t.created_at),
+          text: `Nueva tarea en ${t.zona} asignada a ${t.asignado.split(' ')[0]}`,
+        });
+      }
+    });
+
+    incidencias.forEach((i: any) => {
+      if (i.created_at) {
+        activities.push({
+          date: new Date(i.created_at),
+          text: `Incidencia ${i.prioridad} registrada: ${i.titulo || 'Sin título'}`,
+        });
+      }
+    });
+
+    activities.sort((a, b) => b.date.getTime() - a.date.getTime());
+    return activities.slice(0, 5);
+  }, [tareas, incidencias]);
 
   if (loading) return <div className="p-6 text-gray-500 font-semibold font-sans">Cargando panel...</div>;
 
@@ -285,7 +329,18 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2 bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-10">Incidencias por mes</p>
+          <div className="flex justify-between items-center mb-10">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias por mes</p>
+            <select 
+              value={chartMonths} 
+              onChange={e => setChartMonths(Number(e.target.value))}
+              className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white"
+            >
+              <option value={3}>Últimos 3 meses</option>
+              <option value={6}>Últimos 6 meses</option>
+              <option value={12}>Último año</option>
+            </select>
+          </div>
           {chartData.length === 0 ? (
              <div className="h-[240px] flex items-center justify-center text-gray-400 font-semibold text-sm border-2 border-dashed border-gray-100 rounded-2xl">
                Aún no hay datos históricos de incidencias
@@ -309,27 +364,60 @@ const Dashboard: React.FC = () => {
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm p-5 sm:p-8">
           <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-10">Actividad reciente</p>
           <div className="flex flex-col gap-6 mt-8">
-            {actividadReciente.map((a, i) => (
-              <div key={i} className="flex gap-4 group">
-                <div className="w-1.5 h-auto bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-400 rounded-full transition-colors"></div>
-                <div>
-                  <p className="text-xs text-gray-700 dark:text-gray-200 font-bold leading-relaxed">{a}</p>
-                  <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-1 uppercase">Hace {i+1} min</p>
-                </div>
-              </div>
-            ))}
+            {actividadRecienteReal.length === 0 ? (
+               <div className="text-sm text-gray-400 font-semibold italic">Aún no hay actividad.</div>
+            ) : (
+              actividadRecienteReal.map((a, i) => {
+                const diffMins = Math.floor((new Date().getTime() - a.date.getTime()) / 60000);
+                const timeText = diffMins < 1 ? "Justo ahora" : diffMins < 60 ? `Hace ${diffMins} min` : diffMins < 1440 ? `Hace ${Math.floor(diffMins/60)} h` : `Hace ${Math.floor(diffMins/1440)} d`;
+                return (
+                  <div key={i} className="flex gap-4 group">
+                    <div className="w-1.5 h-auto bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-400 rounded-full transition-colors"></div>
+                    <div>
+                      <p className="text-xs text-gray-700 dark:text-gray-200 font-bold leading-relaxed">{a.text}</p>
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500 font-semibold mt-1 uppercase">{timeText}</p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
 
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-800 flex flex-wrap justify-between items-center gap-3 bg-gray-50/30 dark:bg-transparent">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
-            <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors">
-              <RefreshCw size={16} />
-            </button>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-transparent">
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
+              <button onClick={fetchData} className="text-blue-500 hover:text-blue-600 transition-colors bg-blue-50 p-1.5 rounded-lg">
+                <RefreshCw size={14} />
+              </button>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white flex-1 md:flex-none">
+                <option value="todos">Cualquier Estado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_curso">En Curso</option>
+                <option value="completada">Completada</option>
+              </select>
+              <select value={filtroPrioridad} onChange={e => setFiltroPrioridad(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white flex-1 md:flex-none">
+                <option value="todas">Cualquier Prioridad</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+              </select>
+              <select value={filtroZona} onChange={e => setFiltroZona(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white flex-1 md:flex-none">
+                <option value="todas">Cualquier Zona</option>
+                {Array.from(new Set(tareas.map(t => t.zona))).sort().map(z => <option key={z} value={z}>{z}</option>)}
+              </select>
+              <select value={filtroAsignado} onChange={e => setFiltroAsignado(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white flex-1 md:flex-none">
+                <option value="todos">Cualquier Asignado</option>
+                {Array.from(new Set(tareas.map(t => t.asignado))).sort().map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
             <table className="w-full">
 <thead className="bg-gray-50/50 dark:bg-gray-800/30">
                <tr>{["Zona","Tarea","Asignado","Estado","Prioridad","Acción"].map(h => <th key={h} className="text-left px-5 sm:px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">{h}</th>)}</tr>
