@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabase/client';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, ShieldAlert, CheckCircle, Plus, Search } from 'lucide-react';
+import { Bell, ShieldAlert, CheckCircle, Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import Badge from '../../components/common/Badge';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/Button';
@@ -49,6 +49,7 @@ const Notificaciones: React.FC = () => {
   
   // Admin form
   const [showForm, setShowForm] = useState(false);
+  const [editNotifId, setEditNotifId] = useState<number | null>(null);
   const [newNotif, setNewNotif] = useState({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
   const [ok, setOk] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -110,6 +111,31 @@ const Notificaciones: React.FC = () => {
     }
   };
 
+  const openNew = () => {
+    setEditNotifId(null);
+    setNewNotif({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
+    setShowForm(true);
+  };
+
+  const openEdit = (n: Notificacion) => {
+    setEditNotifId(n.id);
+    setNewNotif({ 
+      tipo: n.tipo, 
+      dest: n.dest, 
+      titulo: n.titulo, 
+      mensaje: n.mensaje, 
+      entidad_id: n.entidad_id || "todas" 
+    });
+    setShowForm(true);
+  };
+
+  const deleteNotif = async (id: number) => {
+    if (window.confirm("¿Estás seguro de eliminar esta notificación?")) {
+      const { error } = await supabase.from('notificaciones').delete().eq('id', id);
+      if (!error) setNotif(prev => prev.filter(x => x.id !== id));
+    }
+  };
+
   const sendNotif = async () => {
     if (!newNotif.titulo || !newNotif.mensaje) return;
     
@@ -118,8 +144,8 @@ const Notificaciones: React.FC = () => {
       mensaje: newNotif.mensaje,
       tipo: newNotif.tipo,
       dest: newNotif.dest,
-      leida: false,
-      fecha: new Date().toISOString(),
+      // No reescribir fecha ni leida al editar
+      ...(editNotifId ? {} : { leida: false, fecha: new Date().toISOString() }),
       // Superadmin elige entidad (o null = global); admin siempre guarda la suya
       entidad_id: isSuperadmin
         ? (newNotif.entidad_id !== 'todas' ? newNotif.entidad_id : null)
@@ -127,15 +153,29 @@ const Notificaciones: React.FC = () => {
       usuario_id: usuario?.id
     };
 
-    const { data, error } = await supabase.from('notificaciones').insert([insertData]).select();
-    if (!error && data) {
-      setNotif(prev => [data[0] as Notificacion, ...prev]);
-      setShowForm(false);
-      setNewNotif({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
-      setOk(true);
-      setTimeout(() => setOk(false), 3000);
+    if (editNotifId) {
+      const { data, error } = await supabase.from('notificaciones').update(insertData).eq('id', editNotifId).select();
+      if (!error && data) {
+        setNotif(prev => prev.map(x => x.id === editNotifId ? { ...x, ...data[0] } : x));
+        setShowForm(false);
+        setEditNotifId(null);
+        setNewNotif({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
+        setOk(true);
+        setTimeout(() => setOk(false), 3000);
+      } else {
+        console.error(error);
+      }
     } else {
-      console.error(error);
+      const { data, error } = await supabase.from('notificaciones').insert([insertData]).select();
+      if (!error && data) {
+        setNotif(prev => [data[0] as Notificacion, ...prev]);
+        setShowForm(false);
+        setNewNotif({ tipo:"informativa", dest:"todos", titulo:"", mensaje:"", entidad_id: "todas" });
+        setOk(true);
+        setTimeout(() => setOk(false), 3000);
+      } else {
+        console.error(error);
+      }
     }
   };
 
@@ -183,7 +223,7 @@ const Notificaciones: React.FC = () => {
           {isAdmin && (
             <Button 
               text="Crear Notificación" 
-              onClick={() => setShowForm(true)} 
+              onClick={openNew} 
               variant="primary" 
               icon={Plus} 
               className="shadow-lg shadow-blue-100 shrink-0"
@@ -213,6 +253,7 @@ const Notificaciones: React.FC = () => {
                 <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Destinatario</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Fecha</th>
                 <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Tipo</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-600 dark:text-gray-200 text-xs uppercase">Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -230,6 +271,10 @@ const Notificaciones: React.FC = () => {
                   <td className="px-4 py-3 text-gray-500 dark:text-white">{new Date(n.fecha).toLocaleString('es-ES')}</td>
                   <td className="px-4 py-3">
                     <Badge cls={TIPO_BADGE[n.tipo]} label={n.tipo.charAt(0).toUpperCase()+n.tipo.slice(1)} />
+                  </td>
+                  <td className="px-4 py-3 flex gap-2">
+                    <button onClick={(e) => { e.stopPropagation(); openEdit(n); }} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
+                    <button onClick={(e) => { e.stopPropagation(); deleteNotif(n.id); }} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                   </td>
                 </tr>
               ))}
@@ -254,9 +299,9 @@ const Notificaciones: React.FC = () => {
         </div>
       )}
 
-      {/* Create notification modal */}
+      {/* Create/Edit notification modal */}
       {showForm && (
-        <Modal title="CREAR NOTIFICACIÓN" onClose={() => setShowForm(false)}>
+        <Modal title={editNotifId ? "EDITAR NOTIFICACIÓN" : "CREAR NOTIFICACIÓN"} onClose={() => setShowForm(false)}>
           <div className="mb-3">
             <label className="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
             <div className="flex gap-2">
@@ -308,7 +353,7 @@ const Notificaciones: React.FC = () => {
           </div>
           <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 mt-4">
             <Button text="Cancelar" onClick={() => setShowForm(false)} variant="secondary" className="flex-1 py-3" />
-            <Button text="Enviar Notificación" onClick={sendNotif} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
+            <Button text={editNotifId ? "Guardar Cambios" : "Enviar Notificación"} onClick={sendNotif} variant="primary" className="flex-1 py-3 shadow-lg shadow-blue-100" />
           </div>
         </Modal>
       )}
