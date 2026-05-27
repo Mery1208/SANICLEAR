@@ -273,8 +273,14 @@ const ControlEntidad: React.FC = () => {
 
   // --- CRUD TAREAS ---
   const openTarea = (t?: any) => {
+    let fallbackId = t?.asignado_id || '';
+    if (t && t.asignado && !fallbackId) {
+      const match = personal.find(p => `${p.nombre} ${p.apellidos}` === t.asignado || p.nombre === t.asignado);
+      if (match) fallbackId = match.id;
+    }
+    
     setEditTarea(t || null);
-    setTareaForm(t ? { ...t } : { zona: '', tarea: '', descripcion: '', asignado: '', asignado_id: '', estado: 'pendiente', prioridad: 'media' });
+    setTareaForm(t ? { ...t, asignado_id: fallbackId } : { zona: '', tarea: '', descripcion: '', asignado: '', asignado_id: '', estado: 'pendiente', prioridad: 'media' });
     setShowTareaModal(true);
   };
   const saveTarea = async () => {
