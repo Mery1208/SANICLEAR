@@ -67,7 +67,10 @@ const Dashboard: React.FC = () => {
   const [filtroZona, setFiltroZona] = useState<string>('todas');
 
   // Filtro grafica
-  const [chartMonths, setChartMonths] = useState<number>(6);
+  const [filtroMes, setFiltroMes] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
 
   const fetchData = async () => {
     setLoading(true);
@@ -158,35 +161,37 @@ const Dashboard: React.FC = () => {
     return result;
   }, [tareas, query, filtroAsignado, filtroEstado, filtroPrioridad, filtroZona]);
 
-  // Calcular CHART_DATA real basado en incidencias de Supabase
+  // Calcular CHART_DATA basado en incidencias por zona para el mes seleccionado
   const chartData = useMemo(() => {
-    if (incidencias.length === 0) return [];
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    const now = new Date();
+    const [year, month] = filtroMes.split('-');
+    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const endDate = new Date(parseInt(year), parseInt(month), 1);
+
+    const zoneMap = new Map<string, { zona: string; Abiertas: number; Resueltas: number }>();
     
-    // Pre-cargamos meses basados en el filtro chartMonths
-    const lastXMonths = Array.from({ length: chartMonths }).map((_, index) => {
-      const d = new Date(now.getFullYear(), now.getMonth() - ((chartMonths - 1) - index), 1);
-      return { key: `${d.getFullYear()}-${d.getMonth()}`, mes: months[d.getMonth()], Abiertas: 0, Resueltas: 0 };
+    // Inicializar con las zonas existentes para que aparezcan en la gráfica aunque estén a 0
+    zonas.forEach(z => {
+      zoneMap.set(z.nombre, { zona: z.nombre, Abiertas: 0, Resueltas: 0 });
     });
 
-    const bucketMap = new Map(lastXMonths.map(b => [b.key, b]));
-    
     incidencias.forEach((i: any) => {
       if (!i.created_at) return;
       const d = new Date(i.created_at);
-      const key = `${d.getFullYear()}-${d.getMonth()}`;
-      const bucket = bucketMap.get(key);
-
-      // Solo sumamos si la incidencia pertenece a uno de los meses mostrados
-      if (bucket) {
-        if (i.estado === 'resuelta') bucket.Resueltas++;
-        else bucket.Abiertas++;
+      if (d >= startDate && d < endDate) {
+        const zoneName = i.zona || 'Sin zona';
+        if (!zoneMap.has(zoneName)) {
+           zoneMap.set(zoneName, { zona: zoneName, Abiertas: 0, Resueltas: 0 });
+        }
+        if (i.estado === 'resuelta') {
+          zoneMap.get(zoneName)!.Resueltas++;
+        } else {
+          zoneMap.get(zoneName)!.Abiertas++;
+        }
       }
     });
     
-    return lastXMonths;
-  }, [incidencias, chartMonths]);
+    return Array.from(zoneMap.values());
+  }, [incidencias, filtroMes, zonas]);
 
   const pendientes = tareas.filter(t => t.estado === "pendiente").length;
   const alertas = incidencias.filter(i => i.prioridad === "alta" && i.estado !== "resuelta").length;
@@ -329,17 +334,14 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2 bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm p-5 sm:p-8">
-          <div className="flex justify-between items-center mb-10">
-            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias por mes</p>
-            <select 
-              value={chartMonths} 
-              onChange={e => setChartMonths(Number(e.target.value))}
-              className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white"
-            >
-              <option value={3}>Últimos 3 meses</option>
-              <option value={6}>Últimos 6 meses</option>
-              <option value={12}>Último año</option>
-            </select>
+          <div className="flex flex-col items-center justify-center mb-8 gap-3">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest text-center">Incidencias por Zona</p>
+            <input
+              type="month"
+              value={filtroMes}
+              onChange={(e) => setFiltroMes(e.target.value)}
+              className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold text-[#1e3a5f] focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50 dark:bg-slate-800 dark:text-white text-center shadow-sm cursor-pointer"
+            />
           </div>
           {chartData.length === 0 ? (
              <div className="h-[240px] flex items-center justify-center text-gray-400 font-semibold text-sm border-2 border-dashed border-gray-100 rounded-2xl">
@@ -350,7 +352,7 @@ const Dashboard: React.FC = () => {
               <ResponsiveContainer width="100%" height={240} initialDimension={{ width: 10, height: 240 }}>
                 <BarChart data={chartData} barSize={20} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="mes" tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="zona" tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fontWeight:600, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip cursor={{fill: 'rgba(148, 163, 184, 0.1)'}} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
               <Bar dataKey="Abiertas"  fill="#3B82F6" radius={[6,6,0,0]} />
@@ -394,7 +396,7 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
             
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap justify-end md:ml-auto gap-2 w-full md:w-auto">
               <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-800 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Cualquier Estado</option>
                 <option value="pendiente">Pendiente</option>
@@ -445,19 +447,21 @@ const Dashboard: React.FC = () => {
                        <Badge cls={PRIORIDAD_BADGE[t.prioridad] || "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"} label={t.prioridad.charAt(0).toUpperCase()+t.prioridad.slice(1)} />
                    </td>
                   <td className="px-5 sm:px-8 py-4 sm:py-5 text-right">
-                      <button
-                        onClick={async () => {
-                          const { error } = await supabase.from('tareas').update({ estado: 'completada' }).eq('id', t.id);
-                          if (!error) {
-                            setTareas(prev => prev.map(ta => ta.id === t.id ? { ...ta, estado: 'completada' } : ta));
-                          } else {
-                            alert('Error al completar la tarea');
-                          }
-                        }}
-                        className="bg-green-500 hover:bg-green-600 text-white font-black uppercase tracking-wider px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-green-100 transition-all active:scale-95"
-                      >
-                        Hecho
-                      </button>
+                      {t.estado !== 'completada' && (
+                        <button
+                          onClick={async () => {
+                            const { error } = await supabase.from('tareas').update({ estado: 'completada' }).eq('id', t.id);
+                            if (!error) {
+                              setTareas(prev => prev.map(ta => ta.id === t.id ? { ...ta, estado: 'completada' } : ta));
+                            } else {
+                              alert('Error al completar la tarea');
+                            }
+                          }}
+                          className="bg-green-500 hover:bg-green-600 text-white font-black uppercase tracking-wider px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-green-100 transition-all active:scale-95"
+                        >
+                          Hecho
+                        </button>
+                      )}
                   </td>
                   </tr>
                 ))}

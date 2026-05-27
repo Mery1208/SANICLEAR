@@ -461,29 +461,29 @@ const ControlEntidad: React.FC = () => {
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <div className="flex items-center gap-3">
               <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
-              <Button 
-                text="Nueva Tarea" 
-                onClick={() => openTarea()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-              />
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
-              <select value={fTareaEstado} onChange={e => setFTareaEstado(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+              <select value={fTareaEstado} onChange={e => setFTareaEstado(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Estado</option>
                 <option value="pendiente">Pendiente</option>
                 <option value="en_curso">En Curso</option>
                 <option value="completada">Completada</option>
               </select>
-              <select value={fTareaZona} onChange={e => setFTareaZona(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fTareaZona} onChange={e => setFTareaZona(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Zona</option>
                 {Array.from(new Set(tareasActivas.map((t: any) => t.zona))).sort().map(z => <option key={String(z)} value={String(z)}>{String(z)}</option>)}
               </select>
-              <select value={fTareaAsignado} onChange={e => setFTareaAsignado(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fTareaAsignado} onChange={e => setFTareaAsignado(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Asignado</option>
                 {Array.from(new Set(tareasActivas.map((t: any) => t.asignado))).sort().map(a => <option key={String(a)} value={String(a)}>{String(a)}</option>)}
               </select>
+              <Button 
+                text="Nueva Tarea" 
+                onClick={() => openTarea()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
+              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -527,26 +527,26 @@ const ControlEntidad: React.FC = () => {
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <div className="flex items-center gap-3">
               <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
-              <Button 
-                text="Nueva Incidencia" 
-                onClick={() => openIncid()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-              />
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
-              <select value={fIncidZona} onChange={e => setFIncidZona(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+              <select value={fIncidZona} onChange={e => setFIncidZona(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Zona</option>
                 {Array.from(new Set(incidenciasActivas.map((i: any) => i.zona))).sort().map(z => <option key={String(z)} value={String(z)}>{String(z)}</option>)}
               </select>
-              <select value={fIncidPrioridad} onChange={e => setFIncidPrioridad(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fIncidPrioridad} onChange={e => setFIncidPrioridad(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Prioridad</option>
                 <option value="critica">Crítica</option>
                 <option value="alta">Alta</option>
                 <option value="media">Media</option>
                 <option value="baja">Baja</option>
               </select>
+              <Button 
+                text="Nueva Incidencia" 
+                onClick={() => openIncid()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
+              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -588,33 +588,34 @@ const ControlEntidad: React.FC = () => {
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <div className="flex items-center gap-3">
               <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
-              <Button 
-                text="Nuevo Personal" 
-                onClick={() => handleOpenEditUser()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-              />
+              <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block ml-2">Control Total</span>
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
               <input 
                 type="text" 
                 placeholder="Nombre..." 
                 value={fPersonalNombre} 
                 onChange={e => setFPersonalNombre(e.target.value)} 
-                className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1"
+                className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none"
               />
-              <select value={fPersonalRol} onChange={e => setFPersonalRol(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fPersonalRol} onChange={e => setFPersonalRol(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Rol</option>
                 <option value="admin">Admin</option>
                 <option value="operario">Operario</option>
               </select>
-              <select value={fPersonalTurno} onChange={e => setFPersonalTurno(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fPersonalTurno} onChange={e => setFPersonalTurno(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Turno</option>
                 <option value="Mañana">Mañana</option>
                 <option value="Tarde">Tarde</option>
                 <option value="Noche">Noche</option>
               </select>
+              <Button 
+                text="Nuevo Personal" 
+                onClick={() => handleOpenEditUser()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
+              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -658,32 +659,32 @@ const ControlEntidad: React.FC = () => {
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <div className="flex items-center gap-3">
               <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Zonas del Centro</p>
-              <Button 
-                text="Nueva Zona" 
-                onClick={() => openZona()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-              />
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
               <input 
                 type="text" 
                 placeholder="Nombre..." 
                 value={fZonaNombre} 
                 onChange={e => setFZonaNombre(e.target.value)} 
-                className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1"
+                className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none"
               />
-              <select value={fZonaPlanta} onChange={e => setFZonaPlanta(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fZonaPlanta} onChange={e => setFZonaPlanta(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Planta</option>
                 {Array.from(new Set(zonasList.map((z: any) => String(z.planta)))).sort().map(p => <option key={p} value={p}>{p}</option>)}
               </select>
-              <select value={fZonaNivel} onChange={e => setFZonaNivel(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fZonaNivel} onChange={e => setFZonaNivel(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Nivel</option>
                 <option value="alto">Alto</option>
                 <option value="medio">Medio</option>
                 <option value="bajo">Bajo</option>
               </select>
+              <Button 
+                text="Nueva Zona" 
+                onClick={() => openZona()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
+              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -726,29 +727,29 @@ const ControlEntidad: React.FC = () => {
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <div className="flex items-center gap-3">
               <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
-              <Button 
-                text="Nueva Notificación" 
-                onClick={() => openNotif()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
-              />
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
-              <select value={fNotifTipo} onChange={e => setFNotifTipo(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+              <select value={fNotifTipo} onChange={e => setFNotifTipo(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Tipo</option>
                 <option value="urgente">Urgente</option>
                 <option value="importante">Importante</option>
                 <option value="informativa">Informativa</option>
               </select>
-              <select value={fNotifDestino} onChange={e => setFNotifDestino(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fNotifDestino} onChange={e => setFNotifDestino(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Destino</option>
                 {Array.from(new Set(notificacionesEntidad.map((n: any) => n.dest))).sort().map(d => <option key={String(d)} value={String(d)}>{String(d)}</option>)}
               </select>
-              <select value={fNotifEmisor} onChange={e => setFNotifEmisor(e.target.value)} className="px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded text-xs focus:outline-none bg-white dark:bg-slate-700 dark:text-white flex-1">
+              <select value={fNotifEmisor} onChange={e => setFNotifEmisor(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Emisor</option>
                 {Array.from(new Set(notificacionesEntidad.map((n: any) => n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'))).sort().map(e => <option key={String(e)} value={String(e)}>{String(e)}</option>)}
               </select>
+              <Button 
+                text="Nueva Notificación" 
+                onClick={() => openNotif()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
+              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
