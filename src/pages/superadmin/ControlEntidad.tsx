@@ -436,7 +436,7 @@ const ControlEntidad: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
             <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
@@ -515,7 +515,7 @@ const ControlEntidad: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Administradores y Personal */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
           <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
@@ -531,7 +531,7 @@ const ControlEntidad: React.FC = () => {
               />
             </div>
           </div>
-          <div className="overflow-x-auto flex-1">
+          <div className="overflow-x-auto flex-1 max-h-96">
             <table className="w-full">
               <thead className="bg-gray-50/50 dark:bg-[#1e3a5f]/30">
                 <tr>{["Nombre","Rol","Turno","Acción"].map(h => <th key={h} className="text-left px-4 sm:px-6 py-3 sm:py-4 text-[10px] font-black text-gray-400 dark:text-gray-200 uppercase tracking-widest whitespace-nowrap">{h}</th>)}</tr>
@@ -584,7 +584,7 @@ const ControlEntidad: React.FC = () => {
                     <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <Badge cls={PRIORIDAD_BADGE[z.nivel] || "bg-gray-100"} label={z.nivel} />
                     </td>
-                    <td className="px-4 sm:px-6 py-3 sm:py-4 flex gap-2">
+                    <td className="px-4 sm:px-6 py-3 py-4 flex gap-2">
                       <button onClick={() => openZona(z)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><Edit2 size={14} /> Editar</button>
                       <button onClick={() => deleteZona(z.id, z.nombre)} className="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><Trash2 size={14} /> Eliminar</button>
                     </td>
@@ -596,7 +596,7 @@ const ControlEntidad: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Últimas Notificaciones */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
               <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-[#1e3a5f]/30">
