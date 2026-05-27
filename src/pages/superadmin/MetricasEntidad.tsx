@@ -119,7 +119,7 @@ const MetricasEntidad: React.FC = () => {
         { title: 'Predicción Incidencias', value: `${prediccionIncidencias} estimadas`, tone: 'text-red-600 bg-red-50', icon: <Brain size={24} /> },
         { title: 'Carga Prevista', value: `${prediccionCarga} tareas`, tone: 'text-amber-600 bg-amber-50', icon: <LineChartIcon size={24} /> },
         { title: 'Personal Ideal', value: `${operariosRecomendados} operarios`, tone: 'text-violet-600 bg-violet-50', icon: <Users size={24} /> },
-        { title: 'Nivel de Riesgo', value: prediccionIncidencias > 3 ? 'Alto' : 'Bajo', tone: prediccionIncidencias > 3 ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50', icon: <AlertTriangle size={24} /> },
+        { title: 'Nivel de Riesgo', value: prediccionIncidencias > 15 ? 'Alto' : 'Bajo', tone: prediccionIncidencias > 15 ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50', icon: <AlertTriangle size={24} /> },
       ]);
 
       setLoading(false);
@@ -203,15 +203,15 @@ const MetricasEntidad: React.FC = () => {
       </div>
 
       {/* Inteligencia Artificial / Previsiones */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
           <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
             Zonas con mayor presión operativa
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {zonasMasExigidas.length === 0 && (
-              <div className="md:col-span-2 rounded-2xl border border-gray-100 bg-gray-50 p-5 text-sm text-gray-500 font-medium italic">
-                Aún no hay suficientes tareas generadas para predecir las zonas de mayor carga.
+              <div className="md:col-span-2 lg:col-span-4 rounded-2xl border border-gray-100 bg-gray-50 p-5 text-sm text-gray-500 font-medium italic">
+                Aún no hay suficientes tareas generadas para ver las zonas de mayor carga.
               </div>
             )}
             {zonasMasExigidas.map((zona) => (
@@ -219,19 +219,6 @@ const MetricasEntidad: React.FC = () => {
                 <p className="text-sm font-black text-[#1e3a5f] mb-2">{zona.zona}</p>
                 <p className="text-3xl font-black text-blue-600 mb-2">{zona.total}</p>
                 <p className="text-xs text-gray-500 font-medium">Registros históricos. Vigilar en previsión del siguiente ciclo.</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
-            Motor predictivo (IA)
-          </p>
-          <div className="flex flex-col gap-4">
-            {['Media móvil de 3 periodos para suavizar picos.', 'Extrapolación lineal para anticipar el siguiente mes.', 'Detección temprana de saturación por carga.', 'Recomendación base de personal óptimo.'].map((item) => (
-              <div key={item} className="rounded-2xl border border-gray-100 bg-slate-50 p-4 text-xs text-gray-600 font-semibold leading-relaxed">
-                {item}
               </div>
             ))}
           </div>

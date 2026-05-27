@@ -334,16 +334,16 @@ const EstadisticasSuperadmin: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
           <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
             Zonas con mayor presión operativa
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {zonasMasExigidas.length === 0 && (
-              <div className="md:col-span-2 rounded-2xl border border-gray-100 bg-gray-50 p-5 text-sm text-gray-500 font-medium italic">
-                No hay suficientes datos de zonas para construir previsiones por área.
+              <div className="md:col-span-2 lg:col-span-4 rounded-2xl border border-gray-100 bg-gray-50 p-5 text-sm text-gray-500 font-medium italic">
+                No hay suficientes datos de zonas para construir estadísticas por área.
               </div>
             )}
 
@@ -352,27 +352,8 @@ const EstadisticasSuperadmin: React.FC = () => {
                 <p className="text-sm font-black text-[#1e3a5f] mb-2">{zona.zona}</p>
                 <p className="text-3xl font-black text-blue-600 mb-2">{zona.total}</p>
                 <p className="text-sm text-gray-500 font-medium">
-                  Registros asociados. Esta zona debería vigilarse en la previsión del siguiente ciclo.
+                  Registros asociados. Esta zona debería vigilarse en el siguiente ciclo.
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
-            Motor predictivo inicial
-          </p>
-
-          <div className="flex flex-col gap-4">
-            {[
-              'Media móvil de 3 periodos para suavizar picos.',
-              'Extrapolación lineal para anticipar el siguiente ciclo.',
-              'Detección temprana de saturación por incidencias + carga.',
-              'Recomendación base de personal según volumen previsto.',
-            ].map((item) => (
-              <div key={item} className="rounded-2xl border border-gray-100 bg-slate-50 p-4">
-                <p className="text-sm text-gray-600 font-semibold leading-relaxed">{item}</p>
               </div>
             ))}
           </div>
