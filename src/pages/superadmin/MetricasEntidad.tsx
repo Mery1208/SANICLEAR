@@ -113,13 +113,28 @@ const MetricasEntidad: React.FC = () => {
       
       const prediccionIncidencias = Math.max(0, Math.round((movingAverage(incidenciasSerie) + linearProjection(incidenciasSerie)) / 2));
       const prediccionCarga = Math.max(0, Math.round((movingAverage(cargaSerie) + linearProjection(cargaSerie)) / 2));
+      
+      const promedioHistoricoIncidencias = incidenciasSerie.length > 0 ? incidenciasSerie.reduce((a, b) => a + b, 0) / incidenciasSerie.length : 0;
+      const promedioHistoricoCarga = cargaSerie.length > 0 ? cargaSerie.reduce((a, b) => a + b, 0) / cargaSerie.length : 0;
+
+      let nivelRiesgo = 'Bajo';
+      let riesgoTone = 'text-emerald-600 bg-emerald-50';
+
+      if (prediccionIncidencias > promedioHistoricoIncidencias * 1.2 || prediccionCarga > promedioHistoricoCarga * 1.2) {
+          nivelRiesgo = 'Alto';
+          riesgoTone = 'text-red-600 bg-red-50';
+      } else if (prediccionIncidencias > promedioHistoricoIncidencias * 1.1 || prediccionCarga > promedioHistoricoCarga * 1.1) {
+          nivelRiesgo = 'Medio';
+          riesgoTone = 'text-amber-600 bg-amber-50';
+      }
+
       const operariosRecomendados = Math.max(1, Math.ceil(prediccionCarga / 6));
 
       setForecastCards([
         { title: 'Predicción Incidencias', value: `${prediccionIncidencias} estimadas`, tone: 'text-red-600 bg-red-50', icon: <Brain size={24} /> },
         { title: 'Carga Prevista', value: `${prediccionCarga} tareas`, tone: 'text-amber-600 bg-amber-50', icon: <LineChartIcon size={24} /> },
         { title: 'Personal Ideal', value: `${operariosRecomendados} operarios`, tone: 'text-violet-600 bg-violet-50', icon: <Users size={24} /> },
-        { title: 'Nivel de Riesgo', value: prediccionIncidencias > 15 ? 'Alto' : 'Bajo', tone: prediccionIncidencias > 15 ? 'text-red-600 bg-red-50' : 'text-emerald-600 bg-emerald-50', icon: <AlertTriangle size={24} /> },
+        { title: 'Nivel de Riesgo', value: nivelRiesgo, tone: riesgoTone, icon: <AlertTriangle size={24} /> },
       ]);
 
       setLoading(false);

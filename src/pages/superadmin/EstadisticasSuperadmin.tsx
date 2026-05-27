@@ -196,21 +196,34 @@ const EstadisticasSuperadmin: React.FC = () => {
       Number(((movingAverage(productividadSerie) + linearProjection(productividadSerie)) / 2).toFixed(1))
     );
 
+    const promedioHistoricoIncidencias = incidenciasSerie.length > 0 ? incidenciasSerie.reduce((a, b) => a + b, 0) / incidenciasSerie.length : 0;
+    const promedioHistoricoCarga = cargaSerie.length > 0 ? cargaSerie.reduce((a, b) => a + b, 0) / cargaSerie.length : 0;
+
+    let saturationRisk = 'Baja';
+    let riskTone = 'text-emerald-600 bg-emerald-50';
+
+    if (nextIncidencias > promedioHistoricoIncidencias * 1.2 || nextCarga > promedioHistoricoCarga * 1.2) {
+        saturationRisk = 'Alta';
+        riskTone = 'text-red-600 bg-red-50';
+    } else if (nextIncidencias > promedioHistoricoIncidencias * 1.1 || nextCarga > promedioHistoricoCarga * 1.1) {
+        saturationRisk = 'Media';
+        riskTone = 'text-amber-600 bg-amber-50';
+    }
+
     const personalSugerido = Math.max(1, Math.ceil(nextCarga / 6));
-    const saturationRisk = nextIncidencias >= 8 || nextCarga >= 20 ? 'Alta' : nextIncidencias >= 4 || nextCarga >= 12 ? 'Media' : 'Baja';
 
     return [
       {
         title: 'Predicción de incidencias',
         value: `${nextIncidencias} próximas`,
         detail: 'Estimación basada en tendencia reciente y media móvil de 3 periodos.',
-        tone: nextIncidencias >= 8 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50',
+        tone: nextIncidencias > promedioHistoricoIncidencias * 1.1 ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50',
       },
       {
         title: 'Carga operativa prevista',
         value: `${nextCarga} tareas`,
         detail: 'Proyección del volumen esperado para el siguiente ciclo mensual.',
-        tone: nextCarga >= 20 ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50',
+        tone: nextCarga > promedioHistoricoCarga * 1.1 ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50',
       },
       {
         title: 'Personal recomendado',
@@ -222,12 +235,7 @@ const EstadisticasSuperadmin: React.FC = () => {
         title: 'Riesgo de saturación',
         value: saturationRisk,
         detail: `Productividad estimada: ${nextProductividad} tareas completadas por operario activo.`,
-        tone:
-          saturationRisk === 'Alta'
-            ? 'text-red-600 bg-red-50'
-            : saturationRisk === 'Media'
-              ? 'text-amber-600 bg-amber-50'
-              : 'text-emerald-600 bg-emerald-50',
+        tone: riskTone,
       },
     ];
   }, [chartData]);
