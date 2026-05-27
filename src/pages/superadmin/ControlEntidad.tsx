@@ -458,11 +458,20 @@ const ControlEntidad: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Historial de Tareas</p>
+              </div>
+              <Button 
+                text="Nueva Tarea" 
+                onClick={() => openTarea()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full">
               <select value={fTareaEstado} onChange={e => setFTareaEstado(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todos">Estado</option>
                 <option value="pendiente">Pendiente</option>
@@ -477,13 +486,6 @@ const ControlEntidad: React.FC = () => {
                 <option value="todos">Asignado</option>
                 {Array.from(new Set(tareasActivas.map((t: any) => t.asignado))).sort().map(a => <option key={String(a)} value={String(a)}>{String(a)}</option>)}
               </select>
-              <Button 
-                text="Nueva Tarea" 
-                onClick={() => openTarea()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
-              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -524,11 +526,20 @@ const ControlEntidad: React.FC = () => {
         
         {/* Incidencias de la entidad */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Incidencias Abiertas</p>
+              </div>
+              <Button 
+                text="Nueva Incidencia" 
+                onClick={() => openIncid()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full">
               <select value={fIncidZona} onChange={e => setFIncidZona(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Zona</option>
                 {Array.from(new Set(incidenciasActivas.map((i: any) => i.zona))).sort().map(z => <option key={String(z)} value={String(z)}>{String(z)}</option>)}
@@ -540,13 +551,6 @@ const ControlEntidad: React.FC = () => {
                 <option value="media">Media</option>
                 <option value="baja">Baja</option>
               </select>
-              <Button 
-                text="Nueva Incidencia" 
-                onClick={() => openIncid()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
-              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -585,12 +589,21 @@ const ControlEntidad: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Administradores y Personal */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
-              <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block ml-2">Control Total</span>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Personal del Centro</p>
+                <span className="text-xs text-blue-500 font-bold bg-blue-50 px-2 py-1 rounded-lg hidden sm:inline-block ml-2">Control Total</span>
+              </div>
+              <Button 
+                text="Nuevo Personal" 
+                onClick={() => handleOpenEditUser()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full">
               <input 
                 type="text" 
                 placeholder="Nombre..." 
@@ -609,13 +622,6 @@ const ControlEntidad: React.FC = () => {
                 <option value="Tarde">Tarde</option>
                 <option value="Noche">Noche</option>
               </select>
-              <Button 
-                text="Nuevo Personal" 
-                onClick={() => handleOpenEditUser()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
-              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -656,11 +662,20 @@ const ControlEntidad: React.FC = () => {
 
         {/* Zonas de la entidad */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Zonas del Centro</p>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Zonas del Centro</p>
+              </div>
+              <Button 
+                text="Nueva Zona" 
+                onClick={() => openZona()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full">
               <input 
                 type="text" 
                 placeholder="Nombre..." 
@@ -678,13 +693,6 @@ const ControlEntidad: React.FC = () => {
                 <option value="medio">Medio</option>
                 <option value="bajo">Bajo</option>
               </select>
-              <Button 
-                text="Nueva Zona" 
-                onClick={() => openZona()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
-              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
@@ -724,11 +732,20 @@ const ControlEntidad: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Últimas Notificaciones */}
         <div className="bg-white dark:bg-transparent rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
+          <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-50 dark:border-gray-700 flex flex-col gap-4 bg-gray-50/30 dark:bg-[#1e3a5f]/30">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">Últimas Notificaciones</p>
+              </div>
+              <Button 
+                text="Nueva Notificación" 
+                onClick={() => openNotif()} 
+                variant="primary" 
+                icon={Plus} 
+                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm" 
+              />
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center justify-end gap-2 w-full">
               <select value={fNotifTipo} onChange={e => setFNotifTipo(e.target.value)} className="px-3 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-100 bg-white dark:bg-slate-700 dark:text-white flex-1 md:flex-none">
                 <option value="todas">Tipo</option>
                 <option value="urgente">Urgente</option>
@@ -743,13 +760,6 @@ const ControlEntidad: React.FC = () => {
                 <option value="todos">Emisor</option>
                 {Array.from(new Set(notificacionesEntidad.map((n: any) => n.usuarios ? `${n.usuarios.nombre} ${n.usuarios.apellidos || ''}` : 'Sistema'))).sort().map(e => <option key={String(e)} value={String(e)}>{String(e)}</option>)}
               </select>
-              <Button 
-                text="Nueva Notificación" 
-                onClick={() => openNotif()} 
-                variant="primary" 
-                icon={Plus} 
-                className="!py-1.5 !px-3 !text-[10px] sm:!text-xs shadow-sm ml-1" 
-              />
             </div>
           </div>
           <div className="overflow-x-auto flex-1 max-h-96">
