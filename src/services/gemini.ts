@@ -6,7 +6,7 @@ import manualDespliegue from '../../public/documentos/MANUAL_DESPLIEGUE.md?raw';
 // @ts-ignore
 import manualUsuario from '../../public/documentos/MANUAL_USUARIO.md?raw';
 
-const API_KEY = "AIzaSyBKDKZgLLQLAfukzuHs-tMtgpeuJQdz6h4";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const SYSTEM_PROMPT = `
@@ -45,7 +45,10 @@ export const getGeminiResponse = async (userMessage: string, history: { role: "u
 
   try {
     const model = genAI.getGenerativeModel(
-      { model: "gemini-3-flash-preview" },
+      { 
+        model: "gemini-3-flash-preview",
+        systemInstruction: SYSTEM_PROMPT
+      },
       { apiVersion: "v1beta" }
     );
 
@@ -53,11 +56,7 @@ export const getGeminiResponse = async (userMessage: string, history: { role: "u
       history: history,
     });
 
-    const messageWithContext = history.length === 0 
-      ? `${SYSTEM_PROMPT}\n\nPREGUNTA DEL USUARIO: ${userMessage}`
-      : userMessage;
-
-    const result = await chat.sendMessage(messageWithContext);
+    const result = await chat.sendMessage(userMessage);
     const response = await result.response;
     return response.text();
   } catch (error: any) {

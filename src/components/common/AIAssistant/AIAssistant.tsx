@@ -152,10 +152,7 @@ const AIAssistant: React.FC = () => {
             </button>
           </div>
           
-          <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-2">
-            <ShieldCheck size={12} className="text-emerald-500" />
-            <span className="text-[10px] text-slate-500 font-semibold tracking-wide uppercase">Datos Grounded en SANICLEARS_TFG_1.md</span>
-          </div>
+
         </div>
       )}
     </div>
