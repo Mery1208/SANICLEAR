@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import logoImg from '../assets/img/logo.png';
 
 export default function Login(): React.JSX.Element {
@@ -12,6 +12,7 @@ export default function Login(): React.JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isRecovering, setIsRecovering] = useState<boolean>(false);
   const [recoveryMsg, setRecoveryMsg] = useState<string>('');
+  const [loginError, setLoginError] = useState<string>('');
   const navigate = useNavigate();
   const { login, usuario, resetPassword } = useAuth();
 
@@ -29,12 +30,13 @@ export default function Login(): React.JSX.Element {
     setLoading(true);
 
     try {
+      setLoginError('');
       const trimmedEmail = email.trim();
       await login(trimmedEmail, password);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Error desconocido';
       console.error('Error de login:', message);
-      alert('Error al acceder: Comprueba tu email y contraseña. \nDetalle: ' + message);
+      setLoginError('El email o la contraseña son incorrectos. Por favor, inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -87,6 +89,14 @@ export default function Login(): React.JSX.Element {
           ) : (
 
           <form onSubmit={handleLogin}>
+            {loginError && (
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 mb-5 rounded-r-lg shadow-sm flex items-start gap-3">
+                <AlertCircle className="shrink-0 mt-0.5" size={18} />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">{loginError}</p>
+                </div>
+              </div>
+            )}
             <div className="input-group">
               <label>Email</label>
               <input
