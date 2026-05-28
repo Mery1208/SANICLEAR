@@ -40,7 +40,7 @@ Tecnológico, servicial y experto en el proyecto Saniclears.
 
 export const getGeminiResponse = async (userMessage: string, history: { role: "user" | "model"; parts: { text: string }[] }[]) => {
   if (!API_KEY) {
-    return "Error: No se ha configurado la API Key de Gemini en el archivo .env.local";
+    return "Error: No se ha configurado la API Key de Gemini. Si estás en local revisa tu .env.local, y si estás en Vercel asegúrate de añadir VITE_GEMINI_API_KEY en Settings -> Environment Variables.";
   }
 
   try {
