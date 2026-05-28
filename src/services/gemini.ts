@@ -46,16 +46,8 @@ export const getGeminiResponse = async (userMessage: string, history: { role: "u
   try {
     const model = genAI.getGenerativeModel(
       { 
-        model: "gemini-3.5-flash",
-        systemInstruction: SYSTEM_PROMPT,
-        // @ts-ignore
-        tools: [{ googleSearch: {} }],
-        generationConfig: {
-          // @ts-ignore
-          thinkingConfig: {
-            thinkingLevel: "HIGH"
-          }
-        }
+        model: "gemini-3-flash-preview", // Volvemos a la versión anterior más estable para cuentas gratuitas
+        systemInstruction: SYSTEM_PROMPT
       },
       { apiVersion: "v1beta" }
     );
