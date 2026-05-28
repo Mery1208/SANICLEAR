@@ -44,12 +44,21 @@ export const getGeminiResponse = async (userMessage: string, history: { role: "u
   }
 
   try {
-     const model = genAI.getGenerativeModel(
-       { 
-         model: "gemini-1.5-pro",
-         systemInstruction: SYSTEM_PROMPT
-       }
-     );
+    const model = genAI.getGenerativeModel(
+      { 
+        model: "gemini-3.5-flash",
+        systemInstruction: SYSTEM_PROMPT,
+        // @ts-ignore
+        tools: [{ googleSearch: {} }],
+        generationConfig: {
+          // @ts-ignore
+          thinkingConfig: {
+            thinkingLevel: "HIGH"
+          }
+        }
+      },
+      { apiVersion: "v1beta" }
+    );
 
     const chat = model.startChat({
       history: history,
