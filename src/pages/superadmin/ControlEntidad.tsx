@@ -178,7 +178,7 @@ const ControlEntidad: React.FC = () => {
     setEditUser(u || null);
     setUserForm(u
       ? { nombre: u.nombre || '', apellidos: u.apellidos || '', email: u.email || '', password: '', rol: u.rol || 'operario', turno: u.turno || 'Mañana' }
-      : { nombre: '', apellidos: '', email: '', password: 'Operario123!', rol: 'operario', turno: 'Mañana' });
+      : { nombre: '', apellidos: '', email: '', password: '', rol: 'operario', turno: 'Mañana' });
     setShowPassword(false);
     setShowUserModal(true);
   };

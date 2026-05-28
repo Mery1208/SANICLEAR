@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
 
       if (authError) {
         return new Response(JSON.stringify({ error: authError.message }), {
-          status: 400,
+          status: 200, // Devolvemos 200 para que el frontend pueda leer el JSON sin lanzar una excepción genérica HTTP
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
       }
@@ -70,9 +70,15 @@ Deno.serve(async (req) => {
       
       if (dbError) {
         return new Response(JSON.stringify({ error: 'Error actualizando perfil: ' + dbError.message }), {
-          status: 400,
+          status: 200, // Devolvemos 200 para que el frontend pueda leer el JSON
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
+      }
+
+      // Si el usuario es ascendido a Administrador o Superadmin, eliminamos todas las tareas
+      // de operario que tuviera asignadas previamente.
+      if (rol === 'admin' || rol === 'superadmin') {
+        await supabase.from('tareas').delete().eq('asignado_id', id);
       }
     }
 
