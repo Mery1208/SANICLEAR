@@ -3,7 +3,7 @@ import { supabase } from './src/supabase/client';
 async function checkDatabase() {
   console.log('Verificando base de datos...');
   
-  // Verificar entidades
+  // Verificar las entidades
   const { data: entidades, error: entidadesError } = await supabase
     .from('entidades')
     .select('*');
