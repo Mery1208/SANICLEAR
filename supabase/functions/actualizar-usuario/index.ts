@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    const { id, password, email } = JSON.parse(bodyText)
+    const { id, password, email, nombre, apellidos, rol, turno, entidad_id } = JSON.parse(bodyText)
 
     if (!id) {
       return new Response(JSON.stringify({ error: 'ID es obligatorio' }), {
@@ -35,31 +35,48 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Preparamos los datos a actualizar dinámicamente
-    const updateData: any = {}
-    if (password && password.trim() !== '') updateData.password = password.trim()
-    if (email && email.trim() !== '') updateData.email = email.trim()
+    // 1. Actualizar Auth si hay password o email
+    const authUpdateData: any = {}
+    if (password && password.trim() !== '') authUpdateData.password = password.trim()
+    if (email && email.trim() !== '') authUpdateData.email = email.trim()
 
-    if (Object.keys(updateData).length === 0) {
-      return new Response(JSON.stringify({ error: 'No hay nada que actualizar' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
+    let authUser = null;
+    if (Object.keys(authUpdateData).length > 0) {
+      const { data: authData, error: authError } = await supabase.auth.admin.updateUserById(
+        id,
+        authUpdateData
+      )
+
+      if (authError) {
+        return new Response(JSON.stringify({ error: authError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+      authUser = authData.user;
     }
 
-    const { data: authData, error: authError } = await supabase.auth.admin.updateUserById(
-      id,
-      updateData
-    )
+    // 2. Actualizar tabla public.usuarios (bypasses RLS gracias al SERVICE_ROLE_KEY)
+    const profileUpdateData: any = {}
+    if (nombre !== undefined) profileUpdateData.nombre = nombre
+    if (apellidos !== undefined) profileUpdateData.apellidos = apellidos
+    if (rol !== undefined) profileUpdateData.rol = rol
+    if (turno !== undefined) profileUpdateData.turno = turno
+    if (entidad_id !== undefined) profileUpdateData.entidad_id = entidad_id
+    if (email && email.trim() !== '') profileUpdateData.email = email.trim() // Sincronizar email también
 
-    if (authError) {
-      return new Response(JSON.stringify({ error: authError.message }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
+    if (Object.keys(profileUpdateData).length > 0) {
+      const { error: dbError } = await supabase.from('usuarios').update(profileUpdateData).eq('id', id)
+      
+      if (dbError) {
+        return new Response(JSON.stringify({ error: 'Error actualizando perfil: ' + dbError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
     }
 
-    return new Response(JSON.stringify({ success: true, user: authData.user }), {
+    return new Response(JSON.stringify({ success: true, user: authUser || { id } }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })

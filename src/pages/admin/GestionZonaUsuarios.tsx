@@ -202,7 +202,6 @@ const Gestion: React.FC = () => {
     if (!usuarioForm.nombre || !usuarioForm.email) return;
 
     if (editUsuario) {
-      // Editar: actualiza perfil y la contraseña si se indicó
       const userData = {
         nombre: usuarioForm.nombre,
         apellidos: usuarioForm.apellidos,
@@ -213,21 +212,20 @@ const Gestion: React.FC = () => {
           ? (currentUser?.entidad_id || null)
           : (usuarioForm.entidad_id || null),
       };
-      const { data: updatedData, error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id).select().maybeSingle();
-      
-      if (error || !updatedData) {
-        alert('Error al actualizar el perfil en la base de datos (quizás faltan permisos).');
-        return;
-      }
 
-      if (usuarioForm.password && usuarioForm.password.trim() !== "") {
-        const { error: pwdError, data } = await supabase.functions.invoke('actualizar-usuario', {
-          body: { id: editUsuario.id, password: usuarioForm.password }
-        });
-        if (pwdError || data?.error) {
-          alert('Perfil actualizado, pero hubo un error al cambiar la contraseña: ' + (data?.error || pwdError?.message));
-          return;
+      // Delegar toda la actualización (perfil y contraseña) a la Edge Function
+      // para evitar bloqueos por RLS (Row Level Security)
+      const { error: fnError, data } = await supabase.functions.invoke('actualizar-usuario', {
+        body: { 
+          id: editUsuario.id, 
+          password: usuarioForm.password,
+          ...userData
         }
+      });
+
+      if (fnError || data?.error) {
+        alert('Error al actualizar el usuario: ' + (data?.error || fnError?.message));
+        return;
       }
 
       setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...userData, id: editUsuario.id } : u));
@@ -274,7 +272,14 @@ const Gestion: React.FC = () => {
       await supabase.from('zonas').delete().eq('id', deleteTarget.id);
       setZonas(prev => prev.filter(z => z.id !== deleteTarget.id));
     } else {
-      await supabase.from('usuarios').delete().eq('id', deleteTarget.id);
+      // Usar la Edge Function para borrar el usuario de Auth y de la base de datos
+      const { error } = await supabase.functions.invoke('eliminar-usuario', {
+        body: { id: deleteTarget.id }
+      });
+      if (error) {
+        alert('Error al eliminar el usuario de forma permanente: ' + error.message);
+        return; // No lo quitamos de la lista si falló
+      }
       setUsuarios(prev => prev.filter(u => u.id !== deleteTarget.id));
     }
     setDeleteTarget(null);

@@ -185,28 +185,25 @@ const ControlEntidad: React.FC = () => {
 
   const handleSaveUser = async () => {
     if (editUser) {
-      // Editar: actualiza datos de perfil
+      // Editar: actualiza perfil y auth vía Edge Function
       const dataToSave = { nombre: userForm.nombre, apellidos: userForm.apellidos, email: userForm.email, rol: userForm.rol, turno: userForm.turno, entidad_id: id };
-      const { error } = await supabase.from('usuarios').update(dataToSave).eq('id', editUser.id);
       
-      // Actualizar contraseña o email en Supabase Auth si ha cambiado
-      if ((userForm.password && userForm.password.trim() !== "") || userForm.email !== editUser.email) {
-        const payload: any = { id: editUser.id };
-        if (userForm.password && userForm.password.trim() !== "") payload.password = userForm.password;
-        if (userForm.email !== editUser.email) payload.email = userForm.email;
-
-        const { error: pwdError, data } = await supabase.functions.invoke('actualizar-usuario', {
-          body: payload
-        });
-        if (pwdError || data?.error) {
-          alert('Datos de perfil actualizados, pero error al sincronizar con Auth: ' + (data?.error || pwdError?.message));
-        }
+      const payload: any = { id: editUser.id, ...dataToSave };
+      if (userForm.password && userForm.password.trim() !== "") {
+        payload.password = userForm.password;
       }
 
-      if (!error) {
-        setPersonal(prev => prev.map(p => p.id === editUser.id ? { ...p, ...dataToSave } : p));
-        setActionMessage("Usuario actualizado correctamente.");
-      } else { alert('Error actualizando usuario: ' + error.message); return; }
+      const { error: fnError, data } = await supabase.functions.invoke('actualizar-usuario', {
+        body: payload
+      });
+
+      if (fnError || data?.error) {
+        alert('Error actualizando usuario: ' + (data?.error || fnError?.message));
+        return;
+      }
+
+      setPersonal(prev => prev.map(p => p.id === editUser.id ? { ...p, ...dataToSave } : p));
+      setActionMessage("Usuario actualizado correctamente.");
     } else {
       // Crear: usa Edge Function para crear en Auth + DB
       if (!userForm.nombre || !userForm.email || !userForm.password) {
@@ -244,11 +241,15 @@ const ControlEntidad: React.FC = () => {
     const { tipo, id } = deleteTarget;
     
     if (tipo === 'usuario') {
-      const { error } = await supabase.from('usuarios').delete().eq('id', id);
+      const { error } = await supabase.functions.invoke('eliminar-usuario', {
+        body: { id: id }
+      });
       if (!error) {
         setPersonal(prev => prev.filter(x => x.id !== id));
         setCounts(prev => ({...prev, usuarios: Math.max(0, prev.usuarios - 1)}));
         setActionMessage("Usuario eliminado correctamente.");
+      } else {
+        alert("Error al eliminar usuario: " + error.message);
       }
     } else if (tipo === 'tarea') {
       const { error } = await supabase.from('tareas').delete().eq('id', id);
