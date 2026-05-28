@@ -157,6 +157,21 @@ const Dashboard: React.FC = () => {
     if (filtroEstado !== 'todos') result = result.filter(t => t.estado === filtroEstado);
     if (filtroPrioridad !== 'todas') result = result.filter(t => t.prioridad === filtroPrioridad);
     if (filtroZona !== 'todas') result = result.filter(t => t.zona === filtroZona);
+    // Ordenar: No completadas primero, y dentro de eso, por prioridad (crítica/alta > media > baja). Completadas al final.
+    result.sort((a, b) => {
+      const aFinished = (a.estado === 'hecha' || a.estado === 'completada') ? 1 : 0;
+      const bFinished = (b.estado === 'hecha' || b.estado === 'completada') ? 1 : 0;
+      
+      if (aFinished !== bFinished) return aFinished - bFinished;
+      
+      const pWeight: Record<string, number> = { 'critica': 1, 'alta': 2, 'media': 3, 'baja': 4 };
+      const wA = pWeight[a.prioridad?.toLowerCase()] || 5;
+      const wB = pWeight[b.prioridad?.toLowerCase()] || 5;
+      
+      if (wA !== wB) return wA - wB;
+      
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
     
     return result;
   }, [tareas, query, filtroAsignado, filtroEstado, filtroPrioridad, filtroZona]);
