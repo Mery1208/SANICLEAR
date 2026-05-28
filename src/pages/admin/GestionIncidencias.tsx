@@ -35,6 +35,11 @@ const GestionIncidencias: React.FC = () => {
   const [entidades, setEntidades] = useState<any[]>([]);
   const [filterEntidad, setFilterEntidad] = useState<string | null>(null);
 
+  const [filtroMes, setFiltroMes] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+
   const [selected, setSelected] = useState<any>(null);
   const [notaTexto, setNotaTexto] = useState("");
   const [ok, setOk] = useState("");
@@ -105,18 +110,30 @@ const GestionIncidencias: React.FC = () => {
      if (data) setOperarios(data);
    };
 
+  const incidenciasDelMes = useMemo(() => {
+    if (!filtroMes) return incidencias;
+    const [year, month] = filtroMes.split('-');
+    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const endDate = new Date(parseInt(year), parseInt(month), 1);
+    return incidencias.filter(i => {
+      if (!i.created_at) return false;
+      const d = new Date(i.created_at);
+      return d >= startDate && d < endDate;
+    });
+  }, [incidencias, filtroMes]);
+
   const stats = {
-    abiertas: incidencias.filter(i => i.estado === "abierta").length,
-    resueltas: incidencias.filter(i => i.estado === "resuelta").length,
-    en_revision: incidencias.filter(i => i.estado === "en_revision" || i.estado === "en_proceso").length,
-    total: incidencias.length
+    abiertas: incidenciasDelMes.filter(i => i.estado === "abierta").length,
+    resueltas: incidenciasDelMes.filter(i => i.estado === "resuelta").length,
+    en_revision: incidenciasDelMes.filter(i => i.estado === "en_revision" || i.estado === "en_proceso").length,
+    total: incidenciasDelMes.length
   };
 
   const categories = ["Equipo", "Material", "Acceso", "Zona", "Otro"];
-  const getCatCount = (cat: string) => incidencias.filter(i => i.tipo === cat).length;
+  const getCatCount = (cat: string) => incidenciasDelMes.filter(i => i.tipo === cat).length;
 
   const filteredIncidencias = useMemo(() => {
-    return incidencias.filter(i => {
+    return incidenciasDelMes.filter(i => {
       const matchStatus =
         filterStatus === 'Todas' ? true :
           filterStatus === 'Abiertas' ? i.estado === 'abierta' :
@@ -127,7 +144,7 @@ const GestionIncidencias: React.FC = () => {
       const matchEntidad = filterEntidad ? i.hospital === filterEntidad : true;
       return matchStatus && matchCat && matchEntidad;
     });
-  }, [incidencias, filterStatus, filterCategory, filterEntidad]);
+  }, [incidenciasDelMes, filterStatus, filterCategory, filterEntidad]);
 
   const updateEstado = async (id: number, estado: string, notas: string) => {
     const { error } = await supabase.from('incidencias').update({ estado, notas }).eq('id', id);
@@ -239,8 +256,14 @@ const GestionIncidencias: React.FC = () => {
             {cat} <span className={`ml-1.5 ${filterCategory === cat ? "text-blue-300" : "text-blue-400"}`}>{getCatCount(cat)}</span>
           </button>
         ))}
-        {/* Status Tabs */}
-        <div className="flex flex-wrap items-center gap-4">
+        {/* Status Tabs and Month Filter */}
+        <div className="flex flex-wrap items-center gap-4 ml-auto">
+          <input
+            type="month"
+            value={filtroMes}
+            onChange={(e) => setFiltroMes(e.target.value)}
+            className="border border-gray-100 rounded-2xl px-4 py-2 text-xs font-bold text-[#1e3a5f] bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer"
+          />
           <div className="flex gap-1.5 bg-gray-100/50 dark:bg-slate-700/50 p-1 rounded-2xl w-fit">
             {['Todas', 'Abiertas', 'En Revisión', 'Resueltas'].map((s: any) => (
               <button
