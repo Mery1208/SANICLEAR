@@ -46,7 +46,7 @@ export const getGeminiResponse = async (userMessage: string, history: { role: "u
   try {
     const model = genAI.getGenerativeModel(
       { 
-        model: "gemini-3-flash-preview",
+        model: "gemini-1.5-flash",
         systemInstruction: SYSTEM_PROMPT
       },
       { apiVersion: "v1beta" }
