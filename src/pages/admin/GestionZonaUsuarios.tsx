@@ -213,20 +213,25 @@ const Gestion: React.FC = () => {
           ? (currentUser?.entidad_id || null)
           : (usuarioForm.entidad_id || null),
       };
-      const { error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id);
+      const { data: updatedData, error } = await supabase.from('usuarios').update(userData).eq('id', editUsuario.id).select().maybeSingle();
       
+      if (error || !updatedData) {
+        alert('Error al actualizar el perfil en la base de datos (quizás faltan permisos).');
+        return;
+      }
+
       if (usuarioForm.password && usuarioForm.password.trim() !== "") {
         const { error: pwdError, data } = await supabase.functions.invoke('actualizar-usuario', {
           body: { id: editUsuario.id, password: usuarioForm.password }
         });
         if (pwdError || data?.error) {
-          alert('Datos actualizados, pero error al cambiar la contraseña: ' + (data?.error || pwdError?.message));
+          alert('Perfil actualizado, pero hubo un error al cambiar la contraseña: ' + (data?.error || pwdError?.message));
+          return;
         }
       }
 
-      if (!error) {
-        setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...userData, id: editUsuario.id } : u));
-      }
+      setUsuarios(prev => prev.map(u => u.id === editUsuario.id ? { ...userData, id: editUsuario.id } : u));
+
     } else {
       // Crear: usa Edge Function para crear cuenta en Auth + fila en DB
       if (!usuarioForm.password) {

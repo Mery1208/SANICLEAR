@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const stored = useAuthStore.getState();
     if (stored.usuario) {
       setLoading(false);
-      return;
+      // No hacemos return aquí para permitir que se suscriba a onAuthStateChange y actualice el perfil si ha cambiado
     }
 
     // 1. Obtener sesión inicial (con manejo de errores)
