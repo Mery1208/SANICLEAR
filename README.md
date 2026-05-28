@@ -183,6 +183,10 @@ limpieza-hospitalaria/
 │   ├── 📜 main.tsx             # Punto de entrada
 │   └── 📜 index.css            # Estilos globales
 │
+├── 📂 supabase/                # Backend (Supabase Edge Functions y Configuración)
+│   └── 📂 functions/           # Funciones Serverless en Deno (crear-usuario, actualizar-usuario)
+├── 📜 generar_demo_zonas.mjs   # Script de testeo para poblar zonas
+├── 📜 fill_chart_data.mjs      # Script de simulación para gráficos del superadmin
 ├── 📜 .env.local               # Variables de entorno (NO COMMIT)
 ├── 📜 .env.example             # Ejemplo de variables
 ├── 📜 eslint.config.js         # Linter ESLint
@@ -191,7 +195,7 @@ limpieza-hospitalaria/
 ├── 📜 tsconfig.json            # Configuración TypeScript
 ├── 📜 vite.config.js           # Configuración Vite
 ├── 📜 README.md                # Documentación principal del proyecto
-└── 📜 AGENTS.md               # Configuración Kilo CLI
+└── 📜 AGENTS.md                # Configuración Kilo CLI
 
 ```
 
@@ -236,13 +240,17 @@ Accede a: http://localhost:5173
 
 ### Despliegue en Producción
 
-1. Ejecutar `npm run build`
-2. Subir carpeta `dist/` a Vercel/Netlify
-3. Configurar variables de entorno en la plataforma
+El proyecto está desplegado en producción utilizando **Cloudflare Pages** para el frontend y **IONOS** para la gestión del dominio personalizado.
+
+1. **Dominio:** `saniclears.com` (Adquirido y gestionado mediante IONOS).
+2. **Hosting (Frontend):** Despliegue automatizado en Cloudflare Pages conectado al repositorio de GitHub (`npm run build`).
+3. **DNS y Seguridad:** Los Nameservers de IONOS apuntan a Cloudflare para proveer HTTPS, caché y seguridad perimetral.
+4. **Backend (BaaS):** Supabase aloja la base de datos PostgreSQL, la Autenticación, Storage y las Edge Functions.
+5. **Variables de Entorno:** Configurar las variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` y `VITE_GEMINI_API_KEY` en el panel de Cloudflare.
 
 ---
 
-## 📘 Diario de Desarrollo del TFG
+## 📋 Ficha y Seguimiento del TFG
 
 ### 📋 Ficha del Proyecto
 
@@ -282,14 +290,21 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
    - **Temas tratados:** Preparación de la presentación del TFG y elaboración del guion para la defensa.
 
 - 📅 **26/05/2026 — Ensayo Presentación TFG**
-   - **Asistentes:** María Ceballos, María Mercedes Martínez y Paco.
-   - **Temas tratados:** Ensayo de la presentación del TFG.
+   - **Asistentes:** María Ceballos, María Mercedes Martínez (Merche).
+   - **Temas tratados:** Ensayo general de la presentación del TFG, revisión del guion, control de tiempos y preparación para la defensa final.
 
 ---
 
 ## 📘 Diario de Desarrollo del TFG
 
 ### 🗓️ MAYO 2026 — Integración de IA y Pulido Final
+
+#### 📍 27 y 28/05/2026 — Corrección de Autenticación, RLS y Datos Demo
+✨ **Resolución de Bugs Críticos y Mejoras de Seguridad:**
+- **Sincronización del Perfil (AuthContext):** Se solucionó un error crítico donde la aplicación cacheaba indefinidamente el rol del usuario en `localStorage`, impidiendo que los ascensos (ej. de operario a admin) se reflejaran en la interfaz tras recargar la página.
+- **Actualización Segura (`actualizar-usuario`):** Integración de Edge Function para actualizar la contraseña de los usuarios desde el panel de administración, validando correctamente la respuesta del servidor.
+- **Prevención de "Falsos Positivos" en UI:** Mejora en el panel `GestionZonaUsuarios` para capturar fallos silenciosos de RLS mediante `.select().maybeSingle()`. Si el cambio de rol falla por falta de permisos o error, la ventana modal ya no se cierra fingiendo éxito.
+- **Scripts de Simulación:** Uso de scripts (`generar_demo_zonas.mjs`, `fill_chart_data.mjs`, `seed.mjs`) para nutrir la base de datos con datos de prueba realistas para los gráficos del Superadmin.
 
 #### 📍 26/05/2026 — Creación Segura de Usuarios (Edge Functions) Arreglo
 ✨ **Mejoras de Backend y UI:**
@@ -572,4 +587,4 @@ A lo largo del mes de abril se han llevado a cabo reuniones estratégicas con la
 
 ---
 
-*Documento vivo. Última actualización: 18/05/2026*
+*Documento vivo. Última actualización: 28/05/2026*
