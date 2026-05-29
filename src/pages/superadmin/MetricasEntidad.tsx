@@ -118,23 +118,26 @@ const MetricasEntidad: React.FC = () => {
       const promedioHistoricoCarga = cargaSerie.length > 0 ? cargaSerie.reduce((a, b) => a + b, 0) / cargaSerie.length : 0;
 
       let nivelRiesgo = 'Bajo';
-      let riesgoTone = 'text-emerald-600 bg-emerald-50';
+      let riesgoTextColor = 'text-emerald-600 dark:text-emerald-400';
+      let riesgoBgColor = 'bg-emerald-50 dark:bg-emerald-900/30';
 
       if (prediccionIncidencias > promedioHistoricoIncidencias * 1.2 || prediccionCarga > promedioHistoricoCarga * 1.2) {
           nivelRiesgo = 'Alto';
-          riesgoTone = 'text-red-600 bg-red-50';
+          riesgoTextColor = 'text-red-600 dark:text-red-400';
+          riesgoBgColor = 'bg-red-50 dark:bg-red-900/30';
       } else if (prediccionIncidencias > promedioHistoricoIncidencias * 1.1 || prediccionCarga > promedioHistoricoCarga * 1.1) {
           nivelRiesgo = 'Medio';
-          riesgoTone = 'text-amber-600 bg-amber-50';
+          riesgoTextColor = 'text-amber-600 dark:text-amber-400';
+          riesgoBgColor = 'bg-amber-50 dark:bg-amber-900/30';
       }
 
       const operariosRecomendados = Math.max(1, Math.ceil(prediccionCarga / 6));
 
       setForecastCards([
-        { title: 'Predicción Incidencias', value: `${prediccionIncidencias} estimadas`, tone: 'text-red-600 bg-red-50', icon: <Brain size={24} /> },
-        { title: 'Carga Prevista', value: `${prediccionCarga} tareas`, tone: 'text-amber-600 bg-amber-50', icon: <LineChartIcon size={24} /> },
-        { title: 'Personal Ideal', value: `${operariosRecomendados} operarios`, tone: 'text-violet-600 bg-violet-50', icon: <Users size={24} /> },
-        { title: 'Nivel de Riesgo', value: nivelRiesgo, tone: riesgoTone, icon: <AlertTriangle size={24} /> },
+        { title: 'Predicción Incidencias', value: `${prediccionIncidencias} estimadas`, textColor: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-50 dark:bg-red-900/30', icon: <Brain size={24} /> },
+        { title: 'Carga Prevista', value: `${prediccionCarga} tareas`, textColor: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-50 dark:bg-amber-900/30', icon: <LineChartIcon size={24} /> },
+        { title: 'Personal Ideal', value: `${operariosRecomendados} operarios`, textColor: 'text-violet-600 dark:text-violet-400', bgColor: 'bg-violet-50 dark:bg-violet-900/30', icon: <Users size={24} /> },
+        { title: 'Nivel de Riesgo', value: nivelRiesgo, textColor: riesgoTextColor, bgColor: riesgoBgColor, icon: <AlertTriangle size={24} /> },
       ]);
 
       setLoading(false);
@@ -148,11 +151,11 @@ const MetricasEntidad: React.FC = () => {
   return (
     <div className="font-sans">
       <div className="flex flex-wrap items-start gap-4 mb-8">
-        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white rounded-xl border border-gray-200 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+        <button onClick={() => navigate('/superadmin/entidades')} className="flex items-center justify-center w-10 h-10 shrink-0 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors">
           <ArrowLeft size={20} />
         </button>
         <div className="text-left">
-           <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-4">Métricas - {entidad.nombre_hospital}</h2>
+           <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-4">Métricas - {entidad.nombre_hospital}</h2>
           <p className="text-gray-400 text-sm font-medium italic">Rendimiento y análisis de datos de la entidad</p>
         </div>
       </div>
@@ -160,14 +163,14 @@ const MetricasEntidad: React.FC = () => {
       {/* Tarjetas de IA */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {forecastCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div key={card.title} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>{card.title}</p>
-                <p className={`text-xl lg:text-2xl font-black ${card.tone.split(' ')[0]}`}>{card.value.split(' ')[0]}</p>
+                <p className={`text-xl lg:text-2xl font-black ${card.textColor}`}>{card.value.split(' ')[0]}</p>
               </div>
-              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.tone.split(' ')[1]}`}>
-                <span className={card.tone.split(' ')[0]}>{card.icon}</span>
+              <div className={`p-2 lg:p-3 rounded-lg shrink-0 ${card.bgColor}`}>
+                <span className={card.textColor}>{card.icon}</span>
               </div>
             </div>
           </div>
@@ -175,9 +178,9 @@ const MetricasEntidad: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-        <div className="xl:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8 flex flex-col overflow-hidden">
+        <div className="xl:col-span-2 bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-5 sm:p-8 flex flex-col overflow-hidden">
           <div className="flex items-center justify-between mb-6">
-            <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest">
+            <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest">
               Evolución Mensual de Carga Operativa
             </p>
           </div>
@@ -196,21 +199,21 @@ const MetricasEntidad: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8 flex flex-col">
-           <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 mb-5">
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-5 sm:p-8 flex flex-col">
+           <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-500 dark:text-blue-400 mb-5">
               <Activity size={24} />
            </div>
-           <h3 className="text-lg font-black text-[#1e3a5f] uppercase tracking-tight mb-2">Salud de la Entidad</h3>
-           <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6">
+           <h3 className="text-lg font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-2">Salud de la Entidad</h3>
+           <p className="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed mb-6">
              {tasaResolucion >= 80
                ? `Rendimiento óptimo. Tasa de resolución de tareas: ${tasaResolucion}%.`
                : tasaResolucion >= 50
                ? `Rendimiento moderado. Tasa de resolución: ${tasaResolucion}%. Revisar carga operativa.`
                : `Atención requerida. Tasa de resolución: ${tasaResolucion}%. Se recomienda reforzar el equipo.`}
            </p>
-           <div className="mt-auto p-4 bg-gray-50 rounded-2xl border border-gray-100">
-              <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Última Auditoría</p>
-              <p className="text-sm font-bold text-gray-700">
+           <div className="mt-auto p-4 bg-gray-50 dark:bg-slate-700/50 rounded-2xl border border-gray-100 dark:border-slate-700">
+              <p className="text-xs font-black text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1">Última Auditoría</p>
+              <p className="text-sm font-bold text-gray-700 dark:text-gray-200">
                 {ultimaCarga ? ultimaCarga.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
               </p>
            </div>
@@ -219,21 +222,21 @@ const MetricasEntidad: React.FC = () => {
 
       {/* Inteligencia Artificial / Previsiones */}
       <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-5 sm:p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-5 sm:p-8 flex flex-col gap-5">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest m-0">
             Zonas con mayor presión operativa
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {zonasMasExigidas.length === 0 && (
-              <div className="md:col-span-2 lg:col-span-4 rounded-2xl border border-gray-100 bg-gray-50 p-5 text-sm text-gray-500 font-medium italic">
+              <div className="md:col-span-2 lg:col-span-4 rounded-2xl border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50 p-5 text-sm text-gray-500 dark:text-gray-400 font-medium italic">
                 Aún no hay suficientes tareas generadas para ver las zonas de mayor carga.
               </div>
             )}
             {zonasMasExigidas.map((zona) => (
-              <div key={zona.zona} className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
-                <p className="text-sm font-black text-[#1e3a5f] mb-2">{zona.zona}</p>
-                <p className="text-3xl font-black text-blue-600 mb-2">{zona.total}</p>
-                <p className="text-xs text-gray-500 font-medium">Registros históricos. Vigilar en previsión del siguiente ciclo.</p>
+              <div key={zona.zona} className="rounded-2xl border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50 p-5">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white mb-2">{zona.zona}</p>
+                <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-2">{zona.total}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Registros históricos. Vigilar en previsión del siguiente ciclo.</p>
               </div>
             ))}
           </div>

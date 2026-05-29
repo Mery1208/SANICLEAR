@@ -248,7 +248,7 @@ const EstadisticasSuperadmin: React.FC = () => {
     <div className="font-sans">
       <div className="flex justify-between items-start mb-8">
         <div className="text-left">
-          <h2 className="text-2xl font-black text-[#1e3a5f] uppercase tracking-tight mb-1">
+          <h2 className="text-2xl font-black text-[#1e3a5f] dark:text-white uppercase tracking-tight mb-1">
             Estadísticas del superadmin
           </h2>
           <p className="text-gray-400 text-sm font-medium italic">
@@ -274,7 +274,7 @@ const EstadisticasSuperadmin: React.FC = () => {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {forecastCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-xl border border-gray-100 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div key={card.title} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-3 lg:p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] lg:text-[10px] uppercase font-black text-gray-400 tracking-wider truncate" title={card.title}>
@@ -301,8 +301,8 @@ const EstadisticasSuperadmin: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-8">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-6">
             Evolución de incidencias y tareas completadas
           </p>
           <ResponsiveContainer width="100%" height={300} initialDimension={{ width: 10, height: 300 }}>
@@ -321,8 +321,8 @@ const EstadisticasSuperadmin: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-8">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest mb-6">
             Productividad y carga por periodo
           </p>
           <ResponsiveContainer width="100%" height={300} initialDimension={{ width: 10, height: 300 }}>
@@ -343,23 +343,23 @@ const EstadisticasSuperadmin: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-          <p className="text-sm font-black text-[#1e3a5f] uppercase tracking-widest mb-5">
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm p-8 flex flex-col gap-5">
+          <p className="text-sm font-black text-[#1e3a5f] dark:text-white uppercase tracking-widest m-0">
             Zonas con mayor presión operativa
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {zonasMasExigidas.length === 0 && (
-              <div className="md:col-span-2 lg:col-span-4 rounded-2xl border border-gray-100 bg-gray-50 p-5 text-sm text-gray-500 font-medium italic">
+              <div className="md:col-span-2 lg:col-span-4 rounded-2xl border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50 p-5 text-sm text-gray-500 dark:text-gray-400 font-medium italic">
                 No hay suficientes datos de zonas para construir estadísticas por área.
               </div>
             )}
 
             {zonasMasExigidas.map((zona) => (
-              <div key={zona.zona} className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
-                <p className="text-sm font-black text-[#1e3a5f] mb-2">{zona.zona}</p>
-                <p className="text-3xl font-black text-blue-600 mb-2">{zona.total}</p>
-                <p className="text-sm text-gray-500 font-medium">
+              <div key={zona.zona} className="rounded-2xl border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50 p-5">
+                <p className="text-sm font-black text-[#1e3a5f] dark:text-white mb-2">{zona.zona}</p>
+                <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-2">{zona.total}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                   Registros asociados. Esta zona debería vigilarse en el siguiente ciclo.
                 </p>
               </div>
